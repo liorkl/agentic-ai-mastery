@@ -1,0 +1,13 @@
+{
+  "name": "agentic-ai-mastery",
+  "owner": {
+    "name": "Lior Klibansky"
+  },
+  "plugins": [
+    {
+      "name": "coach",
+      "source": ".",
+      "description": "Coaches developers to master agentic AI development through 11 progressive levels"
+    }
+  ]
+}

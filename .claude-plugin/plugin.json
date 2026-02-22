@@ -1,0 +1,8 @@
+{
+  "name": "coach",
+  "description": "Coaches developers to master agentic AI development. Assesses skill by scanning your Claude Code/Cowork environment, teaches from an 11-level curriculum, tracks progress, discovers new features.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Lior Klibansky"
+  }
+}
