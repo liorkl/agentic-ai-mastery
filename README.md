@@ -30,7 +30,7 @@ claude plugin install coach@agentic-ai-mastery
 
 ```bash
 # Clone the repo
-git clone <repo-url> ~/dev/agentic-ai-mastery
+git clone https://github.com/liorklibansky/agentic-ai-mastery ~/dev/agentic-ai-mastery
 
 # In Claude Code, add as local marketplace
 /plugin marketplace add ~/dev/agentic-ai-mastery
@@ -38,6 +38,14 @@ git clone <repo-url> ~/dev/agentic-ai-mastery
 ```
 
 After installation, the plugin is available in every Claude Code and Cowork session.
+
+### Verify Installation
+
+```bash
+/coach:help
+```
+
+You should see a list of available coaching commands.
 
 ## Commands
 
@@ -77,9 +85,40 @@ The coaching skill also activates automatically when you ask learning-related qu
 | L9 | Agent teams — multi-agent orchestration |
 | L10 | System design — governance, quality gates, full mastery |
 
+## Auto-Triggered Coaching
+
+The plugin includes a coaching skill that activates automatically when you ask learning questions like:
+- "How do I use agents?"
+- "What's the best way to structure CLAUDE.md?"
+- "Is this costing too much?"
+
+No command needed — just ask naturally.
+
+## State Storage
+
+The coach stores progress data in `~/.claude/coaching/state/`:
+- `assessments.jsonl` — environment scan history
+- `outcomes.jsonl` — coaching interaction outcomes
+- `discoveries.jsonl` — discovered features and updates
+- `discovery-state.json` — last scan timestamps
+- `strategies.md` — evolved coaching approach
+
+State persists across sessions and projects.
+
 ## Privacy
 
 The coach never reads sensitive files (.env, credentials, secrets, keys). It only scans Claude Code configuration files and writes state to `~/.claude/coaching/`.
+
+## Contributing
+
+This is an open-source project. Contributions are welcome:
+- Report issues or suggest features via GitHub Issues
+- Submit pull requests for bug fixes or enhancements
+- Share feedback on the curriculum or coaching approach
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## License
 
