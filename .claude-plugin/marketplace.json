@@ -1,12 +1,15 @@
 {
   "name": "agentic-ai-mastery",
+  "metadata": {
+    "description": "A coaching plugin marketplace for mastering agentic AI development with Claude Code and Cowork"
+  },
   "owner": {
     "name": "Lior Klibansky"
   },
   "plugins": [
     {
       "name": "coach",
-      "source": ".",
+      "source": "./",
       "description": "Coaches developers to master agentic AI development through 11 progressive levels"
     }
   ]
