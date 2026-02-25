@@ -1,8 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Write",
-      "Edit",
+      "Read",
+      "Write(~/.claude/coaching/**)",
+      "Write(.claude/**)",
+      "Edit(~/.claude/coaching/**)",
+      "Edit(.claude/**)",
       "Bash(git *)",
       "Bash(gh *)",
       "Bash(wc *)",
@@ -11,6 +14,12 @@
       "Bash(mkdir *)",
       "Bash(head *)",
       "Bash(find *)"
+    ],
+    "deny": [
+      "Read(**/.env*)",
+      "Read(**/credentials*)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)"
     ]
   }
 }
