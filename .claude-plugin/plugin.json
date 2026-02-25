@@ -4,5 +4,33 @@
   "version": "1.0.0",
   "author": {
     "name": "Lior Klibansky"
+  },
+  "permissions": {
+    "read": [
+      "~/.claude/**",
+      ".claude/**",
+      "CLAUDE.md",
+      "~/.claude/coaching/state/**"
+    ],
+    "write": [
+      "~/.claude/coaching/**"
+    ],
+    "network": [
+      "github.com",
+      "anthropic.com"
+    ],
+    "bash": [
+      "stat",
+      "claude --version",
+      "wc",
+      "ls"
+    ],
+    "deny": [
+      ".env*",
+      "**/credentials*",
+      "**/*.key",
+      "**/*.pem",
+      "**/secrets*"
+    ]
   }
 }
