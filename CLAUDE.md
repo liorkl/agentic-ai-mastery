@@ -53,6 +53,28 @@ cat knowledge/**/*.md | wc -l  # Total <5,000 lines
 - State writes ONLY to ~/.claude/coaching/**
 - MIT License
 
+## Validation Commands
+
+**Plugin validation:**
+
+```bash
+claude plugin validate .
+```
+
+**Knowledge base line limit check:**
+
+```bash
+wc -l knowledge/**/*.md        # Each file must be <500 lines
+cat knowledge/**/*.md | wc -l  # Total must be <5,000 lines
+```
+
+**JSON validation:**
+
+```bash
+python3 -m json.tool .claude-plugin/plugin.json
+python3 -m json.tool .claude-plugin/marketplace.json
+```
+
 ## Design Documents (Read Before Implementing)
 
 - `docs/requirements.md` — Scope, plugin components, acceptance criteria, implementation plan
