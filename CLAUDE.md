@@ -69,6 +69,14 @@ cat knowledge/**/*.md | wc -l  # Total <5,000 lines
 - Command files: YAML frontmatter with `description` field, then markdown instructions
 - Knowledge files: metadata header → Current State → Key Concepts → Mastery Checks → Cost Implications → Official Resources
 
+## Git Workflow
+
+**Never commit directly to `master`.** Always:
+
+1. Create a feature branch: `git checkout -b feat/<short-description>`
+2. Commit changes on the branch
+3. Push and open a PR for review
+
 ## DO NOT
 
 - Create a web frontend, API server, or database
