@@ -1,5 +1,5 @@
 ---
-description: Get your next lesson based on current skill level and gaps
+description: "Learn the next concept for your level — best for greenfield projects or building new skills from the curriculum"
 ---
 
 # /coach:next — Next Lesson
@@ -55,8 +55,10 @@ Based on topic, read ONE file from knowledge/:
 
 | Level | Topic | File |
 |-------|-------|------|
+| 0 | CLI orientation, first session | knowledge/features/cli-orientation.md |
 | 0-1 | Model selection | knowledge/features/models.md |
 | 1 | Output styles | knowledge/features/output-styles.md |
+| 1-3 | Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |
 | 2-3 | CLAUDE.md, context | knowledge/features/context.md |
 | 4 | Skills | knowledge/features/skills.md |
 | 5 | Agents | knowledge/features/agents.md |
