@@ -1,5 +1,10 @@
 # Agentic AI Mastery — Claude Code Coaching Plugin
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](.claude-plugin/plugin.json)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange.svg)](https://claude.ai/code)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 A Claude Code plugin that teaches developers to master agentic AI development progressively — from first install to system-level design. The coach lives inside your Claude Code workflow, assesses your skill level by scanning your environment, delivers targeted coaching through real work, and tracks your progress over time.
 
 **Works in both Claude Code and Cowork.**
