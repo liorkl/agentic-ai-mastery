@@ -125,6 +125,8 @@ Load ONLY relevant knowledge files:
 
 | Topic | Load File |
 |-------|-----------|
+| CLI orientation, what is Claude Code | knowledge/features/cli-orientation.md |
+| Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |
 | Models, effort levels | knowledge/features/models.md |
 | Output customization | knowledge/features/output-styles.md |
 | CLAUDE.md, rules, imports | knowledge/features/context.md |
