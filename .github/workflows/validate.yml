@@ -1,0 +1,26 @@
+name: Plugin Validation
+
+on:
+  push:
+    branches:
+      - master
+      - "feat/**"
+      - "fix/**"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  validate:
+    name: Validate plugin structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run plugin validation
+        run: claude plugin validate .

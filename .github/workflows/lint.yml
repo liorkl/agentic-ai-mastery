@@ -1,0 +1,80 @@
+name: Lint & Limits
+
+on:
+  push:
+    branches:
+      - master
+      - "feat/**"
+      - "fix/**"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Lint files and enforce size limits
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          echo "Validating .claude-plugin/plugin.json..."
+          python3 -m json.tool .claude-plugin/plugin.json > /dev/null
+
+          echo "Validating .claude-plugin/marketplace.json..."
+          python3 -m json.tool .claude-plugin/marketplace.json > /dev/null
+
+          echo "Validating .claude/settings.json..."
+          python3 -m json.tool .claude/settings.json > /dev/null
+
+          echo "All JSON files are valid."
+
+      - name: Check knowledge file line limits (per-file max 500)
+        run: |
+          failed=0
+          while IFS= read -r f; do
+            lines=$(wc -l < "$f")
+            if [ "$lines" -gt 500 ]; then
+              echo "FAIL: $f has $lines lines (max 500)"
+              failed=1
+            else
+              echo "OK:   $f ($lines lines)"
+            fi
+          done < <(find knowledge -name "*.md")
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Check knowledge base total line limit (max 5000)
+        run: |
+          total=$(find knowledge -name "*.md" -exec cat {} + | wc -l)
+          echo "Total knowledge base lines: $total"
+          if [ "$total" -gt 5000 ]; then
+            echo "FAIL: total knowledge base is $total lines (max 5000)"
+            exit 1
+          fi
+          echo "OK: total knowledge base is within limit."
+
+      - name: Check commands, skills, and agents file line limits (per-file max 500)
+        run: |
+          failed=0
+          while IFS= read -r f; do
+            lines=$(wc -l < "$f")
+            if [ "$lines" -gt 500 ]; then
+              echo "FAIL: $f has $lines lines (max 500)"
+              failed=1
+            else
+              echo "OK:   $f ($lines lines)"
+            fi
+          done < <(find commands skills agents -name "*.md")
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
