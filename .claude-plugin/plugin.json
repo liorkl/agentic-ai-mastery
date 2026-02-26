@@ -4,27 +4,5 @@
   "version": "1.0.1",
   "author": {
     "name": "Lior Klibansky"
-  },
-  "permissions": {
-    "allow": [
-      "Read",
-      "Write(~/.claude/coaching/**)",
-      "Glob",
-      "Grep",
-      "Bash(claude --version)",
-      "Bash(wc)",
-      "Bash(ls)",
-      "Bash(stat)",
-      "WebFetch",
-      "WebSearch"
-    ],
-    "deny": [
-      "Read(**/.env)",
-      "Read(**/.env.*)",
-      "Read(**/secrets*)",
-      "Read(**/credentials*)",
-      "Write(**)",
-      "Bash(*)"
-    ]
   }
 }
