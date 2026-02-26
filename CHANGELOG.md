@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-02-26
+
+### Added
+
+- Explicit `permissions` block in `plugin.json` — declares all allowed tools and denies access to `.env`, credentials, and unrestricted write/bash
+- Scan receipt at end of `/coach:assess` output — lists every file pattern scanned, grouped by scope, with explicit "Nothing else was read or written." statement
+- Token usage estimate footer on all commands — hardcoded per-command input/output estimates to validate the ≤3,000 token target
+
+### Changed
+
+- `/coach:next` lesson output now leads with a copy-pasteable `### Do This Now` code block instead of prose `### Try This`; word count target reduced from 200–400 to 150–350 words
+
 ## [1.0.0] - 2026-02-22
 
 ### Added
@@ -38,5 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin validated with `claude plugin validate .` (2,106 lines total, all files under 500 lines)
 - Works in both Claude Code and Cowork with no external dependencies
 
-[Unreleased]: https://github.com/liorklibansky/agentic-ai-mastery/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/liorklibansky/agentic-ai-mastery/releases/tag/v1.0.0
+[Unreleased]: https://github.com/liorkl/agentic-ai-mastery/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/liorkl/agentic-ai-mastery/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/liorkl/agentic-ai-mastery/releases/tag/v1.0.0
