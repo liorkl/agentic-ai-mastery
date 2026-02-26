@@ -48,9 +48,29 @@ After displaying results, append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
-### 5. Privacy Reminder
+### 5. Scan Receipt
 
-End the assessment with a brief note listing what was scanned (scan scope) so the developer knows exactly what the coach examined.
+### Scan Receipt
+
+**Project scope scanned:**
+
+- `.claude/` — settings, rules, hooks
+- `CLAUDE.md` — project instructions
+- `.mcp.json` — MCP server configuration (if present)
+- `.claude-plugin/` — plugin manifest (if present)
+- Project root files: `package.json`, `pyproject.toml`, `go.mod`, `Makefile`, etc.
+
+**Global scope scanned:**
+
+- `~/.claude/settings.json` — global Claude Code settings
+- `~/.claude/CLAUDE.md` — global user instructions
+- `~/.claude/keybindings.json` — custom keybindings (if present)
+
+**State written:**
+
+- `~/.claude/coaching/state/assessments.jsonl` — new assessment appended
+
+Nothing else was read or written.
 
 ### Token Estimate
 
