@@ -77,3 +77,11 @@ If plugin is possibly outdated (>30 days), suggest:
 If gaps exist, suggest: "Run `/coach:execute` to close gaps on this project, or `/coach:next` for your next lesson."
 
 If no assessment exists for the current project, suggest: "Run `/coach:assess` to scan this project."
+
+### Token Estimate
+
+End every response with this footer:
+
+---
+**Estimated tokens this interaction:** ~0.4k input / ~0.2k output
+*Input includes: state files only (~400 tokens)*

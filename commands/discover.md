@@ -122,6 +122,14 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
+### Token Estimate
+
+End every response with this footer:
+
+---
+**Estimated tokens this interaction:** ~2.0k input / ~0.6k output
+*Input includes: web fetch results (~1.6k tokens), state files (~400 tokens)*
+
 ## Graceful Degradation
 
 | Failure | Behavior |

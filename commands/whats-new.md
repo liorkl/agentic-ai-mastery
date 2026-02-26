@@ -133,6 +133,14 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
+### Token Estimate
+
+End every response with this footer:
+
+---
+**Estimated tokens this interaction:** ~1.8k input / ~0.5k output
+*Input includes: web search results (~1.5k tokens), this command (~300 tokens)*
+
 ## Discovery Entry Format
 
 Each entry in discoveries.jsonl:
