@@ -6,31 +6,25 @@
     "name": "Lior Klibansky"
   },
   "permissions": {
-    "read": [
-      "~/.claude/**",
-      ".claude/**",
-      "CLAUDE.md",
-      "~/.claude/coaching/state/**"
-    ],
-    "write": [
-      "~/.claude/coaching/**"
-    ],
-    "network": [
-      "github.com",
-      "anthropic.com"
-    ],
-    "bash": [
-      "stat",
-      "claude --version",
-      "wc",
-      "ls"
+    "allow": [
+      "Read",
+      "Write(~/.claude/coaching/**)",
+      "Glob",
+      "Grep",
+      "Bash(claude --version)",
+      "Bash(wc)",
+      "Bash(ls)",
+      "Bash(stat)",
+      "WebFetch",
+      "WebSearch"
     ],
     "deny": [
-      ".env*",
-      "**/credentials*",
-      "**/*.key",
-      "**/*.pem",
-      "**/secrets*"
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets*)",
+      "Read(**/credentials*)",
+      "Write(**)",
+      "Bash(*)"
     ]
   }
 }
