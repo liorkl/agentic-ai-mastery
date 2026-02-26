@@ -51,3 +51,11 @@ After displaying results, append to `~/.claude/coaching/state/outcomes.jsonl`:
 ### 5. Privacy Reminder
 
 End the assessment with a brief note listing what was scanned (scan scope) so the developer knows exactly what the coach examined.
+
+### Token Estimate
+
+End every response with this footer:
+
+---
+**Estimated tokens this interaction:** ~1.5k input / ~0.8k output
+*Input includes: coach agent prompt (~600 tokens), environment scan results (~600 tokens), this command (~300 tokens)*

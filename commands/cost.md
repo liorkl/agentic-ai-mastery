@@ -119,6 +119,14 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
+### Token Estimate
+
+End every response with this footer:
+
+---
+**Estimated tokens this interaction:** ~1.1k input / ~0.5k output
+*Input includes: pricing knowledge file (~800 tokens), state files (~300 tokens)*
+
 ## Level-Specific Cost Coaching
 
 ### Levels 0-1: Cost Foundations

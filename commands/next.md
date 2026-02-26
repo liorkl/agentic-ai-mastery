@@ -125,6 +125,14 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
+### Token Estimate
+
+End every response with this footer:
+
+---
+**Estimated tokens this interaction:** ~1.2k input / ~0.5k output
+*Input includes: 1 knowledge file (~800 tokens), state files (~400 tokens)*
+
 ## Example Output
 
 For a Level 3 user with gap "CLAUDE.md missing test command":
