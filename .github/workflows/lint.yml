@@ -35,6 +35,35 @@ jobs:
 
           echo "All JSON files are valid."
 
+      - name: Check plugin.json only contains known keys
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+
+          # Keys supported by the Claude Code plugin schema.
+          # "permissions" is NOT supported — it causes install to fail.
+          # Update this list when the schema is officially extended.
+          ALLOWED_KEYS = {"name", "version", "description", "author", "license", "keywords", "homepage", "repository"}
+          ALLOWED_AUTHOR_KEYS = {"name", "email", "url"}
+
+          data = json.load(open(".claude-plugin/plugin.json"))
+
+          unknown = set(data.keys()) - ALLOWED_KEYS
+          if unknown:
+              print(f"FAIL: plugin.json contains unrecognized keys: {unknown}")
+              print("These will cause 'claude plugin install' to fail with a validation error.")
+              sys.exit(1)
+
+          author = data.get("author", {})
+          if isinstance(author, dict):
+              unknown_author = set(author.keys()) - ALLOWED_AUTHOR_KEYS
+              if unknown_author:
+                  print(f"FAIL: plugin.json author contains unrecognized keys: {unknown_author}")
+                  sys.exit(1)
+
+          print("OK: plugin.json keys are valid.")
+          EOF
+
       - name: Check knowledge file line limits (per-file max 500)
         run: |
           failed=0

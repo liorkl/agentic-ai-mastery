@@ -3,9 +3,7 @@
 ## Todo
 
 - [ ] Trust: create SECURITY.md documenting what plugin reads, writes, never touches, and network calls made
-- [ ] Trust: add scan receipt (list of every file path read) at end of every /coach:assess output
-- [ ] Trust: add explicit tool permissions to plugin.json manifest — auditable by anyone
-- [ ] Cost: add token usage estimate footer to every /coach:* command output
+- [ ] Trust: add explicit tool permissions to plugin.json manifest — auditable by anyone. NOTE: `"permissions"` key is NOT currently supported by the Claude Code plugin schema (causes install to fail with "Unrecognized key: permissions"). Need to wait for schema support or find an alternative (marketplace.json + README "Security" section as documentation-only approach).
 - [ ] Cost/UX: narrow the coaching skill trigger scope to reduce unwanted activations (not opt-in — just more precise triggers)
 - [ ] UX: improve SKILL.md Rule 4 to support proactive mid-task warnings (e.g., "before you add that 5th MCP server...")
 - [ ] UX: refactor /coach:next to lead with actionable fix (actual code/config), explanation second
@@ -25,3 +23,7 @@
 ## In Progress
 
 ## Done
+
+- [x] Trust: add scan receipt at end of /coach:assess output (PR #12)
+- [x] Cost: add token usage estimate footer to every /coach:* command output (PR #13)
+- [x] UX: refactor /coach:next to lead with actionable fix — actual code/config, explanation second (PR #14)
