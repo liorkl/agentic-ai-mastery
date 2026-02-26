@@ -71,7 +71,7 @@ Also load `knowledge/pricing/pricing-current.md` if the topic has significant co
 
 ### 5. Deliver Lesson
 
-**Format (200-400 words):**
+**Format (150-350 words):**
 
 ```markdown
 ## [Topic Name] — Level [N]
@@ -91,9 +91,15 @@ Also load `knowledge/pricing/pricing-current.md` if the topic has significant co
 
 [Cost implication of this feature]
 
-### Try This
+### Do This Now
 
-[Single concrete action they can take now]
+[The actual file edit, config block, or command to run — formatted as a code block with the target file path as the language hint comment]
+
+[One sentence: where this goes and what it does]
+
+### Why It Matters
+
+[One paragraph: the reasoning, grounded in their project]
 
 ### Resources
 
@@ -147,11 +153,21 @@ npm run test:coverage       # Coverage report
 
 Skipping tests doesn't save tokens — it costs MORE. Claude will make changes, you'll find bugs later, and Claude will spend 2-3x more tokens fixing them. Test commands enable fail-fast.
 
-### Try This
+### Do This Now
 
-1. Open your CLAUDE.md
-2. Add the test section above (adjust commands for your project)
-3. Run `/coach:assess` again to see your score improve
+```markdown
+<!-- Add to your CLAUDE.md -->
+## Test Commands
+
+Run tests with: `npm test`
+Run a single file: `npm test -- src/utils.test.ts`
+```
+
+Add this to your `CLAUDE.md` so Claude runs the right test command instead of guessing.
+
+### Why It Matters
+
+Without explicit test commands, Claude spends tokens probing your project structure on every test run. With this snippet, it executes directly — saving ~200 tokens per test interaction and cutting hallucinated commands entirely.
 
 ### Resources
 
