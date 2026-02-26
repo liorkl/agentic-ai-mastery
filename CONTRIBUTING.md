@@ -29,11 +29,41 @@ claude plugin install coach@agentic-ai-mastery
 /coach:help
 ```
 
-After making changes to plugin files, reinstall the plugin to pick up your changes:
+## Testing Local Changes
+
+After making changes, follow these steps to pull them into Claude Code:
 
 ```bash
-claude plugin install coach@agentic-ai-mastery
+# 1. Commit and push your changes
+git add .
+git commit -m "your change description"
+git push
+
+# 2. Refresh the marketplace index
+claude plugin marketplace update agentic-ai-mastery
+
+# 3. Update the plugin
+claude plugin update "coach@agentic-ai-mastery"
 ```
+
+> **Note:** the short name `coach` won't work — you must use the full `coach@agentic-ai-mastery` form.
+
+**4. Restart Claude Code** — changes take effect only after a restart.
+
+**5. Verify the update applied:**
+
+```bash
+claude plugin list
+# Check that lastUpdated reflects today's date
+```
+
+**One-liner for the update cycle:**
+
+```bash
+claude plugin marketplace update agentic-ai-mastery && claude plugin update "coach@agentic-ai-mastery"
+```
+
+Then restart Claude Code and test your changes.
 
 ## Validation Before Opening a PR
 
@@ -153,12 +183,11 @@ This section is for maintainers.
 ### Steps
 
 1. Ensure all PRs for the release are merged to `master`
-2. Update `CHANGELOG.md`: rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD` and add a fresh empty `## [Unreleased]` section above it
-3. Update the `version` field in `.claude-plugin/plugin.json`
-4. Commit: `chore: release vX.Y.Z`
-5. Tag: `git tag vX.Y.Z`
-6. Push the tag: `git push origin vX.Y.Z` (triggers the release workflow)
-7. GitHub Release is created automatically by CI from the tag
+2. Create a release branch: `git checkout -b chore/release-vX.Y.Z`
+3. Update `CHANGELOG.md`: rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD` and add a fresh empty `## [Unreleased]` section above it
+4. Update the `version` field in `.claude-plugin/plugin.json`
+5. Commit: `chore: release vX.Y.Z` and open a PR
+6. Merge the PR — CI auto-tags `vX.Y.Z` and creates the GitHub Release automatically
 
 ### Semver Rules
 
