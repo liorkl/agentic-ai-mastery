@@ -31,18 +31,33 @@ claude plugin marketplace add liorklibansky/agentic-ai-mastery
 claude plugin install coach@agentic-ai-mastery
 ```
 
-### Local Install (Development / Testing)
+### Local Development
 
 ```bash
-# Clone the repo
-git clone https://github.com/liorklibansky/agentic-ai-mastery ~/dev/agentic-ai-mastery
-
-# In Claude Code, add as local marketplace
-/plugin marketplace add ~/dev/agentic-ai-mastery
-/plugin install coach@agentic-ai-mastery
+git clone https://github.com/liorklibansky/agentic-ai-mastery
 ```
 
-After installation, the plugin is available in every Claude Code and Cowork session.
+Load the plugin for a session without installing — changes are picked up on each launch:
+
+```bash
+claude --plugin-dir /path/to/agentic-ai-mastery
+```
+
+To reload mid-session after editing files:
+
+```bash
+/reload-plugins
+```
+
+**To test the install/update UX** (register as a local marketplace):
+
+```bash
+claude plugin marketplace add /path/to/agentic-ai-mastery
+claude plugin install coach@agentic-ai-mastery
+
+# After changes:
+claude plugin update coach@agentic-ai-mastery
+```
 
 ### Verify Installation
 
