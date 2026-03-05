@@ -118,28 +118,76 @@ What principle does this teach? What will they recognize next time?]
 
 ---
 
-Type **done** when you've applied it, **skip** to come back later,
-or ask any question to learn more before proceeding.
+Type **apply** to let me implement this for you, **done** if you've already applied it,
+**skip** to come back later, or ask any question before proceeding.
 ```
 
 ### 6. Wait for User Response
 
 After presenting the step, **stop and wait**. Do not auto-advance.
 
-The user must respond with one of:
-- **"done"** → mark step complete, advance
-- **"skip"** → mark step skipped, advance
-- **Any other text** → treat as a question, answer it in context of this step,
-  then re-present the prompt ("Type **done** when ready...")
+Change the closing prompt to:
 
-### 7. On "done" — Mark Complete and Log
+```
+Type **apply** to let me implement this for you, **done** if you've already applied it,
+**skip** to come back later, or ask any question before proceeding.
+```
+
+The user must respond with one of:
+- **"apply"** → use Claude's tools to implement the fix directly (see Step 6a), then mark complete and advance
+- **"done"** → user applied it manually, mark complete and advance
+- **"skip"** → mark skipped, advance
+- **Any other text** → treat as a question, answer it in context of this step,
+  then re-present the prompt
+
+### 6a. On "apply" — Implement Using Claude's Tools
+
+Use the appropriate tool to apply the fix:
+- File creation or edit → use **Write** or **Edit** with the exact content from "How to Implement"
+- Shell command → use **Bash**
+- Multiple changes → apply them in sequence
+
+After applying, confirm what was done:
+
+```
+✓ Applied. I've created/updated <file or command> as shown above.
+```
+
+Then proceed as if the user said "done" — mark complete, log, advance.
+
+### 7. On "done" or after "apply" — Verify the Fix
+
+Before marking complete, verify the fix was actually applied using Claude's tools:
+
+- **File created/edited** → Read the file and confirm the expected content is present
+- **Shell command** → Run a verification command (e.g. `cat`, `ls`, `which`) to confirm the outcome
+- **Multiple changes** → Spot-check the most critical one
+
+**If verification passes:**
+
+```
+✓ Verified. <one sentence confirming what was found, e.g. "deny rules are present in .claude/settings.json">
+```
+
+Proceed to mark complete and log.
+
+**If verification fails** (file missing, content wrong):
+
+```
+⚠ I checked but couldn't confirm the fix was applied — <what was expected vs. what was found>.
+Type **apply** to let me implement it, or fix it manually and type **done** again.
+```
+
+Do not mark complete. Re-present the options.
+
+### 8. Mark Complete and Log
 
 Update execution-state.json:
 - Set `steps[current_index].status = "done"`
 - Set `steps[current_index].completed_at = <ISO timestamp>`
 - Increment `current_step_index`
 
-Append to `~/.claude/coaching/state/outcomes.jsonl`:
+After confirming, append to `~/.claude/coaching/state/outcomes.jsonl`:
 
 ```json
 {
@@ -165,7 +213,7 @@ Moving to next step...
 
 Then immediately present the next step (Step N+1).
 
-### 8. On "skip" — Mark Skipped and Advance
+### 9. On "skip" — Mark Skipped and Advance
 
 Update execution-state.json:
 - Set `steps[current_index].status = "skipped"`
@@ -230,6 +278,6 @@ applies to ALL tools (Read, Edit, Bash). One settings.json protects the whole pr
 
 ---
 
-Type **done** when you've applied it, **skip** to come back later,
-or ask any question to learn more before proceeding.
+Type **apply** to let me implement this for you, **done** if you've already applied it,
+**skip** to come back later, or ask any question before proceeding.
 ```
