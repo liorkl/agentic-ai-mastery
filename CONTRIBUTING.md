@@ -19,15 +19,20 @@ Do NOT contribute: web frontends, API servers, shell scripts, npm/pip packages, 
 git clone https://github.com/<your-username>/agentic-ai-mastery ~/dev/agentic-ai-mastery
 cd ~/dev/agentic-ai-mastery
 
-# 2. Add the local repo as a marketplace source in Claude Code
+# 2. Activate the pre-push hook (one-time setup)
+git config core.hooksPath .githooks
+
+# 3. Add the local repo as a marketplace source in Claude Code
 claude plugin marketplace add ~/dev/agentic-ai-mastery
 
-# 3. Install the plugin locally
+# 4. Install the plugin locally
 claude plugin install coach@agentic-ai-mastery
 
-# 4. Verify installation
+# 5. Verify installation
 /coach:help
 ```
+
+The pre-push hook runs the same checks as CI (JSON validation, plugin.json key whitelist, file line limits) before every push, so issues are caught locally before they reach a PR.
 
 ## Testing Local Changes
 

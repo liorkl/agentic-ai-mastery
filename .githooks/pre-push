@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# Pre-push hook — mirrors the lint CI checks.
+# Activate with: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+PASS=0
+FAIL=1
+exit_code=$PASS
+
+echo "=== pre-push checks ==="
+
+# 1. JSON syntax
+echo ""
+echo "--- JSON syntax ---"
+for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .claude/settings.json; do
+  if python3 -m json.tool "$f" > /dev/null 2>&1; then
+    echo "OK:   $f"
+  else
+    echo "FAIL: $f is not valid JSON"
+    exit_code=$FAIL
+  fi
+done
+
+# 2. plugin.json schema key whitelist
+echo ""
+echo "--- plugin.json key whitelist ---"
+python3 - <<'EOF'
+import json, sys
+
+ALLOWED_KEYS = {"name", "version", "description", "author", "license", "keywords", "homepage", "repository"}
+ALLOWED_AUTHOR_KEYS = {"name", "email", "url"}
+
+data = json.load(open(".claude-plugin/plugin.json"))
+
+unknown = set(data.keys()) - ALLOWED_KEYS
+if unknown:
+    print(f"FAIL: plugin.json contains unrecognized keys: {unknown}")
+    print("These will cause 'claude plugin install' to fail.")
+    sys.exit(1)
+
+author = data.get("author", {})
+if isinstance(author, dict):
+    unknown_author = set(author.keys()) - ALLOWED_AUTHOR_KEYS
+    if unknown_author:
+        print(f"FAIL: plugin.json author contains unrecognized keys: {unknown_author}")
+        sys.exit(1)
+
+print("OK:   plugin.json keys are valid")
+EOF
+if [ $? -ne 0 ]; then exit_code=$FAIL; fi
+
+# 3. Knowledge file line limits (each <500)
+echo ""
+echo "--- knowledge file line limits ---"
+while IFS= read -r f; do
+  lines=$(wc -l < "$f")
+  if [ "$lines" -gt 500 ]; then
+    echo "FAIL: $f has $lines lines (max 500)"
+    exit_code=$FAIL
+  else
+    echo "OK:   $f ($lines lines)"
+  fi
+done < <(find knowledge -name "*.md" 2>/dev/null)
+
+# 4. Knowledge base total line limit (<5000)
+echo ""
+echo "--- knowledge base total ---"
+total=$(find knowledge -name "*.md" -exec cat {} + 2>/dev/null | wc -l)
+if [ "$total" -gt 5000 ]; then
+  echo "FAIL: total knowledge base is $total lines (max 5000)"
+  exit_code=$FAIL
+else
+  echo "OK:   total knowledge base is $total lines"
+fi
+
+# 5. Commands / skills / agents line limits (each <500)
+echo ""
+echo "--- commands/skills/agents line limits ---"
+while IFS= read -r f; do
+  lines=$(wc -l < "$f")
+  if [ "$lines" -gt 500 ]; then
+    echo "FAIL: $f has $lines lines (max 500)"
+    exit_code=$FAIL
+  else
+    echo "OK:   $f ($lines lines)"
+  fi
+done < <(find commands skills agents -name "*.md" 2>/dev/null)
+
+echo ""
+if [ $exit_code -eq 0 ]; then
+  echo "=== all checks passed ==="
+else
+  echo "=== checks failed — fix the issues above before pushing ==="
+fi
+
+exit $exit_code
