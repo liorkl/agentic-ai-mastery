@@ -48,7 +48,26 @@ After displaying results, append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
-### 5. Scan Receipt
+### 5. Call to Action
+
+**If gaps or anti-patterns were found:**
+
+```
+---
+**What to do now:**
+Run `/coach:execute` to fix your gaps step by step — each fix includes the why and exact code.
+*Or run `/coach:next` if you'd rather learn the next concept first.*
+```
+
+**If the environment is clean (no gaps, no anti-patterns):**
+
+```
+---
+**What to do now:**
+Your environment is clean. Run `/coach:next` to get your next level-appropriate lesson.
+```
+
+### 6. Scan Receipt
 
 ### Scan Receipt
 
@@ -72,7 +91,7 @@ After displaying results, append to `~/.claude/coaching/state/outcomes.jsonl`:
 
 Nothing else was read or written.
 
-### Token Estimate
+### 7. Token Estimate
 
 End every response with this footer:
 
