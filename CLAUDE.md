@@ -32,15 +32,43 @@ claude plugin validate .
 # Verify knowledge files under limits
 wc -l knowledge/**/*.md        # Each file <500 lines
 cat knowledge/**/*.md | wc -l  # Total <5,000 lines
+```
 
-# Local install for testing
-/plugin marketplace add ~/liorklibansky/dev/agentic-ai-mastery
-/plugin install coach@agentic-ai-mastery
+## Local Test Workflow
 
-# Test commands
+**Dev loop** — load plugin for a single session without installing (primary approach):
+
+```bash
+# In the test project, start Claude Code with the plugin loaded
+claude --plugin-dir /abs/path/to/agentic-ai-mastery
+```
+
+No install, no version bump, no update cycle. Changes to plugin files are picked up
+on the next session launch. To reload mid-session without restarting:
+
+```bash
+/reload-plugins
+```
+
+Then test:
+
+```bash
 /coach:help
 /coach:assess
 /coach:next
+```
+
+**Integration test** — test the actual install/update UX (run once):
+
+```bash
+# Register as a local marketplace (once per machine)
+claude plugin marketplace add /abs/path/to/agentic-ai-mastery
+
+# Install globally
+claude plugin install coach@agentic-ai-mastery
+
+# After making changes, update the installed copy
+claude plugin update coach@agentic-ai-mastery
 ```
 
 ## Key Constraints
