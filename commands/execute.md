@@ -180,7 +180,19 @@ Type **apply** to let me implement it, or fix it manually and type **done** agai
 
 Do not mark complete. Re-present the options.
 
-### 8. Mark Complete and Log
+### 8. Cross-Step Dependency Hint
+
+After verification passes, check if the completed step and the next pending step are known to build on each other. If so, add a one-line bridge before advancing:
+
+| Completed | Next | Bridge hint |
+|---|---|---|
+| L4 skill gap | L5 agent gap | "The skill you just created can be wired into your agent in the next step — we'll reference it from the agent's system prompt." |
+| L5 agent gap | any | "Your agent is ready. Consider which skills it should call on — we'll connect them if needed." |
+| settings.json deny rules | any | "Deny rules apply to all tools, including any agents you create — no extra config needed." |
+
+Only show the bridge hint when both steps are present and pending. Skip silently otherwise.
+
+### 9. Mark Complete and Log
 
 Update execution-state.json:
 - Set `steps[current_index].status = "done"`
@@ -213,7 +225,7 @@ Moving to next step...
 
 Then immediately present the next step (Step N+1).
 
-### 9. On "skip" — Mark Skipped and Advance
+### 10. On "skip" — Mark Skipped and Advance
 
 Update execution-state.json:
 - Set `steps[current_index].status = "skipped"`
