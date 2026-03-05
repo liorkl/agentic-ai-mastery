@@ -128,6 +128,36 @@ For reliable auto-delegation:
 description: Reviews Python code for PEP-8 compliance, type hints, and security issues. Does NOT modify files or write code.
 ```
 
+### Skills + Agents
+
+Agents and skills complement each other: **skills** are reusable workflows (what to do), **agents** are specialized contexts (who does it and with what tools/model).
+
+An agent can invoke a skill by referencing it in its system prompt:
+
+```markdown
+---
+name: reviewer
+description: Reviews code for quality and security.
+model: haiku
+tools: [Read, Glob, Grep]
+---
+
+# Code Reviewer Agent
+
+When reviewing code, use the **code-review** skill to apply team standards.
+Reference: `.claude/skills/code-review/SKILL.md`
+
+## Role
+You are a read-only reviewer. Never modify files.
+```
+
+**Why connect them:**
+- The skill holds the reusable review logic — any agent or user can invoke it
+- The agent provides the constrained context (Haiku model, read-only tools, focused role)
+- Separating them means updating the review logic once in the skill benefits all agents that reference it
+
+**The pattern**: Build the skill at L4, wire it into agents at L5. A skill without an agent is a workflow anyone can call. A skill referenced by an agent is a workflow with a dedicated, cost-optimized executor.
+
 ## Mastery Checks
 
 - [ ] Have you created a custom agent with tool restrictions?

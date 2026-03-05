@@ -106,6 +106,17 @@ Skills can:
 - Invoke other skills
 - Reference supporting documents
 - Include executable code that runs without loading into context
+- Be referenced by custom agents (L5) — the most powerful combination
+
+**Skill → Agent wiring** is the natural next step after creating a skill. An agent's system prompt references the skill file directly, giving the agent a reusable, updateable workflow without duplicating logic:
+
+```markdown
+# Agent system prompt excerpt
+When asked to review code, apply the instructions in
+`.claude/skills/code-review/SKILL.md`.
+```
+
+A skill built at L4 becomes the workflow engine for one or more specialized agents at L5.
 
 ### Testing Skills
 
