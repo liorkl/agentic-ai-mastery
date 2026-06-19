@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`/coach:recap`** — progress recap from assessment + outcome history. Leads with how the repo got more Claude-ready (verification readiness, CLAUDE.md score, resolved anti-patterns) and what was practiced — makes the "team gradually gets better" loop visible. Read-only.
+- **`/coach:compare`** — before/after diff of two assessments for the current project, classifying each change as a gain or regression, led by verification readiness rather than the level number. Read-only.
+- **`knowledge/features/plugins.md`** — closes a content gap: plugin anatomy, validation, marketplace/install flow, when to build a plugin, and the permissions model (including the `plugin.json` permissions install-breaker caveat). Wired into the `/coach:next` and skill knowledge tables.
+- `/coach:help` now explains the passive coaching skill (auto-trigger, not a command) to remove a common point of confusion.
+
 ### Changed — re-centered on outcomes (get the best out of Claude)
 
 - Reframed the coaching spine from "which features do you have (L0–L10)" to "are you getting the best out of Claude, and is your repo built for it?" The L0–L10 ladder is now explicitly a feature scaffold, not a score

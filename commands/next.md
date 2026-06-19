@@ -69,6 +69,7 @@ Based on topic, read ONE file from knowledge/:
 | 7 | MCP | knowledge/features/mcp.md |
 | 8 | Headless | knowledge/features/headless.md |
 | 9 | Teams | knowledge/features/teams.md |
+| 10 | Plugins — packaging & sharing a Claude-ready setup with the team | knowledge/features/plugins.md |
 
 Do NOT load `knowledge/pricing/pricing-current.md` here — cost/token coaching is off by default and lives in the opt-in `/coach:cost` command.
 
