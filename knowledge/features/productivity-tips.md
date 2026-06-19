@@ -1,9 +1,7 @@
-<!--
-topic: Productivity Tips
-last_updated: February 2026
-source_docs: curriculum-v1.1.md
-curriculum_level: 1-3
--->
+<!-- file: knowledge/features/productivity-tips.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: 1-3 -->
 
 # Productivity Tips
 
@@ -123,7 +121,7 @@ Switch model mid-session:
 /model sonnet    # Switch back
 ```
 
-**Cost ratio:** Haiku ≈ 1x, Sonnet ≈ 5x, Opus ≈ 15x
+**Relative input price:** Haiku ≈ 1x, Sonnet ≈ 3x, Opus ≈ 5x (Opus is much closer to Sonnet than it used to be — escalate freely). For the full cost angle, use `/coach:cost`.
 
 ---
 
@@ -226,16 +224,19 @@ Claude will read the file in context. This is more precise than
 - [ ] You've tried headless mode for at least one repetitive task
 - [ ] You break large features into reviewable steps
 
-## Cost Implications
+## Why It Matters
 
-These tips stack:
-- Right model selection: up to 15x cost reduction
-- Context hygiene: 30-60% reduction on long sessions
-- Targeted prompts: 50% fewer follow-up turns
-- Headless for automation: eliminates interactive overhead
+These tips stack into better, faster, more reliable results:
+- Targeted prompts (file + behavior + boundary) get the right change on the
+  first try instead of through rounds of correction
+- Context hygiene keeps Claude focused on the current task, so answers stay
+  accurate on long sessions
+- Matching the model to the task means the right depth of reasoning where it
+  counts and quick turnaround where it doesn't
+- Iterative steps stay small enough to review, test, and undo — fewer errors
+  reach the codebase
 
-**Combined effect:** A developer applying all 10 tips typically spends
-3-5x less on the same work vs. default usage patterns.
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

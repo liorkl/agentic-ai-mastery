@@ -1,9 +1,7 @@
-<!--
-topic: Claude API for Developers
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L8+
--->
+<!-- file: knowledge/ecosystem/api.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://platform.claude.com/docs/en/about-claude/models/overview -->
+<!-- curriculum_level: L8+ -->
 
 # Claude API for Developers
 
@@ -31,7 +29,7 @@ import anthropic
 client = anthropic.Anthropic()
 
 message = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6",
     max_tokens=1024,
     messages=[
         {"role": "user", "content": "Hello, Claude!"}
@@ -49,7 +47,7 @@ import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic();
 
 const message = await client.messages.create({
-  model: "claude-sonnet-4-20250514",
+  model: "claude-sonnet-4-6",
   max_tokens: 1024,
   messages: [
     { role: "user", content: "Hello, Claude!" }
@@ -86,7 +84,7 @@ tools = [
 
 ```python
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6",
     max_tokens=1024,
     tools=tools,
     messages=[{"role": "user", "content": "What's the weather in Tokyo?"}]
@@ -106,7 +104,7 @@ for block in response.content:
 
 ```python
 with client.messages.stream(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6",
     max_tokens=1024,
     messages=[{"role": "user", "content": "Write a story"}]
 ) as stream:
@@ -114,21 +112,21 @@ with client.messages.stream(
         print(text, end="", flush=True)
 ```
 
-## Extended Thinking
+## Adaptive Thinking + Effort
 
-For complex reasoning tasks:
+The old `thinking={"type": "enabled", "budget_tokens": N}` form is removed on the 4.6+ family (it 400s). Use **adaptive thinking** and control depth with the **effort** parameter:
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-5-20251101",
+    model="claude-opus-4-8",
     max_tokens=16000,
-    thinking={
-        "type": "enabled",
-        "budget_tokens": 10000
-    },
+    thinking={"type": "adaptive"},
+    output_config={"effort": "high"},  # low | medium | high | xhigh | max
     messages=[{"role": "user", "content": "Solve this complex problem..."}]
 )
 ```
+
+There is no separate thinking-token budget to set — Claude decides how much to think, and `effort` scales the overall depth and spend.
 
 ## Batch API
 
@@ -160,7 +158,7 @@ Reduce costs for repeated prefixes:
 
 ```python
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6",
     max_tokens=1024,
     system=[
         {
@@ -186,7 +184,7 @@ For building agent applications:
 from anthropic import Agent
 
 agent = Agent(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6",
     tools=[...],
     system_prompt="You are a helpful assistant..."
 )
@@ -264,11 +262,12 @@ print(f"Output tokens: {response.usage.output_tokens}")
 ### Calculate Costs
 
 ```python
-def calculate_cost(usage, model="claude-sonnet-4"):
+def calculate_cost(usage, model="claude-sonnet-4-6"):
     rates = {
-        "claude-sonnet-4": {"input": 3, "output": 15},
-        "claude-opus-4-5": {"input": 15, "output": 75},
-        "claude-haiku": {"input": 1, "output": 5}
+        "claude-fable-5": {"input": 10, "output": 50},
+        "claude-opus-4-8": {"input": 5, "output": 25},
+        "claude-sonnet-4-6": {"input": 3, "output": 15},
+        "claude-haiku-4-5": {"input": 1, "output": 5},
     }
     rate = rates[model]
     input_cost = (usage.input_tokens / 1_000_000) * rate["input"]

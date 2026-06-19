@@ -1,21 +1,21 @@
-<!--
-topic: Model Selection
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L0-L1
--->
+<!-- file: knowledge/features/models.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
 
 # Model Selection
 
 ## Current State
 
-Claude Code supports three model tiers as of February 2026:
+As of June 2026, Claude Code runs on the Claude 4.x / Fable family. Use the alias — never append date suffixes.
 
-| Model | Strengths | Best For | Relative Cost |
-|-------|-----------|----------|---------------|
-| **Opus 4.6** | Most advanced reasoning, 1M context, agent teams | Architecture, complex debugging, multi-agent orchestration | 5x baseline |
-| **Sonnet 4.5/4.6** | Best coding model, preferred 70% over previous versions | Daily coding, feature implementation, 80-90% of tasks | 3x baseline |
-| **Haiku 4.5** | 90% of Sonnet's agentic performance, 2x speed | Quick questions, simple edits, code review, subagents | 1x baseline |
+| Model | Alias | Context | Best For |
+|-------|-------|---------|----------|
+| **Claude Fable 5** | `claude-fable-5` | 1M | The hardest reasoning and long, autonomous agentic runs |
+| **Claude Opus 4.8** | `claude-opus-4-8` | 1M | Architecture, complex debugging, long-horizon agentic work |
+| **Claude Sonnet 4.6** | `claude-sonnet-4-6` | 1M | Daily coding and feature work — handles most tasks well |
+| **Claude Haiku 4.5** | `claude-haiku-4-5` | 200K | Quick questions, simple edits, subagents |
+
+> Opus is no longer the "5x expensive" tier it used to be — Opus 4.8 sits much closer to Sonnet now (see `knowledge/pricing/pricing-current.md`). Escalate to it whenever a task is genuinely hard; don't ration it on cost grounds.
 
 ## Key Concepts
 
@@ -25,69 +25,61 @@ Claude Code supports three model tiers as of February 2026:
 # Command-line flag
 claude --model sonnet
 
-# During session
+# During a session
 /model haiku
 /model sonnet
 /model opus
-
-# Opus plans, Sonnet executes (recommended default for experienced users)
-/model opusplan
 ```
 
-### Effort Levels (Opus 4.6 Only)
+### Adaptive Thinking + Effort
 
-Control adaptive thinking depth:
-- **Low**: Routine tasks, minimal reasoning tokens
-- **Medium**: Standard tasks, balanced
-- **High**: Complex reasoning, maximum thinking tokens
+The old `budget_tokens` "extended thinking" knob is gone on the 4.6+ family. Thinking is now **adaptive** — Claude decides when and how deeply to think — and you tune the overall depth/spend with the **effort** parameter:
 
-Lower effort = fewer thinking tokens = cheaper.
+- **low** — short, scoped, latency-sensitive tasks
+- **medium** — balanced default for most work
+- **high** — intelligence-sensitive work (recommended minimum for hard tasks)
+- **xhigh** — best for most coding and agentic use cases (Claude Code's default)
+- **max** — when correctness matters more than anything; can overthink
 
-### Model Selection by Task
+Higher effort means more thorough reasoning and more tool use; lower effort means terser, faster responses. On Opus 4.8 the intelligence ceiling is high enough that `high` is a sensible default — don't reach for `xhigh`/`max` reflexively.
 
-| Task | Recommended Model |
-|------|------------------|
-| Quick syntax question | Haiku |
-| Single-file edit | Haiku or Sonnet |
-| Feature implementation | Sonnet |
-| Multi-file refactor | Sonnet or opusplan |
-| Architecture decision | Opus (plan mode) |
-| Code review | Haiku |
-| Complex debugging | opusplan |
-| Writing tests | Sonnet |
-| Documentation | Haiku |
+### Per-Agent Model Routing
 
-### Agent-Level Model Routing
-
-Specify cheaper models for agents doing simple work:
+Set a model in a subagent's frontmatter so simple delegated work runs on a cheaper, faster model:
 
 ```yaml
 # .claude/agents/reviewer.md frontmatter
 model: haiku
 ```
 
-A review agent reading code doesn't need Opus. Haiku costs 1/5th as much.
+A read-only reviewer or a file-search subagent doesn't need Opus — Haiku is fast and capable for focused, well-scoped jobs.
 
-### The opusplan Strategy
+### Plan Mode (replaces the old "opusplan" idea)
 
-Uses Opus for planning (read-only, high-reasoning) and automatically switches to Sonnet for execution (file writes, code generation). You get Opus-quality architectural thinking at Sonnet execution prices.
+The current best-practice workflow is **explore → plan → code**: enter plan mode, let Claude read the relevant code and produce a plan, then switch out of plan mode to implement. This separates research from execution so Claude doesn't solve the wrong problem — no special model alias required. Skip planning for one-sentence changes; use it when the approach is uncertain or the change spans multiple files.
+
+### Model Selection by Task
+
+| Task | Recommended |
+|------|-------------|
+| Quick syntax question | Haiku |
+| Single-file edit | Haiku or Sonnet |
+| Feature implementation | Sonnet |
+| Multi-file refactor | Sonnet, escalate to Opus if hard |
+| Architecture / planning | Opus (plan mode) |
+| Code review (fresh-context subagent) | Haiku or Sonnet |
+| Complex debugging | Opus |
+| Long autonomous / overnight runs | Opus 4.8 or Fable 5 at high/xhigh effort |
 
 ## Mastery Checks
 
-- [ ] Can you explain when to use each model tier?
-- [ ] Do you default to Sonnet and escalate selectively to Opus?
-- [ ] Have you tried the opusplan strategy for complex tasks?
-- [ ] Do your custom agents specify appropriate models?
-
-## Cost Implications
-
-Most developers default to Opus for everything, paying 5x unnecessarily.
-
-**The 80/20 rule**: Sonnet handles 80-90% of coding tasks. Haiku handles simple tasks at 1/3 Sonnet's cost.
-
-**Savings potential**: Switching from Opus-default to Sonnet-default saves 60-80% on token costs.
+- [ ] Can you explain when to reach for each model tier?
+- [ ] Do you default to Sonnet for daily work and escalate to Opus for hard problems?
+- [ ] Do you use plan mode (explore → plan → code) for uncertain or multi-file work?
+- [ ] Do your custom subagents specify an appropriate model?
+- [ ] Do you tune `effort` instead of looking for a thinking-token budget?
 
 ## Official Resources
 
-- [Claude Code Documentation](https://code.claude.com/docs/en/overview)
-- [Model Selection Best Practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices)
+- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)
+- [Claude Code documentation](https://code.claude.com/docs/en/overview)

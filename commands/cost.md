@@ -1,10 +1,10 @@
 ---
-description: Get cost optimization coaching for your current level
+description: Opt-in cost/token coaching for your current level (off by default elsewhere)
 ---
 
 # /coach:cost — Cost Optimization Coaching
 
-Delivers level-appropriate cost coaching based on the user's environment and detected anti-patterns.
+Delivers level-appropriate cost coaching based on the user's environment and detected anti-patterns. This is the **only** place cost/token coaching surfaces — the rest of the plugin keeps it off by default, so users opt in here when they want it.
 
 ## Execution Steps
 
@@ -81,13 +81,14 @@ From `knowledge/pricing/pricing-current.md`, extract sections relevant to their 
 
 [Level-appropriate cost concepts]
 
-### February 2026 Quick Reference
+### Pricing Quick Reference (June 2026)
 
 | Model | Input/1M | Output/1M | Best For |
 |-------|----------|-----------|----------|
-| Haiku | $1 | $5 | Simple tasks, agents |
-| Sonnet 4 | $3 | $15 | Daily development |
-| Opus 4.5 | $15 | $75 | Complex reasoning |
+| Haiku 4.5 | $1 | $5 | Simple tasks, subagents |
+| Sonnet 4.6 | $3 | $15 | Daily development |
+| Opus 4.8 | $5 | $25 | Complex reasoning, long-horizon agentic work |
+| Fable 5 | $10 | $50 | The hardest reasoning / long autonomous runs |
 
 ### Try This
 
@@ -133,11 +134,12 @@ End every response with this footer:
 
 **Key concepts:**
 - Model selection saves the most money
-- Haiku: $1/$5 per million tokens (simple tasks)
-- Sonnet: $3/$15 per million tokens (most work)
-- Opus: $15/$75 per million tokens (complex only)
+- Haiku 4.5: $1/$5 per million tokens (simple tasks)
+- Sonnet 4.6: $3/$15 per million tokens (most work)
+- Opus 4.8: $5/$25 per million tokens (complex / long-horizon work)
+- Fable 5: $10/$50 per million tokens (the hardest reasoning only)
 
-**Typical savings:** 50-80% by matching model to task
+**Typical savings:** 40-70% by matching model to task. Note Opus 4.8 is now only ~1.7x Sonnet's input price (not 5x) — escalate to it freely when a task is hard.
 
 **Action:** "Try Haiku for your next documentation task. Compare the result."
 
@@ -214,6 +216,6 @@ End every response with this footer:
 | CLAUDE.md >150 lines | +tokens/message | Split into rules/ |
 | Unused MCP servers | +500 tokens/server | Remove inactive |
 | Never clearing | Context fills | /clear between tasks |
-| Opus everywhere | 5x Sonnet cost | Match model to task |
+| Opus everywhere | ~1.7x Sonnet cost | Match model to task (the gap is much smaller now) |
 | No Batch API | 2x CI costs | Enable for automation |
 | Giant agent prompts | +tokens/invocation | Keep agents focused |

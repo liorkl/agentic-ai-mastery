@@ -1,9 +1,7 @@
-<!--
-topic: Agent Skills
-last_updated: February 2026
-source_docs: curriculum-v1.1.md
-curriculum_level: L4
--->
+<!-- file: knowledge/features/skills.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L4 -->
 
 # Agent Skills
 
@@ -139,15 +137,15 @@ The skill-creator workflow: draft → eval → iterate → improve
 - [ ] Have you tested the skill with eval cases?
 - [ ] Do you understand the metadata → body → resources loading pattern?
 
-## Cost Implications
+## Why It Matters
 
-Progressive disclosure in skills is a cost feature:
-- **Monolithic instruction file**: 5,000 tokens loaded every session
-- **Properly structured skill**: 500 tokens metadata + 4,500 only when invoked
+Progressive disclosure is what makes skills reliable, not just lean:
+- **Loaded only when relevant**: the body enters context when the task matches, so Claude isn't distracted by instructions for unrelated work
+- **Sharper triggering**: a tight name + description scanned at startup means the right skill fires at the right moment
+- **Eval workflows catch regressions early**: draft → eval → iterate, before a broken skill reaches real tasks
+- A well-structured skill keeps its full instructions available without crowding out the actual work.
 
-**Eval workflows prevent expensive cycles**: deploy → discover problems → fix → redeploy
-
-**A well-structured skill costs 1/10th the context budget of a monolithic instruction file.**
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

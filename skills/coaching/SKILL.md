@@ -2,9 +2,9 @@
 name: coaching
 description: >
   Coaches developers on Claude Code and Cowork mastery. Triggers when the user
-  asks about learning, best practices, configuration, features, or cost optimization.
+  asks about learning, best practices, configuration, or features.
   Examples: "how do I use agents", "what's the best way to structure CLAUDE.md",
-  "is this costing too much", "teach me about skills"
+  "when should I use a skill vs a subagent", "teach me about hooks"
 ---
 
 # Coaching Skill
@@ -17,8 +17,9 @@ This skill activates when detecting questions about:
 - Learning Claude Code features ("how do I...", "what are...", "teach me...")
 - Best practices ("what's the best way to...", "should I...")
 - Configuration ("how to set up...", "where does X go...")
-- Cost optimization ("is this expensive", "how to reduce costs")
 - Feature explanation ("what are agents", "explain skills")
+
+Cost/token optimization is handled separately by the opt-in `/coach:cost` command — see Rule 3.
 
 ## Before Every Response
 
@@ -66,22 +67,20 @@ Example: Level 2 user asks about agent teams (Level 9)
 - Avoid abstract explanations without concrete anchors
 - Show exactly which file to edit and what to add
 
-### Rule 3: Include Cost Awareness
+### Rule 3: Cost Awareness Is Off By Default
 
-Every teaching should mention cost implications where relevant:
-- Context overhead of features
-- Token costs of different approaches
-- When to use cheaper models
-- Cost-saving patterns
+Do NOT volunteer cost or token advice in normal coaching. Lead with capability, correctness, and good practice — not spend. Don't append "cost notes," token estimates, or "this saves X%" lines.
+
+Only bring up cost/tokens when the user explicitly asks ("is this expensive?", "how do I reduce cost?") or runs `/coach:cost` — that command owns the topic and is the only place `knowledge/pricing/pricing-current.md` should be loaded.
 
 ### Rule 4: Flag Anti-Patterns Immediately
 
 If the latest assessment shows anti-patterns, mention them regardless of what was asked:
 - Security issues: CRITICAL priority
-- Cost waste: HIGH priority
+- Missing verification (no test/build command Claude can run): HIGH priority
 - Configuration issues: MEDIUM priority
 
-Example: "Before we cover that — I noticed your CLAUDE.md is 237 lines. This adds ~237 tokens of overhead to every interaction. Let's address that first."
+Example: "Before we cover that — I noticed your CLAUDE.md is 237 lines. Bloated CLAUDE.md files cause Claude to ignore your actual instructions, so let's trim it first."
 
 ### Rule 5: Be Concise
 
@@ -181,9 +180,7 @@ Custom agents go in `.claude/agents/your-agent.md`. Here's the structure:
 
 [YAML frontmatter + example]
 
-Based on your assessment, you're at Level 5 with solid CLAUDE.md (score 8/10). Your next step is creating a focused agent — try a read-only reviewer first.
-
-Cost note: Agents use their own context window. Use `model: haiku` for simple tasks to save 67% vs Sonnet.
+Based on your assessment, you're at Level 5 with solid CLAUDE.md (score 8/10). Your next step is creating a focused agent — try a read-only reviewer first. A fresh subagent context reviewing your diff catches bugs you'd miss in the session that wrote the code.
 
 Create `.claude/agents/reviewer.md` and run `/coach:exercise` for a hands-on challenge.
 ```
@@ -200,6 +197,7 @@ Structure coaching responses as:
 
 1. **Direct answer** (what to do)
 2. **Grounding** (specific to their files/level)
-3. **Cost insight** (where relevant)
-4. **Next step** (concrete action or command)
-5. **Resource link** (optional, if helpful)
+3. **Next step** (concrete action or command)
+4. **Resource link** (optional, if helpful)
+
+Do not add a cost/token line — see Rule 3.

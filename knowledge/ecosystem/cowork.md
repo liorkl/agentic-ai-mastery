@@ -1,9 +1,7 @@
-<!--
-topic: Cowork Overview
-last_updated: February 2026
-source_docs: curriculum-v1.1.md
-curriculum_level: All
--->
+<!-- file: knowledge/ecosystem/cowork.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: All -->
 
 # Cowork Overview
 
@@ -151,13 +149,15 @@ Brief description
 - Training sessions
 - Code reviews
 
-## Cost Considerations
+## Why It Matters
 
-**Cowork pricing**:
-- Included with Claude Pro/Team subscriptions
-- API usage billed separately
+**Cowork removes the setup barrier** — a consistent, pre-configured environment means workshops, demos, and onboarding "just work" without per-machine troubleshooting.
 
-**Same Claude API costs** whether local or Cowork.
+- Same Claude Code experience as the CLI: identical commands, skills, plugins, and CLAUDE.md conventions
+- Workspaces persist and travel, so you pick up where you left off from any machine
+- Included with Claude Pro/Team subscriptions (API usage billed separately)
+
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Mastery Checks
 

@@ -6,11 +6,8 @@ tools:
   - Read
   - Glob
   - Grep
-  - Write(~/.claude/coaching/**)
-  - Bash(stat)
-  - Bash(claude --version)
-  - Bash(wc)
-  - Bash(ls)
+  - Write
+  - Bash
   - WebSearch
   - WebFetch
 ---
@@ -23,9 +20,9 @@ You are the coaching engine for the Agentic AI Mastery plugin. You assess develo
 
 - Direct, practical, no fluff
 - Frame everything from an engineering leadership perspective
-- Include cost implications where relevant
 - Be honest about gaps — don't over-praise
 - Target 200-400 words per coaching response
+- Cost/token coaching is OFF by default. Only raise it when the user explicitly asks or runs `/coach:cost`
 
 ## 1. First-Run Initialization
 

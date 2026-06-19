@@ -1,9 +1,7 @@
-<!--
-topic: Context Engineering
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L3
--->
+<!-- file: knowledge/features/context.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L3 -->
 
 # Context Engineering
 
@@ -91,19 +89,20 @@ The single most cost-effective workflow habit:
 - Do NOT create new utility files — check src/utils/ first
 ```
 
-**Keep CLAUDE.md under 150 lines** — it's loaded every session.
+**Keep CLAUDE.md short** (a good rule of thumb is under ~150 lines) — it's loaded every session. For each line, ask: *"Would removing this cause Claude to make a mistake?"* If not, cut it. Bloated CLAUDE.md files cause Claude to **ignore** your actual instructions. Domain knowledge or workflows that only matter sometimes belong in **skills**, which load on demand, not in CLAUDE.md.
 
 ### @imports for Modular Context
 
-Split large configs:
+CLAUDE.md can pull in other files with the `@path/to/file` syntax (no `@import` keyword):
 
 ```markdown
 # CLAUDE.md
-@import .claude/rules/api-patterns.md
-@import .claude/rules/testing.md
+See @README.md for project overview.
+- Git workflow: @.claude/rules/git-instructions.md
+- Testing: @.claude/rules/testing.md
 ```
 
-Rules files load contextually, cheaper than putting everything in CLAUDE.md.
+This keeps the always-loaded file lean while detail lives in files that are pulled in when relevant.
 
 ### Strategic Context Loading
 
@@ -127,23 +126,21 @@ Rules files load contextually, cheaper than putting everything in CLAUDE.md.
 ## Mastery Checks
 
 - [ ] Do you /clear between unrelated tasks?
-- [ ] Is your CLAUDE.md under 150 lines?
+- [ ] Is your CLAUDE.md short and free of lines Claude already knows?
 - [ ] Do you use the commit-and-clear pattern?
 - [ ] Can you explain context rot to a colleague?
 - [ ] Have you set up context monitoring?
 
-## Cost Implications
+## Why It Matters
 
-**Context is THE cost lever. Everything else is optimization at the margin.**
+**Context is the fundamental constraint — managing it well is the difference between a session you watch and one Claude can finish on its own.** As context fills, Claude starts forgetting earlier instructions and making more mistakes (context rot). A focused CLAUDE.md and aggressive `/clear` keep Claude's attention on what's relevant:
 
-- A 100K context window at message 20 has cost 2M input tokens in history re-reads
-- Auto-compaction kicks in at 95% — too late, you've overpaid for many messages
-- Every line in CLAUDE.md is read on every message
+- A lean CLAUDE.md means Claude actually follows it — an overlong one gets half-ignored.
+- Architecture map: lets Claude orient without reading half the repo.
+- Build/test commands: Claude runs the real check instead of guessing.
+- DO NOT patterns: steer Claude away from the wrong files.
 
-**Cost impact of each CLAUDE.md section:**
-- Architecture map: Prevents exploratory file-reading (saves thousands of tokens)
-- Build/test commands: Prevents Claude guessing and failing (saves retry cycles)
-- DO NOT patterns: Prevents the most wasteful reads
+(If you want the token/cost angle specifically, that's the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

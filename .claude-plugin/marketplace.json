@@ -6,7 +6,7 @@
       "reads": ["~/.claude/**", ".claude/**", "CLAUDE.md"],
       "writes": ["~/.claude/coaching/**"],
       "network": ["github.com (changelog)", "search.anthropic.com (discovery)"],
-      "never_reads": [".env, credentials, secrets, keys, tokens"]
+      "never_reads": [".env", "credentials", "secrets", "keys", "tokens"]
     }
   },
   "owner": {

@@ -39,7 +39,7 @@ If assessments.jsonl doesn't exist or is empty:
 
 2. **Anti-patterns** (if severity HIGH or CRITICAL)
    - Address these before teaching new material
-   - Security and cost issues take precedence
+   - Security and correctness issues take precedence
 
 3. **Current level mastery** (if no gaps)
    - Teach next skill at their current level
@@ -67,7 +67,7 @@ Based on topic, read ONE file from knowledge/:
 | 8 | Headless | knowledge/features/headless.md |
 | 9 | Teams | knowledge/features/teams.md |
 
-Also load `knowledge/pricing/pricing-current.md` if the topic has significant cost implications.
+Do NOT load `knowledge/pricing/pricing-current.md` here — cost/token coaching is off by default and lives in the opt-in `/coach:cost` command.
 
 ### 5. Deliver Lesson
 
@@ -86,10 +86,6 @@ Also load `knowledge/pricing/pricing-current.md` if the topic has significant co
 
 [Specific reference to their files/config]
 [What they should check or create]
-
-### Cost Awareness
-
-[Cost implication of this feature]
 
 ### Do This Now
 
@@ -125,14 +121,6 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
-### Token Estimate
-
-End every response with this footer:
-
----
-**Estimated tokens this interaction:** ~1.2k input / ~0.5k output
-*Input includes: 1 knowledge file (~800 tokens), state files (~400 tokens)*
-
 ## Example Output
 
 For a Level 3 user with gap "CLAUDE.md missing test command":
@@ -157,10 +145,6 @@ npm test -- --watch         # Watch mode
 npm run test:coverage       # Coverage report
 ```
 
-### Cost Awareness
-
-Skipping tests doesn't save tokens — it costs MORE. Claude will make changes, you'll find bugs later, and Claude will spend 2-3x more tokens fixing them. Test commands enable fail-fast.
-
 ### Do This Now
 
 ```markdown
@@ -175,7 +159,7 @@ Add this to your `CLAUDE.md` so Claude runs the right test command instead of gu
 
 ### Why It Matters
 
-Without explicit test commands, Claude spends tokens probing your project structure on every test run. With this snippet, it executes directly — saving ~200 tokens per test interaction and cutting hallucinated commands entirely.
+Verification is the single biggest quality lever in Claude Code: give Claude a check it can run (tests, build, lint) and it closes its own loop instead of waiting for you to catch mistakes. Without an explicit test command Claude guesses how to run your suite; with this snippet it runs the real one and iterates until it passes.
 
 ### Resources
 
@@ -188,4 +172,4 @@ Without explicit test commands, Claude spends tokens probing your project struct
 - Generic advice not grounded in their project
 - Lessons over 400 words
 - Repeating topics covered in last 3 outcomes
-- Skipping cost implications
+- Volunteering cost/token advice (it's opt-in via `/coach:cost`)

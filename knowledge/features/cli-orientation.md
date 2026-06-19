@@ -1,9 +1,7 @@
-<!--
-topic: Claude Code CLI Orientation
-last_updated: February 2026
-source_docs: curriculum-v1.1.md
-curriculum_level: 0-1
--->
+<!-- file: knowledge/features/cli-orientation.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: 0-1 -->
 
 # Claude Code CLI — Orientation
 
@@ -50,9 +48,9 @@ can hold in memory at once. This includes:
 When context fills up, use `/compact` to summarize and continue, or `/clear`
 to start fresh (keeps CLAUDE.md, loses conversation).
 
-**Cost implication:** Every token in context costs money on every request.
-A bloated CLAUDE.md or large file read early in a session multiplies cost
-across all subsequent turns.
+**Why it matters:** Everything in context competes for Claude's attention.
+A bloated CLAUDE.md or large file read early in a session dilutes focus on
+every subsequent turn, degrading answer quality — so keep context lean.
 
 ### CLAUDE.md — Your Instruction File
 
@@ -163,13 +161,13 @@ See `knowledge/commands/commands-ref.md` for the complete reference.
 - [ ] You've run `/clear` and understand what it resets vs. what it keeps
 - [ ] You can name 3 core interaction flows and when to use each
 
-## Cost Implications
+## Why It Matters
 
-- Starting a session costs ~0 tokens (context is empty)
-- Every tool result and message adds to context — it compounds
-- `/compact` costs ~500-1000 tokens but saves thousands on long sessions
-- Running Claude headless on simple tasks: use `haiku` (10x cheaper than Opus)
-- The biggest cost multiplier: a large CLAUDE.md loaded on every single turn
+- A focused context window keeps Claude's answers accurate — every tool result and message adds to context and compounds, so prune aggressively
+- `/compact` and `/clear` preserve the signal that matters and drop the noise, keeping later turns sharp
+- Match the model to the task: `haiku` (`claude-haiku-4-5`) handles simple jobs well; reserve `claude-opus-4-8` for hard reasoning
+- The biggest quality drag is a large CLAUDE.md loaded on every turn — keep it tight so standing instructions stay prominent
+- (For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

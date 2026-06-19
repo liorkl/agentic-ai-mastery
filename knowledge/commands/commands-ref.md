@@ -1,9 +1,7 @@
-<!--
-topic: Slash Commands Reference
-last_updated: February 2026
-source_docs: curriculum-v1.1.md
-curriculum_level: All
--->
+<!-- file: knowledge/commands/commands-ref.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: All -->
 
 # Slash Commands Reference
 
@@ -118,20 +116,21 @@ Commands can be added via:
 - Plugins (namespaced like `/plugin-name:command`)
 - CLAUDE.md (document workflows for manual reference)
 
-## Cost Implications
+## Why It Matters
 
-**Commands themselves are free** — they're client-side operations.
+**Most commands are client-side** — `/clear`, `/compact`, `/context`, `/help` act on the session directly without invoking Claude.
 
-**Commands that trigger Claude responses**:
-- `/commit` — generates commit message (cheap)
-- `/pr` — generates PR description (moderate)
-- `/review` — full code analysis (varies with diff size)
+**Some commands drive Claude to produce work**:
+- `/commit` — generates a commit message from staged changes
+- `/pr` — drafts a PR title and description
+- `/review` — runs a full code analysis over the diff
 
-**Context-saving commands**:
-- `/clear` — immediately frees context
-- `/compact` — preserves key info, frees ~60-80%
+**Context-management commands keep answers sharp**:
+- `/clear` resets the window so a new task starts focused
+- `/compact` distills the conversation to its key decisions and current state
+- `/context` shows what's consuming the window so you can prune
 
-**Use `/context` regularly** to understand where tokens go.
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Mastery Checks
 

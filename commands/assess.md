@@ -90,11 +90,3 @@ Your environment is clean. Run `/coach:next` to get your next level-appropriate 
 - `~/.claude/coaching/state/assessments.jsonl` — new assessment appended
 
 Nothing else was read or written.
-
-### 7. Token Estimate
-
-End every response with this footer:
-
----
-**Estimated tokens this interaction:** ~1.5k input / ~0.8k output
-*Input includes: coach agent prompt (~600 tokens), environment scan results (~600 tokens), this command (~300 tokens)*

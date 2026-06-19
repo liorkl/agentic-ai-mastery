@@ -126,14 +126,6 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
-### Token Estimate
-
-End every response with this footer:
-
----
-**Estimated tokens this interaction:** ~1.0k input / ~0.6k output
-*Input includes: 1 knowledge file (~700 tokens), state files (~300 tokens)*
-
 ## Exercise Bank by Level
 
 ### Level 0-1: Getting Started
