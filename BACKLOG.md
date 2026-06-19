@@ -19,6 +19,9 @@
 - [ ] Import best practices
 - [ ] Marketing: plan README page and webpage that demonstrate value and drive installs/adoption
 - [ ] Architecture: consider omitting per-user discovery and instead bundling latest Claude Code feature updates with plugin version upgrades — reduces user spend and avoids redundant scans
+- [ ] Knowledge: create `knowledge/features/plugins.md` covering plugin anatomy, validation, marketplace submission flow, and permissions model
+- [ ] UX: add cooldown check to /coach:assess — if last assessment is <X hours old, prompt user before re-running to avoid duplicate scans and wasted tokens
+- [ ] UX: explain the /coaching skill in /coach:help output — users see it in the CLI but have no context that it's a passive auto-trigger, not a command
 
 ## In Progress
 
