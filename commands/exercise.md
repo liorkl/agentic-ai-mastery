@@ -126,7 +126,29 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
-## Exercise Bank by Level
+## Exercise Bank
+
+### Cross-Cutting Practices (any level — prefer these when the practice is weak)
+
+**Exercise: Close the verification loop**
+- Pick a small change. In one prompt, tell Claude the change AND "run the tests and iterate until they pass; show me the output."
+- Success: Claude runs the check itself and reports passing output — you didn't run it
+- Verify: the test/build output appears in Claude's response, green
+
+**Exercise: Make CLAUDE.md verification-ready**
+- Ensure CLAUDE.md names the exact test, build, and lint commands for this repo
+- Success: a fresh session can run all three with no guessing
+- Verify: `/coach:assess` shows `verification_ready: true`
+
+**Exercise: Explore → plan → code**
+- Take a multi-file change. Use plan mode to explore and produce a plan, edit the plan, then implement from it
+- Success: implementation matches the approved plan; no mid-task rethink
+- Verify: the plan existed before any edit
+
+**Exercise: Ground a prompt**
+- Rewrite a vague request as file + example-pattern-to-follow + symptom + boundary
+- Success: correct result on the first try, no correction round
+- Verify: compare attempts with and without grounding
 
 ### Level 0-1: Getting Started
 

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed — re-centered on outcomes (get the best out of Claude)
+
+- Reframed the coaching spine from "which features do you have (L0–L10)" to "are you getting the best out of Claude, and is your repo built for it?" The L0–L10 ladder is now explicitly a feature scaffold, not a score
+- Made the high-leverage **cross-cutting practices the spine**, coached and assessed at every level, **verification first**: give Claude a check it can run, explore→plan→code, ground the prompt, course-correct early, manage context
+- `/coach:assess` now leads with a "getting the best out of Claude here?" verdict (verification readiness) above the level number; anti-patterns are led by "no test/build/lint command Claude can run" (now critical) and "no verification gate"; assessment state records `verification_ready` / `verification_gate` / `practice_gaps`
+- `/coach:next` orders lessons by leverage, not level — a missing practice (especially verification) outranks the next feature
+- CLAUDE.md scoring keeps verification commands weighted highest and now rewards pointing at an example pattern to follow; rewrote `productivity-tips.md` into a verification-first practices guide
+- README now explains what "mastery" means here (the five practices) so teams don't mistake the level number for skill
+
 ### Fixed
 
 - README install instructions pointed at a non-existent owner (`liorklibansky`) — corrected the marketplace-add and clone commands to `liorkl`, so installation actually works

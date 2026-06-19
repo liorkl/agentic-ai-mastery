@@ -5,15 +5,27 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange.svg)](https://claude.ai/code)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-A Claude Code plugin that teaches developers to master agentic AI development progressively — from first install to system-level design. The coach lives inside your Claude Code workflow, assesses your skill level by scanning your environment, delivers targeted coaching through real work, and tracks your progress over time.
+A Claude Code plugin that coaches a developer (or a whole team) toward two outcomes: **getting the best possible work out of Claude**, and **building repos where Claude does its best work** — so anyone gets great results without hand-holding. The coach lives inside your Claude Code workflow, assesses your environment, and teaches through your real project files.
 
 **Works in both Claude Code and Cowork.**
 
+## What "mastery" means here
+
+It's not collecting features. It's internalizing the handful of cross-cutting practices that actually move output quality — coached at every level, **verification first**:
+
+1. **Verify** — give Claude a check it can run (tests, build, lint, a screenshot). The single biggest lever.
+2. **Explore → plan → code** — separate planning from execution so Claude solves the right problem.
+3. **Ground the prompt** — point at specific files, example patterns, and the symptom.
+4. **Course-correct early** — redirect the moment Claude drifts; `/clear` and re-prompt rather than fight a polluted context.
+5. **Manage context** — short CLAUDE.md, `/clear` between tasks, subagents for investigation.
+
+The L0–L10 levels below are a feature-progression scaffold layered on top — **not** a score. A repo can be "L9" and still get mediocre output if it skips the practices above.
+
 ## What It Does
 
-- Scans your Claude Code environment to detect your current skill level (L0–L10)
-- Identifies gaps in your setup and flags anti-patterns
-- Delivers level-appropriate lessons grounded in your actual project files
+- Assesses whether you're getting the best out of Claude and whether your repo is set up for it (verification readiness first), then reports your feature level (L0–L10)
+- Flags anti-patterns, led by "Claude can't verify its own work here"
+- Delivers lessons grounded in your actual project files — practice gaps before feature gaps
 - Provides hands-on exercises with clear success criteria
 - Tracks progress across sessions
 - Discovers new Claude Code features and updates weekly

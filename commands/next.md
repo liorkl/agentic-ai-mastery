@@ -31,23 +31,25 @@ If assessments.jsonl doesn't exist or is empty:
 
 ### 3. Determine Lesson Topic
 
-**Priority order:**
+**Priority order** (order by leverage, not by level):
 
-1. **HIGH-priority gaps** (features missing below detected level)
-   - These are foundations the user skipped
-   - Example: Level 5 user missing proper CLAUDE.md (Level 2 skill)
+1. **Missing cross-cutting practice — verification first**
+   - If `verification_ready` is false (no test/build/lint command Claude can run): teach this FIRST, regardless of level. It's the #1 lever for output quality.
+   - Then the other practices when weak: plan-first (explore→plan→code), grounding prompts in specific files/patterns/symptoms, course-correcting early, context hygiene.
+   - These outrank features — a Level 7 repo with no verification gets a verification lesson, not an MCP lesson.
 
 2. **Anti-patterns** (if severity HIGH or CRITICAL)
    - Address these before teaching new material
-   - Security and correctness issues take precedence
+   - Security and verification issues take precedence
 
-3. **Current level mastery** (if no gaps)
-   - Teach next skill at their current level
-   - Use mastery checks from curriculum
+3. **HIGH-priority feature gaps** (features missing below detected level)
+   - Foundations the user skipped — e.g. a Level 5 user missing a quality CLAUDE.md (Level 2)
 
-4. **Next level preview** (if current level mastered)
-   - Brief introduction to what's ahead
-   - Don't deep-dive above level
+4. **Current level mastery** (if no practice gaps, anti-patterns, or feature gaps)
+   - Teach the next skill at their current level, using the curriculum mastery checks
+
+5. **Next level preview** (if current level mastered)
+   - Brief introduction to what's ahead — don't deep-dive above level
 
 ### 4. Load Relevant Knowledge File
 
@@ -55,6 +57,7 @@ Based on topic, read ONE file from knowledge/:
 
 | Level | Topic | File |
 |-------|-------|------|
+| any | Cross-cutting practices: verification, plan-first, grounding prompts, course-correction, context hygiene | knowledge/features/productivity-tips.md |
 | 0 | CLI orientation, first session | knowledge/features/cli-orientation.md |
 | 0-1 | Model selection | knowledge/features/models.md |
 | 1 | Output styles | knowledge/features/output-styles.md |
