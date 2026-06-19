@@ -2,6 +2,13 @@
 ## Project: agentic-ai-mastery
 ## Location: ~/liorklibansky/dev/agentic-ai-mastery
 
+> **⚠️ HISTORICAL (2026-06-19).** This records the original prompts used to scaffold the plugin. It is kept for reference, not as current guidance. Several instructions below are **superseded** by what shipped:
+> - **Model:** the "Use Sonnet — this project doesn't need Opus" note is outdated; the current default model is **Opus 4.8 (`claude-opus-4-8`)**. The agent's `model:` and `tools:` frontmatter also changed — `tools:` takes plain tool **names** (`Read, Glob, Grep, Write, Bash, …`), never scoped `Bash(...)` / `Write(...)` patterns (those break loading). Scope tools in `.claude/settings.json`.
+> - **Cost:** "include cost awareness" / "cost awareness mandate" was **reverted** — cost coaching is OFF BY DEFAULT and lives only in the opt-in `/coach:cost` command. Coaching is centered on the verification-first / five cross-cutting practices spine.
+> - **Knowledge structure:** the section order ends with **"Why It Matters"**, not "Cost Implications"; pricing is current June-2026 models, not "Feb 2026".
+> - **Commands:** the shipped set is larger than the original "8" — it also includes `/coach:recap` and `/coach:compare`; there's a new `knowledge/features/plugins.md` (L10).
+> - **plugin.json:** never add a `permissions` key (it breaks install); version is now past `1.0.0`.
+
 ---
 
 ## Pre-Requisites

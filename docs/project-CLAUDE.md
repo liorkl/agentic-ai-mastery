@@ -1,5 +1,7 @@
 # Agentic AI Mastery — Project Instructions
 
+> **Sync status (2026-06-19):** This is the original design template for the project CLAUDE.md. The **authoritative, live version is the repo-root `CLAUDE.md`** — defer to it where they differ. Reconciled here to the shipped spine: verification-first / five cross-cutting practices, cost coaching off by default, knowledge-file structure ends with "Why It Matters" (not "Cost Implications"), and the dev loop is `claude --plugin-dir` (no install/version bump needed).
+
 ## What This Project Is
 
 A Claude Code **plugin** that coaches developers to master agentic AI development. The plugin bundles commands, a skill, a sub-agent, and a knowledge base into a single installable package.
@@ -32,9 +34,12 @@ claude plugin validate .
 wc -l knowledge/**/*.md        # Each file <500 lines
 cat knowledge/**/*.md | wc -l  # Total <5,000 lines
 
-# Local install for testing
-/plugin marketplace add ~/liorklibansky/dev/agentic-ai-mastery
-/plugin install coach@agentic-ai-mastery
+# Dev loop — load the plugin for a single session without installing
+claude --plugin-dir /abs/path/to/agentic-ai-mastery   # /reload-plugins to refresh mid-session
+
+# Integration test — exercise the real install/update UX (run once)
+claude plugin marketplace add /abs/path/to/agentic-ai-mastery
+claude plugin install coach@agentic-ai-mastery
 
 # Test commands
 /coach:help
@@ -66,7 +71,7 @@ cat knowledge/**/*.md | wc -l  # Total <5,000 lines
 - JSON/JSONL: One JSON object per line in JSONL files, pretty-print plugin.json
 - File naming: kebab-case for all files
 - Command files: YAML frontmatter with `description` field, then markdown instructions
-- Knowledge files: metadata header → Current State → Key Concepts → Mastery Checks → Cost Implications → Official Resources
+- Knowledge files: metadata header → Current State → Key Concepts → Mastery Checks → Why It Matters → Official Resources
 
 ## DO NOT
 

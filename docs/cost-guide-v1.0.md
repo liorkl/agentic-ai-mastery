@@ -1,9 +1,12 @@
 # Claude Code Cost Optimization Guide
-## Consolidated Reference + Cross-Cutting Curriculum Annotations
 
-**Version:** 1.0 — February 2026
-**Purpose:** Companion to the Claude Code Mastery Curriculum v1.1
-**Audience:** Solo developers, engineering managers, team leads managing AI tooling spend
+> **Sync status (2026-06-19):** Reconciled to the shipped plugin. Cost/token coaching is OFF BY DEFAULT — this doc is the reference data behind the opt-in /coach:cost command only, not a mandate to inject cost into every lesson. Pricing updated to current June-2026 models.
+
+## Reference Data Behind the Opt-In `/coach:cost` Command
+
+**Version:** 1.0 — 2026-06-19
+**Purpose:** Reference data backing the opt-in `/coach:cost` command and `knowledge/pricing/pricing-current.md`. In the shipped plugin, cost/token coaching is OFF BY DEFAULT — it is never volunteered, and lives only in `/coach:cost`. This doc is NOT a mandate to inject cost awareness into every interaction or curriculum level.
+**Audience:** Solo developers, engineering managers, team leads managing AI tooling spend — when they explicitly invoke `/coach:cost`
 
 ---
 
@@ -18,30 +21,34 @@ Claude Code costs are driven by **tokens** — the atomic units of text processi
 
 **The compounding problem**: Conversation history is resent with every message. A 10,000-token conversation history after 20 exchanges means you've paid for ~200,000 tokens of history alone. This is the single biggest cost driver most developers don't understand.
 
-**Key insight**: Input tokens are cheap. Output tokens are 3-5x more expensive. But input tokens compound because history accumulates. The cheapest token is the one never sent.
+**Key insight**: Input tokens are cheaper than output tokens. But input tokens compound because history accumulates. The cheapest token is the one never sent.
 
-### 1.2 Pricing Quick Reference (February 2026)
+### 1.2 Pricing Quick Reference (June 2026)
 
 #### API Token Pricing (per million tokens)
 
-| Model | Input | Output | Cache Write (5min) | Cache Read | Relative Cost |
-|-------|-------|--------|-------------------|------------|---------------|
-| **Opus 4.6** | $5.00 | $25.00 | $6.25 | $0.50 | 5x baseline |
-| **Sonnet 4.5/4.6** | $3.00 | $15.00 | $3.75 | $0.30 | 3x baseline |
-| **Haiku 4.5** | $1.00 | $5.00 | $1.25 | $0.10 | 1x baseline |
+All models run with a 1M-token context window unless noted. Pricing is for standard rates.
+
+| Model | API ID | Input | Output | Context |
+|-------|--------|-------|--------|---------|
+| **Fable 5** | `claude-fable-5` | $10.00 | $50.00 | 1M |
+| **Opus 4.8** (default) | `claude-opus-4-8` | $5.00 | $25.00 | 1M |
+| **Opus 4.7** | `claude-opus-4-7` | $5.00 | $25.00 | 1M |
+| **Opus 4.6** | `claude-opus-4-6` | $5.00 | $25.00 | 1M |
+| **Sonnet 4.6** | `claude-sonnet-4-6` | $3.00 | $15.00 | 1M |
+| **Haiku 4.5** | `claude-haiku-4-5` | $1.00 | $5.00 | 200K |
 
 **Cost multipliers that stack:**
 - Long context (>200K input tokens): ~1.5-2x on all token prices
-- Fast mode (Opus 4.6): 6x standard rates ($30/$150 per MTok)
 - US-only inference (inference_geo): 1.1x multiplier
-- Extended thinking tokens: Billed as output tokens (the expensive kind)
+- Adaptive thinking tokens: Billed as output tokens (the expensive kind)
 
 **Cost reducers:**
 - Prompt caching (cache reads): 90% cheaper than base input
 - Batch API: 50% discount on both input and output
 - These stack: Batch + caching can yield 90%+ savings for suitable workloads
 
-#### Subscription Plans (February 2026)
+#### Subscription Plans (June 2026)
 
 | Plan | Monthly Cost | Usage Multiplier | Opus Access | Best For |
 |------|-------------|------------------|-------------|----------|
@@ -80,14 +87,11 @@ The highest-leverage single action. Most developers default to Opus for everythi
 
 # Haiku for: simple edits, quick questions, linting, classification
 /model haiku
-
-# Best of both worlds: Opus plans, Sonnet executes
-/model opusplan
 ```
 
-**The opusplan strategy**: Uses Opus for planning (read-only, high-reasoning) and automatically switches to Sonnet for execution (file writes, code generation). You get Opus-quality architectural thinking at Sonnet execution prices. This is the recommended default for experienced users.
+**The explore→plan→code strategy**: Use a high-reasoning model for the explore and plan phases (read-only, no writes), then execute the code phase on a cheaper model. You get high-quality architectural thinking at lower execution prices. This is the recommended default for experienced users.
 
-**Effort levels** (Opus 4.6 only): Low/Medium/High control adaptive thinking depth. Lower effort = fewer thinking tokens = cheaper. Use low for routine tasks, high only for genuinely complex reasoning.
+**Effort levels**: The `effort` setting (low/medium/high/xhigh/max) controls adaptive thinking depth. Lower effort = fewer thinking tokens = cheaper. Use low for routine tasks, reserve xhigh/max only for genuinely complex reasoning. This replaced the old `budget_tokens` thinking-budget knob — you no longer set a raw token budget; you pick an effort level and thinking adapts.
 
 **Agent-level model routing**: When building custom agents (Level 5), specify cheaper models for agents that do simple work:
 
@@ -201,6 +205,8 @@ A well-structured CLAUDE.md prevents Claude from reading files it shouldn't, run
 - **Conventions**: Prevents over-engineering and rework (saves output tokens)
 - **DO NOT patterns**: Explicit exclusions prevent the most wasteful reads
 
+Use `@path` references to split a large CLAUDE.md so only the relevant section loads when needed (the `@path` syntax replaced the older `@import`).
+
 #### Strategy 5: Disable Unused MCP Servers (saves 5-15%)
 
 Each enabled MCP server injects tool definitions into your system prompt. With 10+ servers, this can consume 10-20% of your context budget on every single message.
@@ -236,7 +242,7 @@ npx ccusage@latest
 
 # Key views
 npx ccusage daily              # Daily token usage and costs
-npx ccusage monthly            # Monthly aggregated report  
+npx ccusage monthly            # Monthly aggregated report
 npx ccusage session            # Usage by conversation session
 npx ccusage blocks             # 5-hour billing window usage
 npx ccusage daily --breakdown  # Per-model cost breakdown
@@ -267,15 +273,15 @@ npx ccusage daily --project myproject    # Filter specific project
 
 | Anti-Pattern | Why It's Expensive | Fix |
 |-------------|-------------------|-----|
-| Using Opus for everything | 5x Haiku's cost per token | Default to Sonnet, escalate selectively |
+| Using Opus for everything | ~5x Haiku's cost per token | Default to Sonnet, escalate selectively |
 | Never clearing context | History compounds every message | Commit-and-clear after each task |
 | Vague prompts | Exploration, clarification, rework | Be specific about file, function, action |
 | Letting sessions run long | Context bloat degrades quality AND costs more | /compact proactively or /clear |
 | 10+ MCP servers always-on | Tool definitions eat context budget | Disable unused, use Tool Search |
-| Extended thinking on simple tasks | Thinking tokens = expensive output tokens | Lower effort level for routine work |
+| High effort on simple tasks | Adaptive thinking tokens = expensive output tokens | Lower the effort level for routine work |
 | Agent teams for simple tasks | Each agent has initialization overhead | Solo agent for single-focus work |
 | Not monitoring usage | Can't optimize what you can't measure | Install ccusage, check /cost regularly |
-| Over-engineering CLAUDE.md | 150+ lines loaded every session | Keep under 150 lines, use @imports |
+| Over-engineering CLAUDE.md | 150+ lines loaded every session | Keep under 150 lines, use @path references |
 | Auto-accept mode for complex tasks | No human checkpoint → expensive wrong turns | Use plan mode for costly operations |
 | Debugging by trial-and-error with AI | Each attempt compounds context | Read the error yourself first, give Claude the specific error |
 | Reading entire large files | Claude reads full files even when you need 3 lines | Point to specific line ranges or functions |
@@ -299,15 +305,15 @@ Based on community-reported averages with Sonnet as default:
 
 ---
 
-## Part 2: Cross-Cutting Cost Annotations by Curriculum Level
+## Part 2: Cost Reference Material, Organized by Topic
 
-These annotations should be integrated into each curriculum level as a "💰 Cost Awareness" section.
+> **Shipped-plugin note:** These topic notes were originally drafted as per-level "Cost Awareness" sections to be injected into every curriculum level. That mandate was REVERTED. In the shipped plugin, cost coaching is OFF BY DEFAULT and is never volunteered at any level — there is no per-level cost annotation. The five cross-cutting practices the plugin actually coaches at every level are, in order, **verify first**, **explore→plan→code**, **ground the prompt**, **course-correct early**, and **manage context** — not cost. The material below is retained ONLY as reference background for the opt-in `/coach:cost` command. Read it as "if the user explicitly asks about cost in the context of topic X, here is the relevant guidance," not as something to surface unprompted.
 
-### Level 0: Foundations — Cost Awareness
+### Foundations — cost background
 
 **What to teach:**
 - The token cost model (input vs. output, compounding history)
-- Model tier pricing differences (Haiku: 1x, Sonnet: 3x, Opus: 5x)
+- Model tier pricing differences (Haiku ~1x, Sonnet ~3x, Opus ~5x relative to Haiku's per-token rate)
 - Subscription vs. API: which makes sense for your situation
 - Install ccusage on day one: `npx ccusage@latest`
 - Run `/cost` after your first session to see what it looks like
@@ -338,7 +344,7 @@ These annotations should be integrated into each curriculum level as a "💰 Cos
 
 **What to teach:**
 - CLAUDE.md is loaded every session — keep it lean (<150 lines)
-- Use @imports to split large configs (load only what's needed)
+- Use `@path` references to split large configs (load only what's needed)
 - Include "DO NOT read" directories (node_modules, dist, .next, build artifacts)
 - Test commands prevent the most expensive failure: Claude guessing build/test patterns
 - Rules files (`.claude/rules/*.md`) load contextually — cheaper than putting everything in CLAUDE.md
@@ -347,7 +353,7 @@ These annotations should be integrated into each curriculum level as a "💰 Cos
 > "Every line in CLAUDE.md is read on every message. Is everything in there earning its keep? Move infrequent context to rules files that load only when relevant."
 
 **Diagnostic addition:**
-> CLAUDE.md > 150 lines without @imports → Flag as cost issue
+> CLAUDE.md > 150 lines without `@path` references → Flag as cost issue
 > Missing test commands → Flag: "Claude will guess, fail, retry — most expensive pattern"
 > No excluded directories → Flag: "Claude may read node_modules or build outputs"
 
@@ -525,7 +531,7 @@ wc -l CLAUDE.md 2>/dev/null
 | What to Check | Threshold | Flag Message |
 |--------------|-----------|-------------|
 | ccusage not installed | Missing | "Install ccusage — you can't optimize what you can't measure" |
-| CLAUDE.md > 150 lines | >150 lines | "Loaded every message. Split into rules/ or use @imports" |
+| CLAUDE.md > 150 lines | >150 lines | "Loaded every message. Split into rules/ or use @path references" |
 | No excluded directories in CLAUDE.md | Missing "DO NOT" | "Claude may read node_modules, dist/, etc." |
 | No test commands in CLAUDE.md | Missing | "Claude will guess → fail → retry. Most expensive pattern." |
 | 8+ MCP servers | >8 count | "Each server costs context tokens. Most use only 4 daily." |
@@ -570,7 +576,7 @@ npx ccusage@latest monthly --plan max5  # or pro, max20
 ### The Cost-Conscious Workflow
 
 ```
-1. Start session → /model sonnet (or opusplan for complex work)
+1. Start session → /model sonnet (or explore→plan→code for complex work)
 2. Check /context → disable unused MCP servers
 3. Work on ONE focused task
 4. Git commit when done
@@ -587,13 +593,13 @@ npx ccusage@latest monthly --plan max5  # or pro, max20
 | Quick syntax question | Haiku | Instant, cheapest |
 | Single-file edit | Haiku or Sonnet | Low complexity |
 | Feature implementation | Sonnet | Sweet spot of capability/cost |
-| Multi-file refactor | Sonnet or opusplan | Needs reasoning but also speed |
+| Multi-file refactor | Sonnet, or explore→plan→code | Needs reasoning but also speed |
 | Architecture decision | Opus (plan mode) | Worth the premium for correctness |
 | Code review | Haiku | Read-heavy, judgment is sufficient |
-| Debugging complex issue | opusplan | Opus reasons, Sonnet fixes |
+| Debugging complex issue | explore→plan→code | Plan on a high-reasoning model, fix on a cheaper one |
 | Writing tests | Sonnet | Moderate complexity, high output |
 | Documentation | Haiku or Sonnet | Low reasoning requirement |
 
 ---
 
-*This document is a living reference. Update pricing when models change. Review strategies quarterly as tooling evolves.*
+*This document is the reference data behind the opt-in `/coach:cost` command — not a default behavior. Last updated 2026-06-19. Update pricing when models change; keep it in sync with `knowledge/pricing/pricing-current.md`.*

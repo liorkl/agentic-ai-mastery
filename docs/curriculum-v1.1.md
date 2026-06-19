@@ -1,15 +1,27 @@
 # Claude Code Mastery Curriculum
 ## The Path to Agentic AI Development Mastery
 
-**Version:** 1.1 — February 2026
+**Version:** 1.1 — June 2026
 **Purpose:** Foundation curriculum for the Claude Code Coaching Agent
-**Last reviewed:** February 20, 2026
+**Last reviewed:** June 19, 2026
+
+> **Sync status (2026-06-19):** Reconciled to the shipped plugin — verification-first / five cross-cutting practices spine, cost coaching off by default (opt-in via /coach:cost), current June-2026 models. Levels are a feature scaffold, not a score.
 
 ---
 
 ## Curriculum Philosophy
 
 Mastery is not about memorizing commands. It's about developing **engineering judgment** for when and how to delegate work to AI agents. Each level builds a mental model, not just a skill set.
+
+**North star:** Coaching exists to (a) get the best work out of Claude and (b) build repos where Claude does its best work — not to "collect features." The L0–L10 ladder below is a **feature-progression scaffold**, not a proxy for skill and not a score. A developer who has only touched L0–L3 features but applies the five cross-cutting practices well is more skilled than one who has wired up agent teams and MCP servers but never gives Claude a way to verify its own work.
+
+**The five cross-cutting practices (verification first) outrank feature breadth.** They are coached at *every* level and matter more than how far up the ladder a developer has climbed:
+
+1. **Verification first** — give Claude a check it can run itself (tests, build, lint, a script, a screenshot). This is the #1 lever on output quality.
+2. **Explore → plan → code** — separate research and planning from execution; use plan mode before writing code.
+3. **Ground the prompt** — point at specific files, an example pattern to follow, and the concrete symptom.
+4. **Course-correct early** — stop and redirect on drift rather than letting it compound; `/clear` and re-prompt when needed.
+5. **Manage context** — keep CLAUDE.md short, `/clear` between tasks, push investigation into subagents.
 
 **Progression principle:** At each level, the developer should be able to _explain why_ they do things a certain way — not just _how_. This is what separates a power user from someone following a tutorial.
 
@@ -55,10 +67,11 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 - Permission wildcards: `Bash(npm run *)`, `Edit(/docs/**)`
 
 #### 0.5 Model Selection Basics
-- **Opus 4.6** — Most advanced, complex reasoning, 1M context, agent teams
-- **Sonnet 4.5** — Best coding model, preferred 70% over previous version, fast
-- **Haiku 4.5** — 90% of Sonnet's agentic performance at 2x speed and 3x cost savings
-- When each model is appropriate (cost vs. capability tradeoff)
+- **Opus 4.8** (`claude-opus-4-8`) — Default model; strongest reasoning and coding, 1M context
+- **Fable 5** (`claude-fable-5`) — Frontier model for the hardest, most open-ended work, 1M context
+- **Sonnet 4.6** (`claude-sonnet-4-6`) — Fast, capable coding model, 1M context
+- **Haiku 4.5** (`claude-haiku-4-5`) — Fastest/cheapest, great for subagents and high-volume work, 200K context
+- When each model is appropriate (start with the default; reach for others by task fit, not habit)
 - Switching models: `--model` flag
 
 #### 0.6 When NOT to Use Claude Code
@@ -115,10 +128,10 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 - When to use each: Explanatory for new codebases, Learning for skill-building
 - Relevance to coaching: the Learning output style IS a coaching interface
 
-#### 1.6 Extended & Adaptive Thinking (Claude 4.x)
-- Extended thinking: asking Claude to reason before answering
-- Adaptive thinking: Claude adjusts reasoning depth based on task complexity
-- When extended thinking adds value vs. when it wastes tokens
+#### 1.6 Adaptive Thinking & Effort (Claude 4.x)
+- Adaptive thinking: Claude adjusts reasoning depth automatically based on task complexity
+- `effort` levels (low / medium / high / xhigh / max) replace the old manual `budget_tokens` / "extended thinking budget" knob — you set how hard to think, not a token count
+- When higher effort earns its keep (hard reasoning, tricky debugging) vs. when low effort is enough
 - Vision optimization for image-based tasks
 
 ### Mastery Check
@@ -145,7 +158,7 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 - Priority hierarchy: module-level > project-level > user-level (~/.claude/CLAUDE.md)
 - AGENTS.md symlink for cross-tool compatibility (Copilot, Cursor)
 - `/init` generates a starter; treat it as a starting point, not the final version
-- Using `@imports` to pull in other files modularly
+- Using `@path` references to pull in other files modularly
 
 #### 2.2 Memory System
 - How Claude Code's memory works across sessions
@@ -298,7 +311,7 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 #### 5.2 Agent Design Principles
 - One agent, one job (code reviewer ≠ code writer ≠ test writer)
 - Constraining tool access (read-only agents can't use Write, Edit, NotebookEdit)
-- Model selection per agent (Haiku 4.5 for fast/cheap — 90% of Sonnet's performance at 3x savings)
+- Model selection per agent (Haiku 4.5 for fast, high-volume subagent work; Opus 4.8 for the orchestrating agent)
 - Writing effective descriptions so auto-delegation works reliably
 - Background color coding for visual identification in terminal
 
@@ -486,7 +499,7 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 - The cost-benefit analysis: teams consume more tokens but finish faster
 - Not everything needs a team — solo agents are often better
 - **Experimental status:** Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` in settings
-- Fast Mode: 2.5x speed on Opus 4.6 responses for interactive team work
+- Fast Mode: higher-speed responses for interactive team work
 
 #### 9.2 Team Architecture
 - Team lead: coordinates, delegates, synthesizes
@@ -545,9 +558,10 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 - The ownership principle: your name on the PR, your responsibility
 - "Outputs are disposable; plans and prompts compound. Debugging at the source scales across every future task."
 
-#### 10.3 Cost & Efficiency Engineering
-- Understanding token costs: Haiku 4.5 ($1/$5) vs. Sonnet 4.5 ($3/$15) vs. Opus
-- Model routing: right model for the right task (Haiku for subagents, Opus for orchestration)
+#### 10.3 Cost & Efficiency Engineering (Opt-In)
+- **Off by default.** Cost/token coaching is not a cross-cutting theme — it lives only in the opt-in `/coach:cost` command and `knowledge/pricing/pricing-current.md`. Reach for it when a developer explicitly asks, not as a default lens on their work.
+- Understanding token costs (June 2026, per million tokens, input/output): Haiku 4.5 $1/$5 · Sonnet 4.6 $3/$15 · Opus 4.8 $5/$25 · Fable 5 $10/$50
+- Model routing: right model for the right task (Haiku for high-volume subagents, Opus for the orchestrating agent)
 - Monitoring and budgeting AI usage across a team
 - ROI measurement: time saved vs. tokens spent
 - Fast Mode for interactive speed when cost is secondary
@@ -562,6 +576,7 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 #### 10.5 Team Adoption & Leadership
 - How to introduce Claude Code to a development team
 - Setting up shared configurations, skills, and agents for consistency
+- **Packaging a Claude-ready setup as a plugin** — bundle your CLAUDE.md conventions, skills, agents, commands, and hooks into a single installable plugin so the whole team gets the same high-quality setup, not just you (see `knowledge/features/plugins.md`). This is the highest-leverage move at this level: you stop sharing a Claude-ready setup by word of mouth and start shipping it.
 - Training patterns: pair programming with AI as the third participant
 - Governance: permissions, audit trails, security policies
 - The Anthropic Academy certification path as a team onboarding tool
@@ -584,17 +599,21 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 
 ---
 
-## Cross-Cutting Themes (Woven Into Every Level)
+## Cross-Cutting Practices (Coached at Every Level)
 
-| Theme | What It Means |
-|-------|---------------|
-| **Context Engineering** | Not just prompting — curating the optimal set of tokens across all context components |
-| **Accountability** | You own the output. AI assists, you decide. |
-| **Progressive Disclosure** | Load information only when needed — applies to skills, context, and learning itself |
-| **Quality Gates** | Trust but verify. Automate verification where possible. |
-| **Cost Consciousness** | Tokens cost money. Choose the right model for each task. |
-| **Security Discipline** | AI has access to your code and tools. Treat it accordingly. |
-| **Iterative Improvement** | Every workflow can be improved. Measure, adjust, repeat. |
+These five practices are the spine of the curriculum. They are coached at every level, **verification first**, and they outrank how far up the feature ladder a developer has climbed. The levels are a scaffold; these practices are the skill.
+
+| Practice | What It Means |
+|----------|---------------|
+| **Verification First** | Give Claude a check it can run itself — tests, build, lint, a script, a screenshot. The #1 lever on output quality. |
+| **Explore → Plan → Code** | Separate research and planning from execution. Use plan mode before writing code. |
+| **Ground the Prompt** | Point at specific files, an example pattern to follow, and the concrete symptom — not "fix the bug." |
+| **Course-Correct Early** | Stop and redirect on drift rather than letting it compound. `/clear` and re-prompt when needed. |
+| **Manage Context** | Short CLAUDE.md, `/clear` between tasks, subagents for investigation. Context is a finite resource. |
+
+Always-on supporting disciplines: **Accountability** (you own the output — AI assists, you decide), **Security** (AI has access to your code and tools; treat it accordingly), and **Iterative Improvement** (measure, adjust, repeat).
+
+> **Cost/token coaching is off by default** and is *not* a cross-cutting theme. It is opt-in only, via the `/coach:cost` command and `knowledge/pricing/pricing-current.md`. Don't lead with cost; lead with verification.
 
 ---
 
@@ -625,7 +644,9 @@ This curriculum is the backbone of the coaching agent's knowledge. The agent sho
 8. **Reference official sources** — point to Anthropic Academy courses, engineering blog posts, and official docs
 9. **Stay current** — the ecosystem evolves monthly; curriculum should be reviewed regularly
 
+**Coaching commands available to the developer:** `/coach:assess`, `/coach:next`, `/coach:execute`, `/coach:exercise`, `/coach:discover`, `/coach:status`, `/coach:help`, `/coach:whats-new`, and `/coach:recap` (a progress narrative of how far the developer has come) and `/coach:compare` (a before/after diff of a repo or workflow). Cost coaching is opt-in only via `/coach:cost`.
+
 ---
 
 *This is a living document. The Claude Code ecosystem evolves rapidly. Curriculum should be reviewed monthly.*
-*Last updated: February 20, 2026*
+*Last updated: June 19, 2026*

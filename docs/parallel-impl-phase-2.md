@@ -1,5 +1,9 @@
 # Parallel Implementation Spec — Phase 2 Trust & UX
 
+> **⚠️ SUPERSEDED (2026-06-19).** This is a historical phase-2 implementation plan. The phase-2 work shipped differently — the plugin was re-centered on a verification-first / five-cross-cutting-practices spine with cost coaching OFF BY DEFAULT. In particular: the per-command token-estimate footers and "cost awareness at every level" proposed here were REVERTED (cost + token estimate live only in the opt-in /coach:cost command); do NOT add a permissions block to plugin.json (it breaks install — scope tools in .claude/settings.json instead). Shipped additions include /coach:recap, /coach:compare, and knowledge/features/plugins.md. Kept for historical reference only — do not implement from this doc.
+
+_Last updated: 2026-06-19._
+
 ## Overview
 
 Four independent improvements are ready for implementation. Each touches a different file set, has no inter-task dependencies, and can be merged in any order. This spec describes how to execute them in parallel using four worker agents orchestrated by a single main agent.
@@ -56,6 +60,8 @@ Do not wait for PRs to be merged before reporting.
 ## Worker Specs
 
 ### Worker A — Explicit Tool Permissions in plugin.json
+
+> **Superseded:** do NOT do this — a `permissions` block in plugin.json breaks install ("Unrecognized key: permissions"). Scope tools in `.claude/settings.json`; agent frontmatter `tools:` takes plain tool names, not `Bash(...)` patterns.
 
 **Branch:** `feat/plugin-tool-permissions`
 **Base:** `master`
@@ -167,6 +173,8 @@ The receipt is static (always the same paths) — it reflects what the coach age
 ---
 
 ### Worker C — Token Usage Estimate Footer on Every Command
+
+> **Superseded:** reverted — cost coaching is OFF BY DEFAULT. The token estimate / cost content lives ONLY in the opt-in `/coach:cost` command, not as a footer on every command.
 
 **Branch:** `feat/token-estimate-footer`
 **Base:** `master`

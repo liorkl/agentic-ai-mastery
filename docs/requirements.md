@@ -1,9 +1,12 @@
 # Claude Code Coaching Agent — Requirements
+
+> **Sync status (2026-06-19):** Reconciled to the shipped plugin — verification-first / five-practices coaching, cost coaching OFF BY DEFAULT (cost + token estimate only in /coach:cost), added /coach:recap + /coach:compare + knowledge/features/plugins.md, assessment schema gained verification_ready / verification_gate / practice_gaps, current June-2026 models.
+
 ## Project: agentic-ai-mastery
 
-**Version:** 1.0
-**Date:** February 20, 2026
-**Status:** Pre-implementation
+**Version:** 1.1
+**Date:** June 19, 2026
+**Status:** Shipped
 
 ---
 
@@ -11,7 +14,17 @@
 
 ### 1.1 Vision
 
-A Claude Code custom agent that teaches developers to master agentic AI development progressively — from first install to system-level design. The coach lives inside the developer's Claude Code workflow, assesses skill level by scanning their environment, delivers targeted coaching through real work (not abstract exercises), and improves its own teaching over time.
+A Claude Code custom agent that teaches developers to get the best work out of Claude and to build repos where Claude does its best work — NOT to "collect features." The coach lives inside the developer's Claude Code workflow, assesses readiness by scanning their environment, delivers targeted coaching through real work (not abstract exercises), and improves its own teaching over time.
+
+**North star:** the goal is great outcomes from Claude on a Claude-ready repo. The 11 levels are a feature scaffold for organizing teaching content — they are NOT a score to maximize.
+
+**Five cross-cutting practices** are coached at EVERY level, with verification FIRST:
+
+1. **Verify** — establish how Claude's work will be checked before relying on it.
+2. **Explore → plan → code** — understand and plan before writing changes.
+3. **Ground the prompt** — anchor requests in the user's real files, constraints, and intent.
+4. **Course-correct early** — catch drift fast rather than letting it compound.
+5. **Manage context** — load only what the task needs; keep the working context tight.
 
 ### 1.2 Why a Plugin (Not MCP, Not Standalone Agent, Not API Product)
 
@@ -31,7 +44,7 @@ These documents contain the detailed designs. Requirements below reference them.
 |----------|----------|------|
 | Curriculum v1.1 | 11-level progression (L0–L10), mastery checks, teaching content | `claude-code-mastery-curriculum-v1.1.md` |
 | Environment Diagnostic v1.1 | Scan targets, quality heuristics, gap detection, anti-patterns | `environment-diagnostic-framework-v1.1.md` |
-| Cost Optimization Guide v1.0 | Pricing reference, cross-cutting cost annotations per level, monitoring tools | `cost-optimization-guide-v1.0.md` |
+| Cost Optimization Guide v1.0 | Pricing reference (current June-2026 models) and monitoring tools, consumed ONLY by the opt-in `/coach:cost` command (cost coaching is off by default) | `cost-optimization-guide-v1.0.md` |
 | Self-Learning & Discovery v1.0 | Outcome tracking, retrospective protocol, weekly discovery, knowledge base structure | `self-learning-discovery-architecture-v1.0.md` |
 
 ---
@@ -55,7 +68,8 @@ These documents contain the detailed designs. Requirements below reference them.
 **Curriculum delivery:**
 - Teaches from the 11-level curriculum
 - Adapts to detected level — never teaches above or skips below
-- Includes cost awareness at every level
+- Coaches the five cross-cutting practices (verification first) at every level
+- Cost/token coaching is OFF BY DEFAULT — cost content surfaces only via the opt-in `/coach:cost` command, never in regular teaching
 - References official learning resources
 
 **Knowledge base (seed):**
@@ -128,9 +142,11 @@ agentic-ai-mastery/                        # ~/liorklibansky/dev/agentic-ai-mast
 │   ├── next.md                            # /coach:next
 │   ├── status.md                          # /coach:status
 │   ├── exercise.md                        # /coach:exercise
+│   ├── recap.md                           # /coach:recap
+│   ├── compare.md                         # /coach:compare
 │   ├── whats-new.md                       # /coach:whats-new
 │   ├── discover.md                        # /coach:discover
-│   ├── cost.md                            # /coach:cost
+│   ├── cost.md                            # /coach:cost (opt-in cost coaching)
 │   └── help.md                            # /coach:help
 │
 ├── skills/                                # Auto-triggered by Claude on context match
@@ -150,7 +166,8 @@ agentic-ai-mastery/                        # ~/liorklibansky/dev/agentic-ai-mast
 │   │   ├── context.md                     # L3 content
 │   │   ├── output-styles.md               # L1 content
 │   │   ├── teams.md                       # L9 content
-│   │   └── headless.md                    # L8 content
+│   │   ├── headless.md                    # L8 content
+│   │   └── plugins.md                     # L10 content (packaging & sharing a Claude-ready setup)
 │   ├── commands/
 │   │   └── commands-ref.md
 │   ├── pricing/
@@ -226,7 +243,7 @@ git clone <repo-url> ~/dev/agentic-ai-mastery
 ```
 
 **What the user gets after install:**
-- Slash commands: `/coach:assess`, `/coach:next`, `/coach:cost`, etc.
+- Slash commands: `/coach:assess`, `/coach:next`, `/coach:recap`, `/coach:compare`, `/coach:cost`, etc.
 - Auto-triggered skill: Claude automatically coaches when learning questions detected
 - Sub-agent: available for complex coaching flows
 - All knowledge files bundled and accessible
@@ -250,7 +267,7 @@ State files persist across sessions and projects. Assessments include project pa
 | **Forbidden reads** | `.env*`, `**/credentials*`, `**/secrets*`, `**/*.key`, `**/*.pem` |
 | **Network** | Web search/fetch for discovery ONLY (not during regular coaching) |
 | **Context budget** | Coach loads ≤3,000 tokens of coaching-specific context per session |
-| **Model** | Coach agent should specify `model: sonnet` (no need for Opus overhead) |
+| **Model** | Coach agent specifies `model: sonnet` (Sonnet 4.6, `claude-sonnet-4-6`) — the scan/teach workload doesn't need the default Opus 4.8 (`claude-opus-4-8`) |
 | **Tool restrictions** | Read-only for project files; write only to `~/.claude/coaching/` |
 | **Auto-scan** | Minimal scan on every invocation (<5 seconds). Deep scan only when triggered by changes, gaps, or explicit `assess` command |
 
@@ -289,11 +306,13 @@ State files persist across sessions and projects. Assessments include project pa
 ```json
 {
   "name": "coach",
-  "description": "Coaches developers to master agentic AI development. Assesses skill by scanning your Claude Code/Cowork environment, teaches from an 11-level curriculum, tracks progress, discovers new features.",
-  "version": "1.0.0",
+  "description": "Coaches developers to master agentic AI development. Assesses readiness by scanning your Claude Code/Cowork environment, teaches from an 11-level curriculum, tracks progress, discovers new features.",
+  "version": "1.1.0",
   "author": { "name": "Lior Klibansky" }
 }
 ```
+
+**Manifest gotcha:** Do NOT add a `permissions` key to `plugin.json` — it breaks plugin install. Tool scoping (allowed/denied tools, write scope) lives in `.claude/settings.json`, not in the manifest.
 
 #### FR-PLUGIN-02: Commands (User-Invoked)
 
@@ -305,9 +324,11 @@ Each command is a markdown file in `commands/` with YAML frontmatter (`descripti
 | `/coach:next` | `commands/next.md` | Read assessment, load relevant knowledge file, deliver level-appropriate lesson | P0 |
 | `/coach:status` | `commands/status.md` | Show current level, last assessment date, discovery staleness | P0 |
 | `/coach:exercise` | `commands/exercise.md` | Hands-on exercise with clear success criteria | P1 |
+| `/coach:recap` | `commands/recap.md` | Progress narrative — what the user learned + how the repo got more Claude-ready | P1 |
+| `/coach:compare` | `commands/compare.md` | Before/after diff of two assessments | P1 |
 | `/coach:whats-new` | `commands/whats-new.md` | Show discovery digest of recent changes | P1 |
 | `/coach:discover` | `commands/discover.md` | Delegate to coach agent for full discovery protocol | P1 |
-| `/coach:cost` | `commands/cost.md` | Cost-relevant coaching for current level | P1 |
+| `/coach:cost` | `commands/cost.md` | Opt-in cost coaching for current level — the ONLY command that surfaces cost content and a token estimate | P1 |
 | `/coach:help` | `commands/help.md` | List commands and current coaching state | P0 |
 
 Each command markdown file contains instructions for Claude: which files to read, what to scan, what to output, and what state to update (append to outcomes.jsonl).
@@ -321,12 +342,12 @@ Each command markdown file contains instructions for Claude: which files to read
 name: coaching
 description: >
   Coaches developers on Claude Code and Cowork mastery. Triggers when the user
-  asks about learning, best practices, configuration, features, or cost optimization.
+  asks about learning, best practices, configuration, or features.
   Examples: "how do I use agents", "what's the best way to structure CLAUDE.md"
 ---
 ```
 
-Skill body contains: coaching tone/behavior rules, level awareness (read latest assessment), knowledge loading instructions, cost awareness mandate, anti-pattern flagging, and outcome logging.
+Skill body contains: coaching tone/behavior rules, the five cross-cutting practices (verification first), level awareness (read latest assessment), knowledge loading instructions, anti-pattern flagging, and outcome logging. The skill includes an explicit rule, **"Cost Awareness Is Off By Default"** — cost/token content is never injected into regular coaching; it is reserved for the opt-in `/coach:cost` command.
 
 #### FR-PLUGIN-04: Coach Sub-Agent
 
@@ -342,22 +363,25 @@ Commands like `/coach:assess` and `/coach:discover` delegate to this agent. It r
 name: coach
 description: Deep coaching agent for assessment, discovery, and analysis.
 model: sonnet
-tools: [Read, LS, Glob, Grep, WebSearch, WebFetch, "Write(~/.claude/coaching/**)", "Bash(stat, claude --version)"]
+tools: [Read, LS, Glob, Grep, WebSearch, WebFetch, Write, Bash]
 ---
 ```
+
+**Frontmatter gotcha:** Agent `tools:` takes plain tool NAMES only — not scoped patterns like `Bash(stat)` or `Write(~/.claude/coaching/**)`. Per-tool scoping (e.g. restricting Bash commands or the Write path) lives in `.claude/settings.json`, not in the agent frontmatter.
 
 Agent body contains full scan logic, level detection algorithm, quality scoring rubric, and anti-pattern detection list.
 
 #### FR-PLUGIN-05: Coaching Behavior Rules
 
-1. **Never skip levels.** If user is Level 3, don't teach Level 7 concepts even if asked. Instead explain what prerequisites are needed.
-2. **Always ground in real work.** Don't give abstract explanations. Reference the user's actual files and configuration.
-3. **Include cost awareness.** Every teaching should mention cost implications where relevant.
-4. **Flag anti-patterns immediately.** If the scan detects a security or cost anti-pattern, mention it regardless of what was asked.
-5. **Be concise.** Coaching messages should be actionable, not lecture-length. Target 200-400 words per coaching response.
-6. **Reference official sources.** Link to Anthropic docs, Academy courses, or engineering blog posts when relevant.
-7. **Track everything.** Append to outcomes.jsonl after each coaching interaction.
-8. **Practice context hygiene.** Load only the knowledge files relevant to the current topic. Never load the entire knowledge base.
+1. **Verification first.** Before relying on Claude's work, establish how it will be checked. Lead every level's coaching with the five cross-cutting practices (verify → explore→plan→code → ground the prompt → course-correct early → manage context).
+2. **Never skip levels.** If user is Level 3, don't teach Level 7 concepts even if asked. Instead explain what prerequisites are needed. Remember levels are a feature scaffold, not a score — the goal is a Claude-ready repo and great outcomes.
+3. **Always ground in real work.** Don't give abstract explanations. Reference the user's actual files and configuration.
+4. **Cost awareness is off by default.** Do NOT mention cost or token implications in regular teaching. Cost content and the token estimate live ONLY in the opt-in `/coach:cost` command.
+5. **Flag anti-patterns immediately.** If the scan detects a security or correctness anti-pattern, mention it regardless of what was asked.
+6. **Be concise.** Coaching messages should be actionable, not lecture-length. Target 200-400 words per coaching response.
+7. **Reference official sources.** Link to Anthropic docs, Academy courses, or engineering blog posts when relevant.
+8. **Track everything.** Append to outcomes.jsonl after each coaching interaction.
+9. **Practice context hygiene.** Load only the knowledge files relevant to the current topic. Never load the entire knowledge base.
 
 #### FR-PLUGIN-06: Context Loading Strategy
 
@@ -374,7 +398,10 @@ On /coach:assess (delegated to agent):
 
 On /coach:next or teaching at Level N:
   ALSO load: knowledge/features/<relevant-file>.md (~400 tokens)
-  ALSO load: knowledge/pricing/pricing-current.md IF cost topic (~300 tokens)
+
+On /coach:cost ONLY (opt-in cost coaching):
+  ALSO load: knowledge/pricing/pricing-current.md (~300 tokens)
+  This is the ONLY path that loads pricing and emits a token estimate.
 
 On /coach:discover (delegated to agent):
   ALSO load: discovery-state.json (~100 tokens)
@@ -446,7 +473,7 @@ Map scan results to curriculum levels using the highest-level feature detected:
 | No configuration at all | Level 0 |
 | Basic CLAUDE.md exists | Level 1 |
 | CLAUDE.md with quality score ≥6/10 + settings.json | Level 2 |
-| Multiple CLAUDE.md + rules/ + @imports | Level 3 |
+| Multiple CLAUDE.md + rules/ + @path imports | Level 3 |
 | skills/ with SKILL.md format | Level 4 |
 | agents/ with custom agents | Level 5 |
 | hooks/ with configured hooks | Level 6 |
@@ -468,24 +495,26 @@ Map scan results to curriculum levels using the highest-level feature detected:
 | Architecture description | 1 | Reduces exploratory file reading |
 | Code style/conventions | 1 | Prevents rework |
 | Constraints/DO NOTs | 1 | Prevents wasteful operations |
-| @imports used | 1 | Shows modular thinking |
+| @path imports used | 1 | Shows modular thinking |
 | Under 150 lines | 1 | Context budget discipline |
 | Project-specific content (not generic) | 1 | Shows intentional configuration |
 
 #### FR-SCAN-04: Anti-Pattern Detection
 
-The scanner must flag all anti-patterns listed in the Diagnostic Framework v1.1 and Cost Optimization Guide v1.0. Each anti-pattern produces a structured finding:
+The scanner must flag all anti-patterns listed in the Diagnostic Framework v1.1. Each anti-pattern produces a structured finding:
 
 ```jsonc
 {
   "anti_pattern": "claude_md_too_long",
   "severity": "medium",  // low, medium, high, critical
   "current_value": "237 lines",
-  "recommendation": "Split into rules/ files or use @imports. Target: <150 lines.",
-  "cost_impact": "Loaded every message. ~237 tokens of overhead on every interaction.",
+  "recommendation": "Split into rules/ files or use @path imports. Target: <150 lines.",
+  "impact": "Loaded every message; bloats the working context on every interaction.",
   "curriculum_level": 2
 }
 ```
+
+Cost/token framing of findings is reserved for the opt-in `/coach:cost` command — the deep-scan findings themselves carry a neutral `impact` field, not a `cost_impact` field.
 
 #### FR-SCAN-05: Privacy
 
@@ -502,8 +531,8 @@ On first setup, knowledge base files are seeded from the design documents. Each 
 
 ```markdown
 <!-- .claude/coaching/knowledge/features/<topic>.md -->
-<!-- COACH KNOWLEDGE BASE — Last updated: 2026-02-20 -->
-<!-- Source: curriculum-v1.1, cost-guide-v1.0 -->
+<!-- COACH KNOWLEDGE BASE — Last updated: 2026-06-19 -->
+<!-- Source: curriculum-v1.1 -->
 
 # <Topic> Knowledge Base
 
@@ -517,10 +546,15 @@ On first setup, knowledge base files are seeded from the design documents. Each 
 
 ### Coaching Relevance
 - Curriculum level: <N>
-- Cost considerations: ...
+- Cross-cutting practices touched: <verify / explore→plan→code / ground / course-correct / manage-context>
 - Common anti-patterns: ...
 - Mastery check: <criteria from curriculum>
+
+## Why It Matters
+- <why this capability matters for getting great work out of Claude and a Claude-ready repo>
 ```
+
+The knowledge-file structure ends with a **"Why It Matters"** section — NOT a "Cost Implications" section. Cost framing is reserved for the opt-in `/coach:cost` command and its pricing knowledge file.
 
 #### FR-KB-02: Knowledge File Size Limits
 
@@ -546,13 +580,21 @@ Location: `~/.claude/coaching/state/assessments.jsonl`
 
 One entry per environment scan:
 
+The assessment output leads with a readiness verdict plus verification status; the detected level is reported as a footnote, not the headline (levels are a feature scaffold, not a score).
+
 ```jsonc
 {
-  "timestamp": "2026-02-20T14:30:00Z",
+  "timestamp": "2026-06-19T14:30:00Z",
   "project_path": "/Users/dev/my-project",
-  "detected_level": 3,
+  "verification_ready": false,           // is there a working way to check Claude's output? (verdict headline)
+  "verification_gate": "No test command in CLAUDE.md and no CI; Claude's changes can't be auto-verified",
+  "practice_gaps": [                      // weaknesses across the five cross-cutting practices
+    { "practice": "verify", "severity": "high", "note": "No test command grounded in CLAUDE.md" },
+    { "practice": "manage_context", "severity": "medium", "note": "CLAUDE.md 237 lines, loaded every message" }
+  ],
+  "detected_level": 3,                    // footnote — feature scaffold, not a score
   "claude_md_score": 7,
-  "features_detected": ["claude_md", "settings_json", "rules_dir", "imports"],
+  "features_detected": ["claude_md", "settings_json", "rules_dir", "path_imports"],
   "features_missing_below_level": ["test_commands"],
   "anti_patterns": [
     { "id": "mcp_server_count", "severity": "medium", "value": "9 servers" }
@@ -561,7 +603,7 @@ One entry per environment scan:
     { "level": 2, "gap": "No test commands in CLAUDE.md", "priority": "high" }
   ],
   "scan_scope": [".claude/", "CLAUDE.md", "~/.claude/"],
-  "claude_code_version": "2.1.8"
+  "claude_code_version": "2.4.0"
 }
 ```
 
@@ -571,8 +613,8 @@ One entry per coaching interaction:
 
 ```jsonc
 {
-  "timestamp": "2026-02-20T15:00:00Z",
-  "session_id": "coach-20260220",
+  "timestamp": "2026-06-19T15:00:00Z",
+  "session_id": "coach-20260619",
   "user_level_at_time": 3,
   "topic": "context-engineering",
   "subtopic": "compact-custom-instructions",
@@ -590,14 +632,14 @@ One entry per discovery finding:
 
 ```jsonc
 {
-  "timestamp": "2026-02-20T10:30:00Z",
+  "timestamp": "2026-06-19T10:30:00Z",
   "source": "github_changelog",
-  "source_version": "2.1.9",
+  "source_version": "2.4.1",
   "classification": "curriculum-relevant",  // curriculum-relevant, diagnostic-relevant, informational, noise
   "title": "Nested skills auto-discovery",
   "description": "Skills in nested .claude/skills directories now auto-discovered",
   "affected_levels": [4],
-  "cost_impact": null,
+  "practice_relevance": null,     // which of the five cross-cutting practices this touches, if any
   "status": "pending"             // pending, integrated, dismissed
 }
 ```
@@ -606,9 +648,9 @@ One entry per discovery finding:
 
 ```jsonc
 {
-  "last_discovery_run": "2026-02-20T10:00:00Z",
-  "last_known_claude_code_version": "2.1.8",
-  "last_known_changelog_entry": "v2.1.8",
+  "last_discovery_run": "2026-06-19T10:00:00Z",
+  "last_known_claude_code_version": "2.4.0",
+  "last_known_changelog_entry": "v2.4.0",
   "curriculum_version": "1.1",
   "knowledge_base_seeded": true
 }
@@ -623,9 +665,10 @@ In v1.0, this file is manually maintained (auto-updates deferred to v1.1). Initi
 <!-- Coaching strategy — manually maintained in v1.0 -->
 
 ## Default Coaching Approach
+- Lead with the five cross-cutting practices, verification first
 - Lead with practical, show concrete files/commands
 - One concept per coaching interaction
-- Always include cost implications
+- Cost awareness is off by default — keep cost/token content out of regular coaching; it lives only in /coach:cost
 - Reference official sources
 - Flag anti-patterns immediately even if not asked
 
@@ -739,8 +782,8 @@ Discovery DOES NOT run:
 | Step | Deliverable | Depends On | Acceptance Test |
 |------|------------|------------|-----------------|
 | 2.1 | Seed knowledge base files (all `knowledge/**/*.md`) | 1.1 | Files exist, each <500 lines, cover all 11 levels |
-| 2.2 | Coaching skill (`skills/coaching/SKILL.md`) + teaching commands (`next.md`, `exercise.md`, `cost.md`) | 1.3 + 2.1 | `/coach:next` delivers level-appropriate lesson by reading relevant knowledge file |
-| 2.3 | Cost coaching integration | 2.2 | Every teaching includes cost awareness |
+| 2.2 | Coaching skill (`skills/coaching/SKILL.md`) + teaching commands (`next.md`, `exercise.md`, `recap.md`, `compare.md`) | 1.3 + 2.1 | `/coach:next` delivers level-appropriate lesson by reading relevant knowledge file; `/coach:recap` narrates progress; `/coach:compare` diffs two assessments |
+| 2.3 | Opt-in cost command (`commands/cost.md`) | 2.2 | `/coach:cost` is the ONLY command that surfaces cost content + a token estimate; no other command mentions cost |
 
 ### Phase 3: State & Persistence
 
@@ -785,7 +828,11 @@ No mock environments or test scripts. Testing is done by installing globally and
 | Gap detection | Open a project with agents but weak CLAUDE.md, verify gaps flagged |
 | Anti-pattern detection | Create an oversized CLAUDE.md (200+ lines), verify flagged |
 | Teaching relevance | At detected level, run `/coach:next`, verify content matches level |
-| Cost awareness | In any teaching response, verify cost insight included |
+| Verification-first coaching | At any level, verify coaching leads with the five practices (verify first) |
+| Cost off by default | Run `/coach:next` and a skill-triggered response — verify NO cost/token content appears |
+| Cost opt-in | Run `/coach:cost` — verify cost content + a token estimate appear (and only here) |
+| Recap | After a few interactions, run `/coach:recap` — verify a progress narrative (learned + repo readiness) |
+| Compare | With two assessments on file, run `/coach:compare` — verify a before/after diff |
 | Skill auto-trigger | Ask "how should I set up CLAUDE.md?" without using a command — verify coaching skill activates |
 | Privacy | Confirm `.env` and credential files never mentioned in scan results |
 | Persistence | Run two sessions, verify second reads first session's outcomes |
@@ -806,8 +853,11 @@ Given anti-patterns mock, when coach runs assessment, then all expected anti-pat
 **AC-04: Level-appropriate teaching**
 Given user at Level 3, when asking about agents (Level 5), coach explains prerequisites needed rather than teaching agents directly.
 
-**AC-05: Cost awareness**
-Given any teaching interaction, the response includes at least one cost-relevant insight.
+**AC-05: Cost off by default**
+Given any regular teaching interaction (`/coach:next`, exercise, or skill-triggered coaching), the response includes NO cost or token content. Cost content and a token estimate appear ONLY when the user runs the opt-in `/coach:cost` command.
+
+**AC-05b: Verification-first coaching**
+Given any coaching interaction, the response leads with the five cross-cutting practices, verification first (establish how Claude's work will be checked before relying on it).
 
 **AC-06: Context budget**
 Given a coaching session, coach's own context overhead (knowledge files + state) stays under 3,000 tokens.
@@ -844,8 +894,10 @@ Given missing or corrupted state files, coach initializes defaults and continues
 | Term | Definition |
 |------|-----------|
 | **Coach** | The custom Claude Code agent defined in coach.md |
-| **Assessment** | An environment scan that detects skill level, gaps, and anti-patterns |
-| **Level** | One of 11 curriculum levels (L0–L10), each with specific mastery criteria |
+| **Assessment** | An environment scan that produces a readiness verdict (verification first), practice gaps, anti-patterns, and a detected level (as a footnote) |
+| **Readiness** | Whether the repo is set up for Claude to do its best work — the north star, not the level number |
+| **Five cross-cutting practices** | Verify · explore→plan→code · ground the prompt · course-correct early · manage context — coached at every level, verification first |
+| **Level** | One of 11 curriculum levels (L0–L10) used as a feature scaffold for organizing teaching content — NOT a score to maximize |
 | **Gap** | A missing or weak skill below the user's detected level |
 | **Anti-pattern** | A configuration or behavior that is wasteful, risky, or counterproductive |
 | **Discovery** | The process of checking for new Claude Code features and updates |
@@ -862,4 +914,4 @@ Given missing or corrupted state files, coach initializes defaults and continues
 
 ---
 
-*This document is the single source of requirements for the v1.0 implementation. Design documents provide detail. This document provides scope, structure, and acceptance criteria.*
+*This document is the single source of requirements, reconciled to the shipped plugin. Design documents provide detail. This document provides scope, structure, and acceptance criteria. Last updated: 2026-06-19.*

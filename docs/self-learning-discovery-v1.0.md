@@ -1,7 +1,9 @@
 # Coach Self-Learning & Continuous Discovery Architecture
 ## Making the Coaching Agent Improve Itself Over Time
 
-**Version:** 1.0 — February 2026
+> **Sync status (2026-06-19):** Reconciled to the shipped plugin — current June-2026 models/effort facts, verification-first framing, cost coaching off by default, knowledge base includes knowledge/features/plugins.md.
+
+**Version:** 1.0 — 2026-06-19
 **Purpose:** Architecture for a coaching agent that learns from its own coaching and discovers new Claude Code features
 **Constraint reality:** Claude Code agents can't run on a schedule, have no persistent memory across sessions, and depend entirely on file-based state
 
@@ -62,8 +64,8 @@ Every coaching interaction appends to `outcomes.jsonl`:
 ```jsonc
 // .claude/coaching/outcomes.jsonl
 {
-  "timestamp": "2026-02-20T14:30:00Z",
-  "session_id": "coach-20260220-143000",
+  "timestamp": "2026-06-18T14:30:00Z",
+  "session_id": "coach-20260618-143000",
   "user_level_detected": 3,
   "topic": "context-engineering",
   "coaching_action": "taught-compact-custom-instructions",
@@ -118,7 +120,7 @@ The coach doesn't ask "did you learn this?" — it checks the environment:
 
 ### 1.4 Pattern Analysis: The Retrospective Protocol
 
-Triggered by the `/coach retrospective` command, or automatically when outcomes.jsonl exceeds 20 unanalyzed entries.
+Triggered by the `/coach:retrospective` command, or automatically when outcomes.jsonl exceeds 20 unanalyzed entries.
 
 **The analysis process:**
 
@@ -159,7 +161,7 @@ The coach's strategy file is a living document that the coach itself updates:
 
 ```markdown
 <!-- .claude/coaching/strategies.md -->
-<!-- AUTO-UPDATED BY COACH — Last retrospective: 2026-02-20 -->
+<!-- AUTO-UPDATED BY COACH — Last retrospective: 2026-06-18 -->
 
 ## User Learning Profile
 
@@ -172,7 +174,7 @@ The coach's strategy file is a living document that the coach itself updates:
 ## Coaching Adjustments
 
 ### What Works
-- Show before/after comparisons (especially for cost savings)
+- Show before/after comparisons (especially verification-first workflows)
 - Link teachings to interview preparation (high motivation)
 - Give concrete file paths and commands (not abstract descriptions)
 
@@ -182,14 +184,14 @@ The coach's strategy file is a living document that the coach itself updates:
 - Exercises without clear success criteria (user unsure if they did it right)
 
 ### Active Experiments
-- Trying: Teaching hooks through cost-monitoring use case (relevant to Level 6)
-- Hypothesis: Practical cost savings will motivate faster adoption than security use case
+- Trying: Teaching hooks through a verification-gate use case (relevant to Level 6)
+- Hypothesis: A concrete verification hook will motivate faster adoption than the security use case
 - Result: [pending — will evaluate in 3 sessions]
 
 ## Priority Adjustments
 - Level 3 needs extra session on /compact (user skipped custom instructions)
 - Skip Level 4 slash commands (deprecated), go straight to skills
-- Level 6 hooks: lead with cost monitoring hook, not security hook
+- Level 6 hooks: lead with verification hook, not security hook
 ```
 
 ### 1.6 Feedback Collection (Lightweight)
@@ -200,7 +202,7 @@ The coach doesn't interrupt workflow with surveys. It collects signals passively
 - Environment scan deltas (strongest signal)
 - Session length trends (getting shorter = more efficient, OR disengaged)
 - Number of coaching vs. regular work sessions (is the user engaging?)
-- Model selection changes (adopting the cost-efficient recommendations?)
+- Model selection changes (adopting the recommended model for the task?)
 
 **Active signals (minimal, opt-in):**
 - After an exercise: "Quick check — did that click or should we approach it differently?"
@@ -237,28 +239,28 @@ Claude Code ships updates weekly. Anthropic blog posts announce paradigm shifts.
 ```jsonc
 // .claude/coaching/discovery-state.json
 {
-  "last_discovery_run": "2026-02-19T10:00:00Z",
+  "last_discovery_run": "2026-06-18T10:00:00Z",
   "staleness_days": 1,
   "sources_checked": {
     "github_changelog": {
-      "last_checked": "2026-02-19T10:00:00Z",
+      "last_checked": "2026-06-18T10:00:00Z",
       "last_known_version": "2.1.8",
       "url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"
     },
     "anthropic_release_notes": {
-      "last_checked": "2026-02-19T10:00:00Z",
+      "last_checked": "2026-06-18T10:00:00Z",
       "url": "https://platform.claude.com/docs/en/release-notes/overview"
     },
     "anthropic_engineering_blog": {
-      "last_checked": "2026-02-15T10:00:00Z",
+      "last_checked": "2026-06-14T10:00:00Z",
       "url": "https://www.anthropic.com/engineering"
     },
     "claude_code_docs": {
-      "last_checked": "2026-02-19T10:00:00Z",
+      "last_checked": "2026-06-18T10:00:00Z",
       "url": "https://code.claude.com/docs"
     },
     "npm_version": {
-      "last_checked": "2026-02-19T10:00:00Z",
+      "last_checked": "2026-06-18T10:00:00Z",
       "last_known_version": "2.1.8"
     }
   },
@@ -284,7 +286,7 @@ Claude Code ships updates weekly. Anthropic blog posts announce paradigm shifts.
 
 Triggered on any of:
 - Coach startup when `staleness_days >= 1`
-- User command: `/coach discover` or `/coach what's new`
+- User command: `/coach:discover` or `/coach:whats-new`
 - After a retrospective (combines learning + discovery)
 
 ```markdown
@@ -307,7 +309,7 @@ Triggered on any of:
 
 1. Phase 1 (above)
 2. SEARCH: "Anthropic Claude Code new features [current month] [current year]"
-3. SEARCH: "Claude API new capabilities [current month] [current year]"  
+3. SEARCH: "Claude API new capabilities [current month] [current year]"
 4. SEARCH: "Anthropic engineering blog [current month] [current year]"
 5. FETCH: Anthropic release notes page
 6. For each result:
@@ -337,12 +339,22 @@ Not every changelog entry matters for coaching. The classifier determines what's
 ## Classification Framework
 
 ### CURRICULUM-RELEVANT (add to knowledge base)
+
+Lead signals are **capability, correctness, and verification** — not cost. Classify
+and surface changes by what they let the user do (or do more reliably), and only note
+cost as a secondary detail.
+
 - New feature that unlocks a new capability (e.g., Agent Teams, Output Styles)
-- New command or flag that changes workflow (e.g., /debug, plan rejection feedback)
-- Pricing or model changes (directly affects cost guidance)
-- New best practice from Anthropic (e.g., context engineering, harness patterns)
+- New command or flag that changes workflow (e.g., /coach:recap, /coach:compare, plan rejection feedback)
+- New best practice from Anthropic (e.g., verification-first workflows, context engineering, harness patterns)
+- Model or capability changes that affect which model fits a task (e.g., a new default model, new `effort` levels)
 - Deprecation of a feature the curriculum teaches
 - Security fix that affects permission guidance
+
+> **Cost is off by default.** Pricing/model-cost changes are NOT a lead classification
+> dimension. Capture them only as a secondary `cost_impact` note (see JSONL format) and
+> surface them solely through the opt-in `/coach:cost` path — never as the primary reason
+> a change is flagged.
 
 ### DIAGNOSTIC-RELEVANT (update scan targets)
 - New config file or setting location
@@ -367,7 +379,7 @@ Not every changelog entry matters for coaching. The classifier determines what's
 ```jsonc
 // .claude/coaching/discoveries.jsonl
 {
-  "timestamp": "2026-02-20T10:30:00Z",
+  "timestamp": "2026-06-18T10:30:00Z",
   "source": "github_changelog",
   "source_version": "2.1.9",
   "classification": "curriculum-relevant",
@@ -387,7 +399,7 @@ Not every changelog entry matters for coaching. The classifier determines what's
     "detail": "Scan for nested skill directories as indicator of Level 4+ sophistication"
   },
 
-  "cost_impact": null,
+  "cost_impact": null,  // secondary note only; surfaced via opt-in /coach:cost, never a lead signal
 
   "status": "pending",  // pending → reviewed → integrated → dismissed
   "integrated_date": null
@@ -410,6 +422,7 @@ Discoveries don't just sit in JSONL — they get integrated into structured refe
 │   │   ├── context.md         # Context management commands, strategies
 │   │   ├── output-styles.md   # Output style configuration
 │   │   ├── teams.md           # Agent teams, delegation
+│   │   ├── plugins.md         # Plugins: structure, marketplaces, install/update
 │   │   └── headless.md        # Headless mode, harness patterns, SDK
 │   │
 │   ├── commands/              # Quick reference for slash commands
@@ -423,7 +436,7 @@ Discoveries don't just sit in JSONL — they get integrated into structured refe
 │       ├── chrome.md          # Chrome agent
 │       └── api.md             # API capabilities relevant to developers
 │
-├── assessments.jsonl          # User skill assessments (existing)
+├── assessments.jsonl          # User skill assessments (existing; schema now includes verification_ready, verification_gate, practice_gaps)
 ├── outcomes.jsonl             # Coaching outcomes (self-learning)
 ├── discoveries.jsonl          # Raw discoveries (discovery system)
 ├── discovery-state.json       # Discovery timestamps and state
@@ -437,7 +450,7 @@ Each knowledge file follows a standard structure:
 
 ```markdown
 <!-- .claude/coaching/knowledge/features/agents.md -->
-<!-- AUTO-MAINTAINED BY COACH — Last updated: 2026-02-20 -->
+<!-- AUTO-MAINTAINED BY COACH — Last updated: 2026-06-18 -->
 <!-- Sources: github_changelog, anthropic_docs, community -->
 
 # Agents Knowledge Base
@@ -448,7 +461,7 @@ Each knowledge file follows a standard structure:
 - Custom agents via `.claude/agents/*.md` (Markdown + YAML frontmatter)
 - Automatic delegation based on description field
 - Tool restrictions (read-only agents possible)
-- Model selection per agent (model: field in frontmatter)
+- Model selection per agent (model: field in frontmatter; e.g. claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5)
 - Visual color coding per agent
 - Built-in subagents: Explore (read-only), Plan (analysis)
 
@@ -458,13 +471,14 @@ Each knowledge file follows a standard structure:
 - [v2.1.6] Skills in nested directories auto-discovered
 
 ### Known Issues
-- [#6108] opusplan may not always switch models correctly during execution
+- [#6108] explore→plan→code may not always switch models correctly during execution
 - Agent teams on Bedrock/Vertex need env var propagation fix (fixed in 2.1.8)
 
 ### Coaching Relevance
 - Level 5 curriculum topic
-- Cost consideration: agents without model: field default to session model (possibly expensive)
+- Verification: read-only/tool-restricted agents make explore→plan→code and review steps safer
 - Diagnostic: check for tool restrictions, model specification, description quality
+- Cost note (opt-in): agents without a model: field default to the session model
 
 ### Open Questions
 - Will agent-to-agent communication become first-class? (Currently via files/git)
@@ -477,11 +491,11 @@ After each discovery run, the coach updates a digest the user can optionally rea
 
 ```markdown
 <!-- .claude/coaching/discovery-digest.md -->
-<!-- AUTO-GENERATED — Last discovery run: 2026-02-20 -->
+<!-- AUTO-GENERATED — Last discovery run: 2026-06-18 -->
 
 # What's New in Claude Code
 
-## Since Your Last Session (Feb 18)
+## Since Your Last Session (Jun 16)
 
 ### 🟢 New Capabilities
 - **Nested skill discovery**: Skills in subdirectories now auto-discovered
@@ -490,22 +504,29 @@ After each discovery run, the coach updates a digest the user can optionally rea
 - **Context window percentage in status line**: New fields for easier monitoring
   → Helps with Level 3 context engineering. Use in custom status hooks.
 
-### 💰 Cost-Relevant Changes
-- **Sonnet 4.6 launched**: Same price as Sonnet 4.5, improved agentic performance
-  → Consider updating your default model.
+- **New coaching commands `/coach:recap` and `/coach:compare`**: Recap recent sessions; compare two runs
+  → Use `/coach:recap` to review what you have applied across sessions.
+
+### ✅ Correctness & Verification
+- **Plan mode preserved after compaction**: Previously, compaction could switch out of plan mode
+  → Keeps the explore→plan→code flow intact so the plan you approved is the plan that runs.
 
 ### 🔧 Fixes That Affect Your Setup
-- **Plan mode preserved after compaction**: Previously, compaction could switch out of plan mode
-  → If you use opusplan, this was silently costing you Opus rates during execution.
+- **Adaptive thinking + `effort`**: `effort` (low/medium/high/xhigh/max) replaced `budget_tokens`
+  → Update any agent/config that still sets `budget_tokens`.
 
-### 📚 Curriculum Updates Needed
+### 📚 Curriculum / Knowledge Updates Needed
 - Level 4: Add nested skills directory pattern
-- Cost guide: Update model list with Sonnet 4.6
+- Knowledge base: Add knowledge/features/plugins.md
+- Models: Refresh to June-2026 lineup (default claude-opus-4-8)
 - Diagnostic: Add context_window percentage check to scan
 
 ### ⏭️ Coming Soon (Signals from Community)
 - Plugins ecosystem expanding (enabledPlugins setting)
 - /debug command for session troubleshooting
+
+### 💰 Cost (opt-in via /coach:cost)
+- Model-cost changes are tracked but shown only when you opt in. Run `/coach:cost` to see them.
 ```
 
 ---
@@ -536,10 +557,10 @@ if (discovery.curriculum_impact.affected_levels.includes(user.current_level)) {
    Want me to show you how to structure skills for your monorepo?"
 }
 
-if (discovery.cost_impact && user.tracks_costs) {
-  // Cost-relevant: always mention
-  "Heads up: Sonnet 4.6 launched with the same pricing but better
-   agentic performance. Worth switching your default."
+// Cost is OFF by default — only surface cost notes when the user opted in via /coach:cost
+if (discovery.cost_impact && user.cost_coaching_enabled) {
+  "Heads up: a newer model is available at comparable pricing with better
+   agentic performance. Worth a look when you next pick a model."
 }
 
 if (discovery.curriculum_impact.action === "deprecation") {
@@ -584,20 +605,25 @@ The coach agent responds to these commands:
 
 ```markdown
 ## Coaching Commands
-/coach assess          — Run environment scan, show current level
-/coach next            — Next lesson based on level and gaps
-/coach exercise        — Hands-on exercise for current topic
-/coach retrospective   — Analyze coaching effectiveness, update strategies
+/coach:assess          — Run environment scan, show current level
+/coach:next            — Next lesson based on level and gaps
+/coach:exercise        — Hands-on exercise for current topic
+/coach:recap           — Recap recent sessions and what was applied
+/coach:compare         — Compare two coaching runs / setups
+/coach:retrospective   — Analyze coaching effectiveness, update strategies
 
 ## Discovery Commands
-/coach discover        — Run discovery protocol (depth based on staleness)
-/coach what's new      — Show discovery digest
-/coach update-kb       — Integrate pending discoveries into knowledge base
+/coach:discover        — Run discovery protocol (depth based on staleness)
+/coach:whats-new       — Show discovery digest
+/coach:update-kb       — Integrate pending discoveries into knowledge base
+
+## Opt-In Commands
+/coach:cost            — Show cost/token coaching (OFF by default)
 
 ## Meta Commands
-/coach status          — Show current level, pending discoveries, staleness
-/coach reset           — Reset coaching history (keep knowledge base)
-/coach export          — Export coaching data for backup
+/coach:status          — Show current level, pending discoveries, staleness
+/coach:reset           — Reset coaching history (keep knowledge base)
+/coach:export          — Export coaching data for backup
 ```
 
 ### 4.2 Session Startup Flow
@@ -663,7 +689,7 @@ The coach itself must practice context engineering:
 
 1. Knowledge base: Load ONLY the knowledge files relevant to current coaching topic
    - Coaching Level 3? Load knowledge/features/context.md
-   - NOT all 12 knowledge files
+   - NOT every knowledge file at once
 
 2. History: Load only last 5-10 outcomes.jsonl entries
    - Full history is for retrospective analysis only
