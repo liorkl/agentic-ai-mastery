@@ -1,9 +1,7 @@
-<!--
-topic: Hooks System
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L6
--->
+<!-- file: knowledge/features/hooks.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L6 -->
 
 # Hooks System
 
@@ -140,22 +138,18 @@ Consider running formatters only on `Stop`, not every `PostToolUse`.
 - [ ] Do you understand the exit code 2 feedback pattern?
 - [ ] Have you tested your hooks independently?
 
-## Cost Implications
+## Why It Matters
 
-**Hooks run OUTSIDE the agentic loop** — zero token cost for the hook itself.
+**Hooks are deterministic — that's the whole point.** They enforce rules with plain code, no LLM judgment, so a security or quality gate fires every single time instead of "usually."
 
-**Hooks as cost protection**:
-- PreToolUse can block expensive operations before they happen
-- Quality gates prevent expensive rework cycles
-- Cost monitoring hooks can alert at thresholds
+**Reliability you can't get from prompting**:
+- A PreToolUse block on secrets cannot be talked around or forgotten
+- Quality gates (lint, test) catch errors before they compound into rework
+- Exit code 2 feeds the failure back to Claude, turning a hook into an automatic correction loop
 
-**The ROI calculation**:
-- A $0 lint hook that catches errors saves the $0.50 round-trip of Claude fixing them
-- Test hooks that fail early prevent hours of debugging later
+**Keep outputs minimal and actionable** — verbose hook output crowds the context and buries the one line Claude actually needs to act on.
 
-**Context pollution warning**:
-- Hooks that produce verbose output still add to context
-- Keep hook outputs minimal and actionable
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

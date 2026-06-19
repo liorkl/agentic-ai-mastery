@@ -1,23 +1,36 @@
 # Agentic AI Mastery — Claude Code Coaching Plugin
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](.claude-plugin/plugin.json)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange.svg)](https://claude.ai/code)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-A Claude Code plugin that teaches developers to master agentic AI development progressively — from first install to system-level design. The coach lives inside your Claude Code workflow, assesses your skill level by scanning your environment, delivers targeted coaching through real work, and tracks your progress over time.
+A Claude Code plugin that coaches a developer (or a whole team) toward two outcomes: **getting the best possible work out of Claude**, and **building repos where Claude does its best work** — so anyone gets great results without hand-holding. The coach lives inside your Claude Code workflow, assesses your environment, and teaches through your real project files.
 
 **Works in both Claude Code and Cowork.**
 
+## What "mastery" means here
+
+It's not collecting features. It's internalizing the handful of cross-cutting practices that actually move output quality — coached at every level, **verification first**:
+
+1. **Verify** — give Claude a check it can run (tests, build, lint, a screenshot). The single biggest lever.
+2. **Explore → plan → code** — separate planning from execution so Claude solves the right problem.
+3. **Ground the prompt** — point at specific files, example patterns, and the symptom.
+4. **Course-correct early** — redirect the moment Claude drifts; `/clear` and re-prompt rather than fight a polluted context.
+5. **Manage context** — short CLAUDE.md, `/clear` between tasks, subagents for investigation.
+
+The L0–L10 levels below are a feature-progression scaffold layered on top — **not** a score. A repo can be "L9" and still get mediocre output if it skips the practices above.
+
 ## What It Does
 
-- Scans your Claude Code environment to detect your current skill level (L0–L10)
-- Identifies gaps in your setup and flags anti-patterns
-- Delivers level-appropriate lessons grounded in your actual project files
+- Assesses whether you're getting the best out of Claude and whether your repo is set up for it (verification readiness first), then reports your feature level (L0–L10)
+- Flags anti-patterns, led by "Claude can't verify its own work here"
+- Delivers lessons grounded in your actual project files — practice gaps before feature gaps
 - Provides hands-on exercises with clear success criteria
 - Tracks progress across sessions
 - Discovers new Claude Code features and updates weekly
-- Includes cost awareness in every coaching interaction
+
+Cost/token coaching is **off by default** — run `/coach:cost` if and when you want it.
 
 ## Installation
 
@@ -25,7 +38,7 @@ A Claude Code plugin that teaches developers to master agentic AI development pr
 
 ```bash
 # Add the marketplace
-claude plugin marketplace add liorklibansky/agentic-ai-mastery
+claude plugin marketplace add liorkl/agentic-ai-mastery
 
 # Install the coach plugin
 claude plugin install coach@agentic-ai-mastery
@@ -34,7 +47,7 @@ claude plugin install coach@agentic-ai-mastery
 ### Local Development
 
 ```bash
-git clone https://github.com/liorklibansky/agentic-ai-mastery
+git clone https://github.com/liorkl/agentic-ai-mastery
 ```
 
 Load the plugin for a session without installing — changes are picked up on each launch:
@@ -77,7 +90,7 @@ You should see a list of available coaching commands.
 | `/coach:exercise` | Get a hands-on exercise for your current skill level |
 | `/coach:whats-new` | Show recent Claude Code changes that affect your learning |
 | `/coach:discover` | Check for new Claude Code features and updates |
-| `/coach:cost` | Get cost optimization coaching for your current level |
+| `/coach:cost` | Opt-in cost/token coaching for your current level (off by default) |
 | `/coach:help` | List all commands and current coaching state |
 
 ## Getting Started
@@ -110,7 +123,7 @@ The coaching skill also activates automatically when you ask learning-related qu
 The plugin includes a coaching skill that activates automatically when you ask learning questions like:
 - "How do I use agents?"
 - "What's the best way to structure CLAUDE.md?"
-- "Is this costing too much?"
+- "When should I use a skill vs a subagent?"
 
 No command needed — just ask naturally.
 

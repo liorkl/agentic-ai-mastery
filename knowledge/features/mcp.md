@@ -1,9 +1,7 @@
-<!--
-topic: MCP Integration
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L7
--->
+<!-- file: knowledge/features/mcp.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L7 -->
 
 # MCP Integration
 
@@ -113,29 +111,20 @@ MCP servers have access to:
 - [ ] Have you enabled Tool Search if you have 5+ servers?
 - [ ] Can you evaluate whether a new server adds real value?
 
-## Cost Implications
+## Why It Matters
 
-**Each MCP server injects tool definitions into your system prompt**:
-- Typically 200-1,000 tokens per server
-- 10 servers × 500 tokens = 5,000 tokens every message
-- That's potentially 10-20% of your context budget
+**Each MCP server injects its tool definitions into the system prompt.** More tools is not better — a crowded toolset makes Claude's selection less reliable, because near-duplicate or rarely-used tools muddy which one fits the task.
 
-**Tool Search is the solution**:
-- Dynamically loads only relevant tools
-- Dramatically reduces context overhead
-- Enable it if you have many servers
+**Fewer, well-chosen servers mean sharper tool use**:
+- Clear, non-overlapping tool names and good descriptions drive correct auto-selection
+- Tool Search dynamically surfaces only the relevant tools when your set grows large, keeping the active choices focused
+- Curate to the servers you actually use — most developers who install 10+ rely on only 3-4 daily
 
-**Community wisdom**:
 > "Went overboard with 15 MCP servers — ended up using only 4 daily."
 
-Most developers who install 10+ servers use only 3-4 regularly. The rest are pure context waste.
+**Check what's loaded** with `/context` and prune servers that add tools without adding value.
 
-**Check your context**:
-```bash
-/context
-```
-
-If MCP tool definitions are more than 5%, you have servers consuming tokens without providing value.
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

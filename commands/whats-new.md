@@ -133,14 +133,6 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
-### Token Estimate
-
-End every response with this footer:
-
----
-**Estimated tokens this interaction:** ~1.8k input / ~0.5k output
-*Input includes: web search results (~1.5k tokens), this command (~300 tokens)*
-
 ## Discovery Entry Format
 
 Each entry in discoveries.jsonl:
@@ -201,9 +193,9 @@ New status line shows context usage percentage.
 
 ### 💰 Cost-Relevant Changes
 
-**Sonnet 4.6 launched** — Feb 17
-Same pricing as Sonnet 4.5, improved agentic performance.
-→ Impact: Consider switching default model
+**Opus 4.8 price drop** — example entry
+Opus 4.8 now $5/$25 per Mtok — much closer to Sonnet than older Opus tiers.
+→ Impact: Escalate to Opus for hard tasks without the old cost penalty
 
 ---
 

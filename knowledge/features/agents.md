@@ -1,9 +1,7 @@
-<!--
-topic: Custom Agents
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L5
--->
+<!-- file: knowledge/features/agents.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L5 -->
 
 # Custom Agents
 
@@ -165,20 +163,22 @@ You are a read-only reviewer. Never modify files.
 - [ ] Can you explain when auto-delegation will trigger?
 - [ ] Have you used the Builder-Validator pattern?
 
-## Cost Implications
+## Why It Matters
 
-**Every agent gets its own context window** — including system prompt, CLAUDE.md, tool definitions.
+**Each agent gets its own clean context window** — a focused system prompt and only the tools it needs keep its reasoning on-task and uncluttered by the parent conversation.
 
-**Agent spin-up has fixed initialization cost**:
-- An agent that runs for one message and exits wasted most tokens on setup
-- Design agents for sustained work, not one-shot questions
+**Right-sized scope improves results**:
+- One agent, one job means tighter prompts and more predictable behavior
+- Design agents for sustained work, not one-shot questions, so the setup pays off in quality
 
-**Model selection matters**:
-- Agents without `model:` field default to session model
-- Haiku agents cost 1/3 of Sonnet agents per token
+**Model selection shapes capability**:
+- Agents without a `model:` field inherit the session model
+- Use `claude-haiku-4-5` for fast, mechanical work and `claude-sonnet-4-6`/`claude-opus-4-8` where deeper reasoning matters
 
-**Tool restrictions prevent expensive operations**:
-- Read-only agents can't accidentally trigger costly write/execute operations
+**Tool restrictions enforce correctness**:
+- A read-only reviewer literally cannot modify files, making the Builder-Validator split trustworthy
+
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

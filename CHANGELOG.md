@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed — re-centered on outcomes (get the best out of Claude)
+
+- Reframed the coaching spine from "which features do you have (L0–L10)" to "are you getting the best out of Claude, and is your repo built for it?" The L0–L10 ladder is now explicitly a feature scaffold, not a score
+- Made the high-leverage **cross-cutting practices the spine**, coached and assessed at every level, **verification first**: give Claude a check it can run, explore→plan→code, ground the prompt, course-correct early, manage context
+- `/coach:assess` now leads with a "getting the best out of Claude here?" verdict (verification readiness) above the level number; anti-patterns are led by "no test/build/lint command Claude can run" (now critical) and "no verification gate"; assessment state records `verification_ready` / `verification_gate` / `practice_gaps`
+- `/coach:next` orders lessons by leverage, not level — a missing practice (especially verification) outranks the next feature
+- CLAUDE.md scoring keeps verification commands weighted highest and now rewards pointing at an example pattern to follow; rewrote `productivity-tips.md` into a verification-first practices guide
+- README now explains what "mastery" means here (the five practices) so teams don't mistake the level number for skill
+
+### Fixed
+
+- README install instructions pointed at a non-existent owner (`liorklibansky`) — corrected the marketplace-add and clone commands to `liorkl`, so installation actually works
+- Version badge in README (`1.0.0`) now matches `plugin.json` (`1.0.1`)
+- Malformed `never_reads` array in `marketplace.json` (one comma-joined string → a proper list)
+- `agents/coach.md` tool frontmatter used scoped `Bash(...)` entries that don't grant the tool at the agent level — replaced with plain tool names (permission scoping stays in `.claude/settings.json`)
+
+### Changed
+
+- **Cost/token coaching is now off by default.** It is no longer woven into every lesson, assessment, or auto-triggered response — it lives only in the opt-in `/coach:cost` command. Removed the per-command "Estimated tokens" footers (kept on `/coach:cost`) and reframed every knowledge-file "Cost Implications" section to "Why It Matters" (capability/correctness first)
+- Refreshed all model/pricing facts to June 2026: Fable 5, Opus 4.8 ($5/$25), Sonnet 4.6, Haiku 4.5. Removed the obsolete "Opus is 5x, default to Sonnet to save 60-80%" framing
+- Replaced dead `budget_tokens` / "extended thinking" guidance with adaptive thinking + the `effort` parameter; removed `opusplan` in favor of the explore→plan→code workflow
+- Corrected the `@import` CLAUDE.md syntax to the actual `@path/to/file` form, and aligned CLAUDE.md guidance with current best practice (keep it short; push domain knowledge to skills)
+- Updated knowledge-file metadata headers to the current format and date
+
 ## [1.0.1] - 2026-02-26
 
 ### Added

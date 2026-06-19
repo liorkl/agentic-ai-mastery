@@ -1,15 +1,13 @@
-<!--
-topic: Output Styles
-last_updated: February 2026
-source_docs: curriculum-v1.1.md
-curriculum_level: L1
--->
+<!-- file: knowledge/features/output-styles.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L1 -->
 
 # Output Styles
 
 ## Current State
 
-Claude Code offers configurable output styles that change how Claude communicates during coding sessions. As of February 2026:
+Claude Code offers configurable output styles that change how Claude communicates during coding sessions:
 
 | Style | Behavior | Best For |
 |-------|----------|----------|
@@ -84,23 +82,18 @@ Output style preferences can be saved per project:
 - [ ] Have you used Learning mode for deliberate skill practice?
 - [ ] Can you create a custom output style for your project?
 
-## Cost Implications
+## Why It Matters
 
-**Explanatory and Learning modes generate more output tokens** — the expensive kind.
+The right output style matches Claude's communication to what you're trying to get out of the session:
 
-- Default: Minimal output, lowest cost
-- Explanatory: ~20-40% more output tokens
-- Learning: ~30-50% more output tokens
+- **Default**: fastest path to a finished change when you already know what you want
+- **Explanatory**: surfaces the "why" behind each choice — ideal when onboarding to an unfamiliar codebase or teaching teammates
+- **Learning**: leaves `TODO(human)` markers and asks reflective questions, so you build the skill rather than just receive the answer
+- **Custom**: encodes a project's tone and conventions so every session speaks the same language
 
-**When it's worth the extra cost:**
-- Onboarding to a new codebase (Explanatory)
-- Deliberate skill-building sessions (Learning)
-- Teaching team members (Explanatory)
+Picking the wrong style isn't a cost problem so much as a fit problem: Default during exploration hides reasoning you need, while Learning during high-volume production work slows you down.
 
-**When to switch to Default:**
-- Production coding where you know what you want
-- High-volume tasks
-- Budget-constrained sessions
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

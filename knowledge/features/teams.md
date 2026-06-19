@@ -1,9 +1,7 @@
-<!--
-topic: Agent Teams
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L9
--->
+<!-- file: knowledge/features/teams.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L9 -->
 
 # Agent Teams
 
@@ -130,36 +128,23 @@ All agents should read:
 - [ ] Have you set up module boundaries to prevent conflicts?
 - [ ] Can you evaluate when teams are cost-justified?
 
-## Cost Implications
+## Why It Matters
 
-**Agent teams multiply costs**:
-```
-N agents × (system prompt + CLAUDE.md + tool defs + task context)
-```
+**Teams pay off only when the work is genuinely parallel.** Each teammate has an independent context window with no shared memory, so coordination has real overhead — the win comes from running isolated work streams at once, not from adding agents to a task that's fundamentally serial.
 
-**Each teammate has independent context window**:
-- No shared memory
-- Some duplication unavoidable
-- Teammates load project context but NOT lead's conversation history
+**Where teams produce better outcomes**:
+- PR review of many files → parallel reviewers finish in the time of one
+- Multi-module refactor → agents work isolated modules without stepping on each other
+- Code + tests + docs → specialists run in parallel, each with focused context
 
-**Broadcast messages scale with team size**:
-- Broadcast to 5 agents = 5× cost of single message
-- Use direct messages when possible
-
-**Fast Mode** (Opus 4.6): 2.5x speed for interactive team work, but 6x standard rates.
-
-**The ROI calculation**:
-> Before spinning up a team, calculate: Does the time savings justify 3-5x the token cost? Often, a well-prompted solo agent with `/clear` between sub-tasks is cheaper AND faster.
-
-**Cost-justified scenarios**:
-- PR review of 10 files → 10 parallel reviewers finish in time of 1
-- Multi-module refactor → parallel work on isolated modules
-- Code + tests + docs → three specialists in parallel
-
-**NOT cost-justified**:
+**Where a solo agent wins**:
 - Simple feature implementation
-- Tasks requiring heavy back-and-forth coordination
-- Debugging (usually needs focused, serial investigation)
+- Tasks needing heavy back-and-forth coordination (messages add latency and context churn)
+- Debugging, which usually needs focused, serial investigation
+
+Define module boundaries in CLAUDE.md so two agents never edit the same file, and prefer direct messages over broadcasts to keep coordination tight.
+
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

@@ -1,9 +1,7 @@
-<!--
-topic: Headless Mode & Harness Pattern
-last_updated: February 2026
-source_docs: curriculum-v1.1.md, cost-guide-v1.0.md
-curriculum_level: L8
--->
+<!-- file: knowledge/features/headless.md -->
+<!-- last-updated: 2026-06-19 -->
+<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- curriculum_level: L8 -->
 
 # Headless Mode & Harness Pattern
 
@@ -144,26 +142,24 @@ Renamed from Claude Code SDK (September 2025). Powers Claude Code but also non-c
 - [ ] Do you set `max_turns` and `timeout_minutes` in automated runs?
 - [ ] Have you used a progress file for session continuity?
 
-## Cost Implications
+## Why It Matters
 
-**Headless mode enables batching**: 50% cheaper via Batch API.
+**The harness pattern is what makes long projects actually finish.** It survives context limits by handing off clean, structured state between sessions instead of trying to cram everything into one window.
 
-**The harness pattern is inherently cost-efficient**:
-- Each session starts with clean context
-- Progress file provides minimal but sufficient continuity (few hundred tokens vs. entire conversation)
-- Git commits as session boundaries align with commit-and-clear
+**Why it produces better results**:
+- Each session starts with a clean context, so reasoning stays focused on the current feature
+- The progress file carries just-enough continuity — the key decisions and next steps, not the noise of a full transcript
+- Git commits as session boundaries keep the codebase merge-ready at every handoff
 
-**Critical guardrails for automation**:
+**Guardrails make automation safe and predictable**:
 ```bash
-# Always set limits
+# Always set limits so an automated run can't loop indefinitely
 claude -p "..." --max-turns 20 --timeout-minutes 30
 ```
 
-**Without limits, runaway agents at Opus rates can burn $50+ before anyone notices.**
+Without `--max-turns`/`--timeout-minutes`, an unattended agent can loop on a stuck task with no one watching.
 
-**Progress file ROI**:
-- Without: Each session re-reads and re-discovers everything
-- With: ~500 tokens of context provides session continuity
+(For the token/cost angle, use the opt-in `/coach:cost` command.)
 
 ## Official Resources
 

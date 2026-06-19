@@ -31,23 +31,25 @@ If assessments.jsonl doesn't exist or is empty:
 
 ### 3. Determine Lesson Topic
 
-**Priority order:**
+**Priority order** (order by leverage, not by level):
 
-1. **HIGH-priority gaps** (features missing below detected level)
-   - These are foundations the user skipped
-   - Example: Level 5 user missing proper CLAUDE.md (Level 2 skill)
+1. **Missing cross-cutting practice — verification first**
+   - If `verification_ready` is false (no test/build/lint command Claude can run): teach this FIRST, regardless of level. It's the #1 lever for output quality.
+   - Then the other practices when weak: plan-first (explore→plan→code), grounding prompts in specific files/patterns/symptoms, course-correcting early, context hygiene.
+   - These outrank features — a Level 7 repo with no verification gets a verification lesson, not an MCP lesson.
 
 2. **Anti-patterns** (if severity HIGH or CRITICAL)
    - Address these before teaching new material
-   - Security and cost issues take precedence
+   - Security and verification issues take precedence
 
-3. **Current level mastery** (if no gaps)
-   - Teach next skill at their current level
-   - Use mastery checks from curriculum
+3. **HIGH-priority feature gaps** (features missing below detected level)
+   - Foundations the user skipped — e.g. a Level 5 user missing a quality CLAUDE.md (Level 2)
 
-4. **Next level preview** (if current level mastered)
-   - Brief introduction to what's ahead
-   - Don't deep-dive above level
+4. **Current level mastery** (if no practice gaps, anti-patterns, or feature gaps)
+   - Teach the next skill at their current level, using the curriculum mastery checks
+
+5. **Next level preview** (if current level mastered)
+   - Brief introduction to what's ahead — don't deep-dive above level
 
 ### 4. Load Relevant Knowledge File
 
@@ -55,6 +57,7 @@ Based on topic, read ONE file from knowledge/:
 
 | Level | Topic | File |
 |-------|-------|------|
+| any | Cross-cutting practices: verification, plan-first, grounding prompts, course-correction, context hygiene | knowledge/features/productivity-tips.md |
 | 0 | CLI orientation, first session | knowledge/features/cli-orientation.md |
 | 0-1 | Model selection | knowledge/features/models.md |
 | 1 | Output styles | knowledge/features/output-styles.md |
@@ -67,7 +70,7 @@ Based on topic, read ONE file from knowledge/:
 | 8 | Headless | knowledge/features/headless.md |
 | 9 | Teams | knowledge/features/teams.md |
 
-Also load `knowledge/pricing/pricing-current.md` if the topic has significant cost implications.
+Do NOT load `knowledge/pricing/pricing-current.md` here — cost/token coaching is off by default and lives in the opt-in `/coach:cost` command.
 
 ### 5. Deliver Lesson
 
@@ -86,10 +89,6 @@ Also load `knowledge/pricing/pricing-current.md` if the topic has significant co
 
 [Specific reference to their files/config]
 [What they should check or create]
-
-### Cost Awareness
-
-[Cost implication of this feature]
 
 ### Do This Now
 
@@ -125,14 +124,6 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 }
 ```
 
-### Token Estimate
-
-End every response with this footer:
-
----
-**Estimated tokens this interaction:** ~1.2k input / ~0.5k output
-*Input includes: 1 knowledge file (~800 tokens), state files (~400 tokens)*
-
 ## Example Output
 
 For a Level 3 user with gap "CLAUDE.md missing test command":
@@ -157,10 +148,6 @@ npm test -- --watch         # Watch mode
 npm run test:coverage       # Coverage report
 ```
 
-### Cost Awareness
-
-Skipping tests doesn't save tokens — it costs MORE. Claude will make changes, you'll find bugs later, and Claude will spend 2-3x more tokens fixing them. Test commands enable fail-fast.
-
 ### Do This Now
 
 ```markdown
@@ -175,7 +162,7 @@ Add this to your `CLAUDE.md` so Claude runs the right test command instead of gu
 
 ### Why It Matters
 
-Without explicit test commands, Claude spends tokens probing your project structure on every test run. With this snippet, it executes directly — saving ~200 tokens per test interaction and cutting hallucinated commands entirely.
+Verification is the single biggest quality lever in Claude Code: give Claude a check it can run (tests, build, lint) and it closes its own loop instead of waiting for you to catch mistakes. Without an explicit test command Claude guesses how to run your suite; with this snippet it runs the real one and iterates until it passes.
 
 ### Resources
 
@@ -188,4 +175,4 @@ Without explicit test commands, Claude spends tokens probing your project struct
 - Generic advice not grounded in their project
 - Lessons over 400 words
 - Repeating topics covered in last 3 outcomes
-- Skipping cost implications
+- Volunteering cost/token advice (it's opt-in via `/coach:cost`)
