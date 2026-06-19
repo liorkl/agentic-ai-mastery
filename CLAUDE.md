@@ -117,7 +117,7 @@ python3 -m json.tool .claude-plugin/marketplace.json
 - JSON/JSONL: One JSON object per line in JSONL files, pretty-print plugin.json
 - File naming: kebab-case for all files
 - Command files: YAML frontmatter with `description` field, then markdown instructions
-- Knowledge files: metadata header → Current State → Key Concepts → Mastery Checks → Cost Implications → Official Resources
+- Knowledge files: metadata header → Current State → Key Concepts → Mastery Checks → Why It Matters → Official Resources
 
 ## Git Workflow
 

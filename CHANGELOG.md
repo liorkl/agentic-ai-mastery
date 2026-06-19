@@ -38,6 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected the `@import` CLAUDE.md syntax to the actual `@path/to/file` form, and aligned CLAUDE.md guidance with current best practice (keep it short; push domain knowledge to skills)
 - Updated knowledge-file metadata headers to the current format and date
 
+### Docs
+
+- Synced the `docs/` design/dev-reference set to the shipped runtime so contributors aren't misled by stale specs (these files are not loaded at runtime). Each doc now carries a `Sync status (2026-06-19)` note. Reconciled: `curriculum-v1.1.md` (levels reframed as a feature scaffold, five-practices spine, verification first), `cost-guide-v1.0.md` (reframed as the opt-in `/coach:cost` reference data — cost off by default), `diagnostic-v1.1.md` (output leads with the readiness verdict; schema gains `verification_ready` / `verification_gate` / `practice_gaps`; anti-patterns led by missing verification), `requirements.md` (cost-at-every-level + token-footer mandates reverted; `/coach:recap`, `/coach:compare`, `plugins.md` added; `plugin.json` permissions/agent-`tools:` gotchas), and `self-learning-discovery-v1.0.md` (current models/effort facts, cost demoted in discovery classification)
+- Marked `docs/parallel-impl-phase-2.md` **superseded** (token footers and the `plugin.json` permissions block it proposed were reverted) and flagged `docs/claude-code-kickoff-instructions.md` as a **historical** build log
+- Refreshed all `docs/` model/pricing/effort/syntax facts to June 2026 (`budget_tokens` → adaptive thinking + `effort`; `opusplan` → explore→plan→code; `@import` → `@path`); aligned the knowledge-file structure note in `CLAUDE.md` (`Cost Implications` → `Why It Matters`)
+
 ## [1.0.1] - 2026-02-26
 
 ### Added
