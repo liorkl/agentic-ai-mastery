@@ -87,6 +87,8 @@ You should see a list of available coaching commands.
 | `/coach:assess` | Scan your environment and report skill level, gaps, and anti-patterns |
 | `/coach:next` | Get your next lesson based on current level and gaps |
 | `/coach:status` | Show current level, last assessment date, and discovery staleness |
+| `/coach:recap` | Progress recap — what you've practiced and how your repo got more Claude-ready |
+| `/coach:compare` | Before/after diff of your environment — concrete proof of improvement |
 | `/coach:exercise` | Get a hands-on exercise for your current skill level |
 | `/coach:whats-new` | Show recent Claude Code changes that affect your learning |
 | `/coach:discover` | Check for new Claude Code features and updates |

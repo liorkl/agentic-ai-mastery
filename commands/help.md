@@ -15,6 +15,8 @@ Display the following command reference to the user:
 | `/coach:execute` | Fix the gaps in an existing project step by step, with the why explained inline |
 | `/coach:exercise` | Get a hands-on exercise for your current skill level |
 | `/coach:status` | Show current coaching level, last assessment date, and discovery staleness |
+| `/coach:recap` | Progress recap — what you've practiced and how your repo got more Claude-ready over time |
+| `/coach:compare` | Before/after diff of your environment showing concrete improvement |
 | `/coach:whats-new` | Show recent Claude Code changes that affect your learning |
 | `/coach:discover` | Check for new Claude Code features and updates |
 | `/coach:cost` | Get cost optimization coaching for your current level |
@@ -42,4 +44,4 @@ If this is your first time, start with `/coach:assess` to scan your environment 
 
 The coach scans your Claude Code configuration (CLAUDE.md, .claude/ directory, settings, and more) to detect your current skill level on an 11-level scale (L0–L10). It then delivers targeted coaching, identifies gaps in your setup, flags anti-patterns, and tracks your progress over time.
 
-The coaching skill also activates automatically when you ask learning-related questions — no command needed.
+**Note:** alongside these commands, the plugin ships a passive **coaching skill**. You may see "coaching" listed among your skills in the CLI — that's not a command you run, it auto-triggers when you ask a learning-related question (e.g. "what's the best way to structure CLAUDE.md?"). No `/coach:` prefix needed for those.

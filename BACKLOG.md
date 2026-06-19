@@ -8,8 +8,6 @@
 - [ ] UX: improve SKILL.md Rule 4 to support proactive mid-task warnings (e.g., "before you add that 5th MCP server...")
 - [ ] UX: refactor /coach:next to lead with actionable fix (actual code/config), explanation second
 - [ ] UX: /coach:next and skill responses should generate the actual config/code fix, not just describe it
-- [ ] New command: /coach:recap — weekly progress summary from assessment and outcome history
-- [ ] New command: /coach:compare — before/after environment diff showing concrete improvement
 - [ ] Adoption: make /coach:assess output shareable as a standalone markdown summary
 - [ ] Legal: add credits for knowledge sources used + add credits going forward when using new sources
 - [ ] Plan how to make this plugin usage efficient
@@ -19,14 +17,18 @@
 - [ ] Import best practices
 - [ ] Marketing: plan README page and webpage that demonstrate value and drive installs/adoption
 - [ ] Architecture: consider omitting per-user discovery and instead bundling latest Claude Code feature updates with plugin version upgrades — reduces user spend and avoids redundant scans
-- [ ] Knowledge: create `knowledge/features/plugins.md` covering plugin anatomy, validation, marketplace submission flow, and permissions model
-- [ ] UX: add cooldown check to /coach:assess — if last assessment is <X hours old, prompt user before re-running to avoid duplicate scans and wasted tokens
-- [ ] UX: explain the /coaching skill in /coach:help output — users see it in the CLI but have no context that it's a passive auto-trigger, not a command
+- [ ] UX: add cooldown check to /coach:assess — if last assessment is recent, prompt before re-running to avoid duplicate scans
 
 ## In Progress
 
 ## Done
 
+- [x] New command: /coach:recap — progress recap from assessment + outcome history (led by repo-readiness, not level)
+- [x] New command: /coach:compare — before/after assessment diff showing concrete improvement
+- [x] Knowledge: create `knowledge/features/plugins.md` — anatomy, validation, marketplace/install flow, permissions model (incl. the plugin.json permissions caveat)
+- [x] UX: explain the passive /coaching skill in /coach:help output
+- [x] Re-center coaching on outcomes (verification-first) instead of feature collection; cost/token coaching off by default
+- [x] Refresh models/pricing/best-practices to June 2026; fix broken install (owner), manifest, agent tool frontmatter
 - [x] Trust: add scan receipt at end of /coach:assess output (PR #12)
-- [x] Cost: add token usage estimate footer to every /coach:* command output (PR #13)
+- [x] ~~Cost: add token usage estimate footer to every /coach:* command output (PR #13)~~ — REVERTED: footers removed when cost/token coaching was made off-by-default (kept only on /coach:cost)
 - [x] UX: refactor /coach:next to lead with actionable fix — actual code/config, explanation second (PR #14)

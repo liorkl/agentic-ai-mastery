@@ -154,6 +154,7 @@ Load ONLY relevant knowledge files:
 | MCP servers | knowledge/features/mcp.md |
 | Headless, automation | knowledge/features/headless.md |
 | Agent teams | knowledge/features/teams.md |
+| Plugins, packaging, marketplace, distribution | knowledge/features/plugins.md |
 | Pricing, costs | knowledge/pricing/pricing-current.md |
 | Cowork | knowledge/ecosystem/cowork.md |
 | API usage | knowledge/ecosystem/api.md |
