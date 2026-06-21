@@ -55,7 +55,7 @@ After displaying results, append to `~/.claude/coaching/state/outcomes.jsonl`:
 ```
 ---
 **What to do now:**
-Run `/coach:execute` to fix your gaps step by step — each fix includes the why and exact code.
+Run `/coach:execute` to work your plan step by step — practices (verification first) then gaps, each with the why and exact code.
 *Or run `/coach:next` if you'd rather learn the next concept first.*
 ```
 

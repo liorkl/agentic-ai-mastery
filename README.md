@@ -86,7 +86,7 @@ You should see a list of available coaching commands.
 |---------|-------------|
 | `/coach:assess` | Scan your environment and report skill level, gaps, and anti-patterns |
 | `/coach:next` | Get your next lesson based on current level and gaps |
-| `/coach:execute` | Fix your assessment gaps step by step — applies each fix and explains why it matters |
+| `/coach:execute` | Work your assessment plan step by step — practices (verification first), then gaps, with the why inline |
 | `/coach:status` | Show current level, last assessment date, and discovery staleness |
 | `/coach:recap` | Progress recap — what you've practiced and how your repo got more Claude-ready |
 | `/coach:compare` | Before/after diff of your environment — concrete proof of improvement |
