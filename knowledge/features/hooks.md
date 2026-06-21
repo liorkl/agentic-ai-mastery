@@ -1,7 +1,7 @@
 <!-- file: knowledge/features/hooks.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
-<!-- curriculum_level: L5 -->
+<!-- curriculum_level: L6 -->
 
 # Hooks System
 

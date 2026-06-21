@@ -33,6 +33,7 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 - **A new L8 — "Parallel Work: Worktrees & Dual-Instance"** is inserted **before** Agent Teams: git worktrees and the two-session (write/review) pattern are the simpler parallelism rung you reach for before a full team.
 - **Permission modes (default/acceptEdits/plan/auto/dontAsk/bypassPermissions) + the `auto` safety classifier, and checkpoints/rewind** are folded into **L0** as the autonomy ↔ oversight dial and safe-exploration tools.
 - **Agent Teams stays L9; Mastery stays L10** (reframed as distribution + operating at scale).
+- **MCP was subsequently moved to L3 (external context & reach), with Skills/Subagents/Hooks shifting to L4/L5/L6** — because MCP is fundamentally a context mechanism and belongs adjacent to the context level (this also matches Anthropic's extension-priority ordering, which puts MCP before skills and hooks).
 
 Context engineering still **pervades Levels 2-10**; verification-first still outranks feature breadth.
 
@@ -260,13 +261,66 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 
 ---
 
-## Level 3: Skills & Slash Commands — "Reusable Workflows"
+## Level 3: MCP Integration — "Extend Claude's Context & Reach"
+**Goal:** Connect Claude Code to external sources of context — and tools that act on them — via the Model Context Protocol.
+**Mindset shift:** From "context lives in my repo and my conversation" → "context comes from my whole toolchain — git, Slack, Jira, Google Docs, logs, AWS — and Claude can act on it too"
+
+**The natural extension of Level 2.** Level 2 was about _internal_ context — the tokens you curate from your own repo and session. MCP is how you reach _external_ context: it gathers from outside sources (git history, Slack threads, Jira tickets, Google Docs, production logs, AWS) **and acts on them** (driving a browser via Playwright, inspecting a page via Chrome DevTools, opening PRs via GitHub). It sits right here, immediately after the context level, so you learn it **cost-aware** from day one.
+
+**Mind the context cost.** Every connected MCP server's tool definitions sit in the window from the first token — connecting all of them upfront is an anti-pattern (Level 2 again). Prefer **progressive disclosure** / code-execution loading: one real workflow dropped from ~150k to ~2k tokens by loading tool defs on demand instead of all at once. Tool Search (3.3) is how Claude Code does this automatically.
+
+### Topics
+
+#### 3.1 What MCP Is
+- Model Context Protocol: an **open standard** for connecting AI to external sources of context and tools
+- MCP servers expose tools that Claude can invoke — both to **pull context** (read git, Slack, Jira, Google Docs, logs, AWS) and to **act** (drive a browser, open PRs, query a DB)
+- Adding MCP servers: `claude mcp add <name> -- <command>`
+- MCP configuration locations: `.mcp.json` (project), `.claude/settings.local.json`, `~/.claude.json`
+
+#### 3.2 Essential MCP Servers
+- **Context7 / docs fetcher** — Up-to-date library docs, prevents hallucinated APIs
+- **Browser automation** (Puppeteer, Playwright) — Claude tests your UI, sees console logs (acts on the browser)
+- **Chrome DevTools** — Claude inspects DOM, network, console in your real browser
+- **Error tracking** (Sentry) — Claude diagnoses production errors
+- **Database access** (PostgreSQL, SQLite) — Claude queries and analyzes data
+- **GitHub** — Claude manages issues, PRs, repos
+- **Excalidraw** — Claude generates architecture diagrams
+
+#### 3.3 Tool Search — Dynamic Tool Loading (Late 2025)
+- When MCP tools exceed 10% of your context window, Tool Search activates
+- Dynamically loads only relevant MCP tools instead of all at once
+- Critical for users with many MCP servers configured
+- Can be disabled if you prefer upfront loading (increases context usage)
+
+#### 3.4 When MCP is Worth the Complexity
+- Don't add servers you won't use regularly
+- Community wisdom: "Went overboard with 15 MCP servers — ended up using only 4 daily."
+- Evaluating MCP server quality, reliability, and maintenance
+- Security considerations: what access are you granting? Vet and trust each server before connecting it
+
+#### 3.5 Building Custom MCP Servers
+- When to build vs. use existing
+- FastMCP (Python) vs. MCP SDK (TypeScript)
+- Designing tools Claude will actually use well (clear names, minimal overlap)
+- Testing MCP servers independently
+
+### Mastery Check
+> Can you identify which MCP servers add real value to your workflow and integrate them without reliability issues?
+
+### Official Resources
+- [MCP Protocol Specification](https://modelcontextprotocol.io)
+- [DeepLearning.AI: MCP course](https://www.deeplearning.ai/short-courses/mcp-build-rich-context-ai-apps-with-anthropic/) (free)
+- [Anthropic Academy: MCP Getting Started + Advanced](https://anthropic.skilljar.com/introduction-to-model-context-protocol) (free, 2 courses)
+
+---
+
+## Level 4: Skills & Slash Commands — "Reusable Workflows"
 **Goal:** Stop repeating yourself. Encode proven workflows using the Agent Skills open standard.
 **Mindset shift:** From "ad-hoc instructions each time" → "workflow engineering with progressive disclosure"
 
 ### Topics
 
-#### 3.1 Agent Skills — The Open Standard (Dec 2025)
+#### 4.1 Agent Skills — The Open Standard (Dec 2025)
 - `.claude/skills/` — the current best practice; lead here, commands are legacy
 - Skills as an **open standard**: portable across Claude.ai, Claude Code, Cowork, and the API
 - Anatomy of a SKILL.md: name + description in frontmatter (scanned at startup), body loaded on demand
@@ -274,28 +328,28 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 - Partner skills: Atlassian, Canva, Figma, Notion, Cloudflare, Stripe, Zapier
 - Built-in skills: PDF, DOCX, XLSX, PPTX (power Claude.ai's file creation)
 
-#### 3.2 Slash Commands (Legacy, Still Supported)
+#### 4.2 Slash Commands (Legacy, Still Supported)
 - What they are: prompt templates stored as `.claude/commands/*.md`
 - Creating project-level vs. user-level commands
 - Parameterized commands with `$ARGUMENTS`
 - Frontmatter for allowed tools and descriptions
 - Note: Skills are now recommended over commands for new work
 
-#### 3.3 Progressive Disclosure Architecture
+#### 4.3 Progressive Disclosure Architecture
 - **3-level loading**: metadata → core instructions → nested resources
 - Why this matters: context efficiency by design
 - Metadata (name + description) loaded at startup costs minimal tokens
 - Body loaded only when task matches — no wasted context on irrelevant skills
 - Skills can include executable code that Claude runs without loading into context
 
-#### 3.4 Designing Good Skills
+#### 4.4 Designing Good Skills
 - Clear trigger descriptions (so Claude knows when to use them)
 - Step-by-step procedures that produce consistent results
 - Including examples of good and bad output
 - Testing skills with the skill-creator workflow: draft → eval → iterate → improve
 - Using the `evals/` directory for structured skill testing
 
-#### 3.5 Skill Composition & Distribution
+#### 4.5 Skill Composition & Distribution
 - Skills that invoke other skills or reference supporting documents
 - Building a personal skill library (user-level `~/.claude/skills/`)
 - Community skills: [Anthropic Skills Repository](https://github.com/anthropics/skills)
@@ -313,7 +367,7 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 
 ---
 
-## Level 4: Custom Agents (Subagents) — "Context Isolation as a Tool"
+## Level 5: Custom Agents (Subagents) — "Context Isolation as a Tool"
 **Goal:** Create focused AI agents that handle specific types of work — and keep their context out of your main window.
 **Mindset shift:** From "one general assistant in one context window" → "a team of specialists I designed, each with its own isolated context"
 
@@ -321,40 +375,40 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 
 ### Topics
 
-#### 4.1 What Custom Agents Are
+#### 5.1 What Custom Agents Are
 - Markdown files with YAML frontmatter in `.claude/agents/`
 - Own context window, system prompt, tool access, permissions, model, and visual color
 - **Context isolation**: a subagent's reads and tool output stay in _its_ window; only the result returns to the parent
 - **Automatic delegation**: Claude routes tasks based on description — like tool invocation
 - Project-level vs. user-level agents (`~/.claude/agents/`)
 
-#### 4.2 Agent Design Principles
+#### 5.2 Agent Design Principles
 - One agent, one job (code reviewer ≠ code writer ≠ test writer)
 - Constraining tool access (read-only agents can't use Write, Edit, NotebookEdit)
 - Model selection per agent (Haiku 4.5 for fast, high-volume subagent work; Opus 4.8 for the orchestrating agent)
 - Writing effective descriptions so auto-delegation works reliably
 - Background color coding for visual identification in terminal
 
-#### 4.3 Built-in Subagents
+#### 5.3 Built-in Subagents
 - **Explore** — Fast, read-only codebase search and analysis (uses Sonnet by default)
 - **Plan** — Research and analysis without file changes
 - **General-purpose** — Default delegation target
 - When to use built-in vs. custom agents
 
-#### 4.4 Creating Your First Agents
+#### 5.4 Creating Your First Agents
 - Using `/agents` command → Create new agent → Generate with Claude (recommended)
 - Manual creation: YAML frontmatter + system prompt
 - The essential starter set: Reviewer (read-only), Planner, Implementer, Tester
 - Iterating on agent prompts based on real results
 
-#### 4.5 Subagent Patterns
+#### 5.5 Subagent Patterns
 - Task delegation: when Claude invokes an agent automatically
 - Explicit invocation via `/agent` command
 - Fan-out: multiple agents working on different aspects
 - Builder-Validator pattern: implementation agent + read-only validation agent
 - Context isolation: subagents don't inherit parent conversation history
 
-#### 4.6 Designing the Coach Agent (Meta-Exercise)
+#### 5.6 Designing the Coach Agent (Meta-Exercise)
 - Building the coaching agent itself as a mastery exercise
 - Persistence patterns (JSONL progress tracking)
 - Diagnostic questioning techniques
@@ -369,7 +423,7 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 
 ---
 
-## Level 5: Hooks — "Deterministic Quality Gates"
+## Level 6: Hooks — "Deterministic Quality Gates"
 **Goal:** Add automated guardrails that run outside the AI loop.
 **Mindset shift:** From "trust but verify manually" → "automated enforcement at every step"
 
@@ -377,20 +431,20 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 
 ### Topics
 
-#### 5.1 What Hooks Are
+#### 6.1 What Hooks Are
 - Scripts that run on specific lifecycle events, _outside_ the agentic loop
 - Not AI — deterministic code (shell scripts, Python) that enforces rules
 - The critical distinction: hooks are reliable because they don't involve LLM judgment
 - Hooks are typically under 100 lines, with clear comments
 
-#### 5.2 Hook Events
+#### 6.2 Hook Events
 - `PreToolUse` — before Claude uses a tool (intercept, modify, block)
 - `PostToolUse` — after Claude uses a tool (validate, log, alert)
 - `Stop` — when Claude finishes responding (enforce quality checks) — **the verification gate**
 - `TeammateIdle` — when a team member finishes (reassign, redirect) — Level 9
 - `TaskCompleted` — when a task is marked done (gate on tests, lint) — Level 9
 
-#### 5.3 Essential Hook Patterns
+#### 6.3 Essential Hook Patterns
 - **Security hooks:** Block secrets before they reach your repo
 - **Quality hooks:** Run linter/formatter after every file edit (ruff, prettier, eslint)
 - **Logging hooks:** Track what Claude does for audit/debugging
@@ -398,7 +452,7 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 - **Test hooks:** Require tests to pass before marking work complete
 - **Status line hooks:** Custom status display showing context usage, DDD progress, etc.
 
-#### 5.4 Writing Production Hooks
+#### 6.4 Writing Production Hooks
 - Keep hooks fast (they block the workflow)
 - Exit code conventions: 0 = pass, 1 = error, 2 = send feedback to Claude
 - Exit code 2 is powerful: it sends the hook's output back as feedback
@@ -412,57 +466,6 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 ### Official Resources
 - [Skills and Hooks Starter Kit](https://github.com/DavidROliverBA/Daves-Claude-Code-Skills)
 - [Claude Code Best Practices — Hooks section](https://www.anthropic.com/engineering/claude-code-best-practices)
-
----
-
-## Level 6: MCP Integration — "Extending Claude's Reach"
-**Goal:** Connect Claude Code to external tools and data sources via the Model Context Protocol.
-**Mindset shift:** From "Claude works with my files" → "Claude works with my entire toolchain"
-
-**Mind the context cost.** Every connected MCP server's tool definitions sit in the window from the first token — connecting all of them upfront is an anti-pattern (Level 2 again). Prefer **progressive disclosure** / code-execution loading: one real workflow dropped from ~150k to ~2k tokens by loading tool defs on demand instead of all at once. Tool Search (6.3) is how Claude Code does this automatically.
-
-### Topics
-
-#### 6.1 What MCP Is
-- Model Context Protocol: an **open standard** for connecting AI to external services
-- MCP servers expose tools that Claude can invoke
-- Adding MCP servers: `claude mcp add <name> -- <command>`
-- MCP configuration locations: `.mcp.json` (project), `.claude/settings.local.json`, `~/.claude.json`
-
-#### 6.2 Essential MCP Servers
-- **Context7 / docs fetcher** — Up-to-date library docs, prevents hallucinated APIs
-- **Browser automation** (Puppeteer, Playwright) — Claude tests your UI, sees console logs
-- **Chrome DevTools** — Claude inspects DOM, network, console in your real browser
-- **Error tracking** (Sentry) — Claude diagnoses production errors
-- **Database access** (PostgreSQL, SQLite) — Claude queries and analyzes data
-- **GitHub** — Claude manages issues, PRs, repos
-- **Excalidraw** — Claude generates architecture diagrams
-
-#### 6.3 Tool Search — Dynamic Tool Loading (Late 2025)
-- When MCP tools exceed 10% of your context window, Tool Search activates
-- Dynamically loads only relevant MCP tools instead of all at once
-- Critical for users with many MCP servers configured
-- Can be disabled if you prefer upfront loading (increases context usage)
-
-#### 6.4 When MCP is Worth the Complexity
-- Don't add servers you won't use regularly
-- Community wisdom: "Went overboard with 15 MCP servers — ended up using only 4 daily."
-- Evaluating MCP server quality, reliability, and maintenance
-- Security considerations: what access are you granting?
-
-#### 6.5 Building Custom MCP Servers
-- When to build vs. use existing
-- FastMCP (Python) vs. MCP SDK (TypeScript)
-- Designing tools Claude will actually use well (clear names, minimal overlap)
-- Testing MCP servers independently
-
-### Mastery Check
-> Can you identify which MCP servers add real value to your workflow and integrate them without reliability issues?
-
-### Official Resources
-- [MCP Protocol Specification](https://modelcontextprotocol.io)
-- [DeepLearning.AI: MCP course](https://www.deeplearning.ai/short-courses/mcp-build-rich-context-ai-apps-with-anthropic/) (free)
-- [Anthropic Academy: MCP Getting Started + Advanced](https://anthropic.skilljar.com/introduction-to-model-context-protocol) (free, 2 courses)
 
 ---
 
@@ -538,7 +541,7 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 
 #### 8.3 Choosing the Right Parallelism
 - Worktrees + dual-instance: independent or write/review work, minimal coordination, predictable cost — start here
-- Subagents (Level 4): parallel work whose results you want folded back into _one_ context, isolation handled for you
+- Subagents (Level 5): parallel work whose results you want folded back into _one_ context, isolation handled for you
 - Agent Teams (Level 9): many interdependent tasks needing shared state and coordination — the heaviest tool, reach for it last
 - The guiding rule: add coordination machinery only when simpler parallelism actually fails
 
@@ -555,7 +558,7 @@ Context engineering still **pervades Levels 2-10**; verification-first still out
 **Goal:** Coordinate multiple Claude instances working in parallel.
 **Mindset shift:** From "one agent, one task" → "orchestrating a team of autonomous agents"
 
-**Start simple — earn the team.** This is the last rung for a reason. Per Anthropic's "Building effective agents": prefer **workflows before agents**, and the simplest thing that works before either. **Don't reach for a team until a single call + verification has actually failed**, then a subagent (Level 4), then worktrees / dual-instance (Level 8) — and only then a team. Teams trade latency and token cost for parallelism and can **compound errors** across agents; the coordination is a liability you take on deliberately, not a default.
+**Start simple — earn the team.** This is the last rung for a reason. Per Anthropic's "Building effective agents": prefer **workflows before agents**, and the simplest thing that works before either. **Don't reach for a team until a single call + verification has actually failed**, then a subagent (Level 5), then worktrees / dual-instance (Level 8) — and only then a team. Teams trade latency and token cost for parallelism and can **compound errors** across agents; the coordination is a liability you take on deliberately, not a default.
 
 ### Topics
 
@@ -689,8 +692,8 @@ Always-on supporting disciplines: **Accountability** (you own the output — AI 
 |------|--------|-------|
 | 1 | 0-1 | Get productive. Learn permission modes, plan mode, and the explore → plan → code → verify loop. Take Claude 101 on Anthropic Academy. |
 | 2-3 | 2 | Configure project memory AND master context engineering (one level now). Read Anthropic's context engineering article. |
-| 4-5 | 3-4 | Build skills using the open standard. Create your first custom agent (a context-isolation tool). |
-| 6-7 | 5-6 | Add hooks (the Stop verification gate) and MCP integrations. Take the MCP course on DeepLearning.AI. |
+| 4-5 | 3-4 | Connect external context & reach via MCP (cost-aware — take the MCP course on DeepLearning.AI). Build skills using the open standard. |
+| 6-7 | 5-6 | Create your first custom agent (a context-isolation tool). Add hooks (the Stop verification gate). |
 | 8-9 | 7-8 | Run headless/SDK and CI workflows. Practice worktrees + dual-instance parallelism. |
 | 9-10 | 9 | Earn the team: only when simpler parallelism fails, try agent teams. |
 | Ongoing | 10 | Distribution: package a Claude-ready setup as a plugin; team leadership, governance, product thinking. |

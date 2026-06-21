@@ -1,7 +1,7 @@
 <!-- file: knowledge/features/agents.md -->
 <!-- last-updated: 2026-06-19 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
-<!-- curriculum_level: L4 -->
+<!-- curriculum_level: L5 -->
 
 # Custom Agents
 

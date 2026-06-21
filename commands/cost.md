@@ -43,9 +43,9 @@ From latest assessment, extract:
 |-------|-----------------|
 | 0-1 | Model selection, effort levels, basic pricing |
 | 2 | CLAUDE.md overhead, /clear vs /compact |
-| 3-4 | Agent context windows, model: haiku for simple agents |
-| 5 | Hooks are free (outside agentic loop) |
-| 6 | MCP server token overhead, progressive disclosure |
+| 3 | MCP server token overhead, progressive disclosure |
+| 4-5 | Agent context windows, model: haiku for simple agents |
+| 6 | Hooks are free (outside agentic loop) |
 | 7 | Batch API (50% savings), headless guardrails |
 | 8 | Parallel sessions (worktrees/dual-instance — each its own context) |
 | 9 | Team multiplication (N agents × full context) |
@@ -158,7 +158,17 @@ End every response with this footer:
 - "Your CLAUDE.md is [N] lines. Target: <150."
 - "Use /clear when switching tasks."
 
-### Levels 3-4: Agent Economics
+### Level 3: MCP Overhead
+
+**Key concepts:**
+- Each server adds 200-1000 tokens to every message
+- 10 servers = 5-10% context budget gone
+- Tool Search (late 2025) dynamically loads tools
+- Most users use only 3-4 servers regularly
+
+**Action:** "Run /context. If MCP tools >5%, remove unused servers."
+
+### Levels 4-5: Agent Economics
 
 **Key concepts:**
 - Each agent gets own context window
@@ -170,7 +180,7 @@ End every response with this footer:
 
 **Action:** "Add `model: haiku` to your reviewer agent."
 
-### Level 5: Hooks Are Free
+### Level 6: Hooks Are Free
 
 **Key concepts:**
 - Hooks run outside agentic loop
@@ -179,16 +189,6 @@ End every response with this footer:
 - Quality hooks prevent expensive rework
 
 **ROI example:** "$0 lint hook saves $0.50 per caught error"
-
-### Level 6: MCP Overhead
-
-**Key concepts:**
-- Each server adds 200-1000 tokens to every message
-- 10 servers = 5-10% context budget gone
-- Tool Search (late 2025) dynamically loads tools
-- Most users use only 3-4 servers regularly
-
-**Action:** "Run /context. If MCP tools >5%, remove unused servers."
 
 ### Level 7: Batch API
 

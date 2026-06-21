@@ -174,33 +174,33 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 - Success: CLAUDE.md under 100 lines, rules/ has 3+ files
 - Verify: `wc -l CLAUDE.md && ls .claude/rules/`
 
-### Level 3: Skills
+### Level 3: MCP
+
+**Exercise: Add MCP Server**
+- Configure an MCP server for your workflow (e.g. git, Slack, or a docs source)
+- Success: Server shows in `/mcp list`
+- Verify: Use a tool from the server
+
+### Level 4: Skills
 
 **Exercise: First Skill**
 - Create a skill that auto-triggers on a pattern
 - Success: Skill activates without explicit invocation
 - Verify: Test the trigger phrase
 
-### Level 4: Subagents
+### Level 5: Subagents
 
 **Exercise: Read-Only Reviewer**
 - Create an agent with only Read, Glob, Grep tools
 - Success: Agent can review but not modify files
 - Verify: `/agent reviewer` on a file
 
-### Level 5: Hooks
+### Level 6: Hooks
 
 **Exercise: Lint Hook**
 - Create PostToolUse hook that lints after Edit
 - Success: Lint runs automatically on edits
 - Verify: Make an edit, see lint output
-
-### Level 6: MCP
-
-**Exercise: Add MCP Server**
-- Configure an MCP server for your workflow
-- Success: Server shows in `/mcp list`
-- Verify: Use a tool from the server
 
 ### Level 7: Headless
 
