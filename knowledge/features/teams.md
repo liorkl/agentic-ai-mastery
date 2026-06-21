@@ -1,9 +1,54 @@
 <!-- file: knowledge/features/teams.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L9 -->
 
-# Agent Teams
+# Parallelism & Agent Teams
+
+## Simpler First: Worktrees & Dual-Instance
+
+Before reaching for any agent-teams machinery, climb the parallelism ladder from the bottom. The first rungs need **no experimental features and no orchestration** — just two plain CLI sessions and (optionally) git worktrees.
+
+### Git Worktrees
+
+A git worktree gives each session its own isolated checkout on its own branch. Parallel edits land in separate working directories, so two sessions never collide on the same files or index:
+
+```bash
+git worktree add ../feature-a -b feature-a
+git worktree add ../feature-b -b feature-b
+```
+
+Run one Claude session per worktree. Each operates on a clean branch; you merge when each is done. This keeps independent work streams physically separated with zero coordination overhead.
+
+### Dual-Instance (Two Plain Sessions)
+
+A simple, powerful parallel pattern that needs **no agent-teams machinery at all**:
+
+- **Writer + reviewer**: one session writes the code, a second session reviews it (often read-only) and feeds back findings.
+- **One session per independent task**: split genuinely separate tasks across two terminals.
+
+Teach this as the **first rung of parallelism**. It captures most of the practical speedup of running work concurrently while staying fully predictable and easy to reason about. Combine it with worktrees when the two sessions touch overlapping files.
+
+## Start Simple — When NOT to Reach for a Team
+
+From Anthropic's "Building effective agents", before adding any multi-agent structure:
+
+- **Find the simplest thing that works.** Often a single model call plus retrieval and a verification check is enough. Add complexity only when simpler approaches demonstrably fall short.
+- **Prefer workflows before agents.** A *workflow* is LLMs orchestrated through predefined code paths — predictable and easy to test. An *agent* is an LLM dynamically directing its own process and tool use — open-ended and harder to bound. Reach for the agent only when the open-endedness is genuinely required.
+- **Teams trade latency and cost** and risk **compounding errors** across agents. They need trust, sandboxing, and guardrails to be worth it.
+
+Reach for an agent **team** only when the task is genuinely open-ended **AND** the cost of error is recoverable — i.e. you have tests, review, and rollback to catch the compounding-error risk. Otherwise stay on a lower rung: solo agent, dual-instance, or worktrees.
+
+**The parallelism ladder (climb in order):**
+
+1. Solo session (workflow or single agent)
+2. Git worktrees — isolated branches, no orchestration
+3. Dual-instance — two plain CLI sessions (writer + reviewer, or task split)
+4. Agent teams — experimental, token-expensive, **last resort**
+
+## Agent Teams (Experimental, Token-Expensive — Last Resort)
+
+> **Experimental and token-expensive.** Agent teams sit at the **top of the parallelism ladder** — the last resort, not the default. Each teammate runs its own context window, so a team multiplies token spend and adds coordination latency. Use it only after worktrees and dual-instance are clearly insufficient. Flags and behavior may change; confirm against https://code.claude.com/docs/en/.
 
 ## Current State
 
@@ -109,6 +154,8 @@ All agents should read:
 ```
 
 ### When to Use Agent Teams
+
+First confirm a lower rung of the parallelism ladder (worktrees, dual-instance) can't do the job — teams are the experimental, token-expensive last resort.
 
 **Good fit**:
 - Genuinely parallelizable tasks

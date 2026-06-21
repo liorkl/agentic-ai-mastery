@@ -1,5 +1,5 @@
 <!-- file: knowledge/features/mcp.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L7 -->
 
@@ -77,6 +77,17 @@ When MCP tools exceed 10% of your context window, Tool Search activates:
 }
 ```
 
+### Context Cost & Progressive Disclosure
+
+**MCP tool definitions load into the context window at session start.** Every connected server carries a standing context cost before you've issued a single prompt — so more servers is not better. Prune servers a task doesn't need; treat MCP's context footprint as a first-class design concern (this ties directly to the "manage context" cross-cutting practice).
+
+Anthropic's [Code execution with MCP](https://www.anthropic.com/engineering/code-execution-with-mcp) (Nov 2025) showed that naively loading all tool definitions upfront is an anti-pattern. Presenting MCP servers as code APIs the agent calls — with **progressive disclosure** of tool definitions, loaded only when needed — cut a real workflow from ~150,000 to ~2,000 tokens (~98.7% reduction).
+
+**Practical guidance**:
+- Connect only the servers the current task needs
+- For tool-heavy workflows, prefer progressive disclosure / code-execution patterns over upfront loading of every definition
+- Use `/context` to see what's actually loaded, and prune
+
 ### Building Custom MCP Servers
 
 **When to build vs. use existing**:
@@ -103,6 +114,14 @@ MCP servers have access to:
 - Review what access it needs
 - Check the source code if open source
 - Use environment variables for secrets
+
+### Vetting & Trust
+
+MCP servers are **third-party code and integrations** — adding one is a supply-chain decision. Don't connect a server you don't trust: a server you rely on can be updated to behave maliciously ("rug-pull" risk).
+
+- Sandbox or scope untrusted servers before giving them real access
+- Use server scopes (local / project / user) deliberately — grant the narrowest scope that works
+- For sandboxing and deny-rule mechanics, see [`permissions.md`](permissions.md) — that file owns the details; don't duplicate them here
 
 ## Mastery Checks
 

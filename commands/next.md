@@ -59,6 +59,7 @@ Based on topic, read ONE file from knowledge/:
 |-------|-------|------|
 | any | Cross-cutting practices: verification, plan-first, grounding prompts, course-correction, context hygiene | knowledge/features/productivity-tips.md |
 | 0 | CLI orientation, first session | knowledge/features/cli-orientation.md |
+| 0 | Permission modes, plan mode, safe operation, sandboxing | knowledge/features/permissions.md |
 | 0-1 | Model selection | knowledge/features/models.md |
 | 1 | Output styles | knowledge/features/output-styles.md |
 | 1-3 | Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |

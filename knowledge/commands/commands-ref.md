@@ -1,5 +1,5 @@
 <!-- file: knowledge/commands/commands-ref.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: All -->
 
@@ -18,8 +18,8 @@ Claude Code provides built-in slash commands for session management, context con
 | `/help` | Show available commands | Lists built-ins + installed skills |
 | `/clear` | Reset context window | Keeps CLAUDE.md, loses conversation |
 | `/compact` | Summarize and continue | Preserves key context, frees space |
-| `/undo` | Revert last file change | Works on Write/Edit operations |
-| `/resume` | Continue previous session | Restores from session storage |
+| `/rewind` | Roll back conversation and/or code | Restore an earlier checkpoint of the session |
+| `/resume` | Continue a previous session | Pick from saved session history |
 
 ### Context Control
 
@@ -28,6 +28,8 @@ Claude Code provides built-in slash commands for session management, context con
 | `/context` | Show context usage breakdown | See what's consuming tokens |
 | `/memory` | Manage persistent facts | Add/remove cross-session memory |
 | `/config` | View/edit settings | Model, permissions, preferences |
+| `/permissions` | View/edit tool permission rules | Allow/deny rules; add/move scope |
+| `/mcp` | Manage MCP servers | List, authenticate, inspect tools |
 
 ### Development Workflow
 
@@ -93,6 +95,10 @@ Test → commit → create PR.
 /review
 ```
 Analyzes staged or specified changes.
+
+### Entering Plan Mode
+
+Plan mode is a permission mode (Claude researches and proposes a plan but makes no edits until you approve), not a slash command. Cycle permission modes with **Shift+Tab** until the prompt shows plan mode. See the [interactive-mode docs](https://code.claude.com/docs/en/interactive-mode) for the exact keys and the full mode list.
 
 ## IDE-Specific Commands
 

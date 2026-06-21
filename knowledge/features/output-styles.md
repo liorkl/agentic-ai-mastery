@@ -1,5 +1,5 @@
 <!-- file: knowledge/features/output-styles.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L1 -->
 
@@ -7,20 +7,28 @@
 
 ## Current State
 
-Claude Code offers configurable output styles that change how Claude communicates during coding sessions:
+Claude Code offers configurable output styles that change how Claude communicates during coding sessions. The built-in styles:
 
 | Style | Behavior | Best For |
 |-------|----------|----------|
-| **Default** | Concise task completion, minimal explanation | Production work, experienced users |
-| **Explanatory** | Educational "Insights" blocks explaining implementation choices | New codebases, learning patterns |
-| **Learning** | Collaborative mode with `TODO(human)` markers | Skill-building, hands-on practice |
-| **Custom** | User-defined via `/output-style:new` | Project-specific needs |
+| **Default** | Standard engineering — concise task completion | Most production work |
+| **Proactive** | Acts immediately, asks fewer clarifying questions | When you trust the direction and want momentum |
+| **Explanatory** | Adds educational asides while it works | Onboarding to unfamiliar code |
+| **Learning** | Collaborative — shares insights and asks YOU to implement marked `TODO(human)` sections | Skill-building, hands-on practice |
+
+Custom styles live in `~/.claude/output-styles/` (create one with `/output-style:new`).
+
+The **Learning style is directly useful for skill-building and coaching** — it keeps you in the loop as the implementer rather than handing you finished code, which is exactly the muscle this plugin is built to grow.
 
 ## Key Concepts
 
 ### Default Style
 
-Minimal overhead. Claude completes tasks without explaining why. Use when you know what you want and just need execution.
+Standard engineering communication. Claude completes tasks concisely without unprompted explanation. Use when you know what you want and just need execution.
+
+### Proactive Style
+
+Acts immediately and asks fewer clarifying questions, favoring momentum over confirmation. Use when the direction is clear and you'd rather review the result than answer questions mid-task.
 
 ### Explanatory Style
 
@@ -57,23 +65,11 @@ function validateInput(data) {
 
 ### Custom Output Styles
 
-Create project-specific styles:
-
-```
-/output-style:new
-```
-
-Then define:
-- Tone (formal, casual, technical)
-- Verbosity level
-- Whether to include explanations
-- Code comment preferences
+Create project-specific styles with `/output-style:new`. Custom styles are stored as files in `~/.claude/output-styles/`, where you can define tone, verbosity, whether to include explanations, and code-comment preferences.
 
 ### Persistence
 
-Output style preferences can be saved per project:
-- `.claude/settings.local.json` for personal preferences
-- Project-level settings for team consistency
+The active output style can be saved per project via `.claude/settings.local.json` (personal) or project-level settings (team consistency).
 
 ## Mastery Checks
 
@@ -87,6 +83,7 @@ Output style preferences can be saved per project:
 The right output style matches Claude's communication to what you're trying to get out of the session:
 
 - **Default**: fastest path to a finished change when you already know what you want
+- **Proactive**: keeps momentum by acting on a clear direction instead of pausing to confirm
 - **Explanatory**: surfaces the "why" behind each choice — ideal when onboarding to an unfamiliar codebase or teaching teammates
 - **Learning**: leaves `TODO(human)` markers and asks reflective questions, so you build the skill rather than just receive the answer
 - **Custom**: encodes a project's tone and conventions so every session speaks the same language

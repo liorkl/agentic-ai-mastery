@@ -40,6 +40,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected the `@import` CLAUDE.md syntax to the actual `@path/to/file` form, and aligned CLAUDE.md guidance with current best practice (keep it short; push domain knowledge to skills)
 - Updated knowledge-file metadata headers to the current format and date
 
+### Added — curriculum content refresh (Phase 1, mid-2026)
+
+- After a live review against Anthropic's current docs/best-practices/Academy and popular community resources, refreshed the knowledge base to mid-2026 reality **without renumbering the L0–L10 ladder** (a structural re-order is a planned Phase 2):
+  - **`knowledge/features/permissions.md`** (new) — permission modes (default/acceptEdits/plan/auto/dontAsk/bypassPermissions), plan mode, the `auto` safety classifier, sandboxing, protected paths, and security/trust basics. Wired into the `/coach:next` and skill knowledge tables at L0
+  - **Checkpoints & rewind** added to `context.md` (safe exploration + course-correction); context reframed as the fundamental constraint (context rot / attention budget)
+  - **MCP context cost & progressive disclosure** added to `mcp.md` (the code-execution-with-MCP ~150k→~2k token result; connect only needed servers) plus an MCP vetting/trust note
+  - **`headless.md`**: corrected "Claude Code SDK" → **Claude Agent SDK**, fixed the `--output-format` values (`text`/`json`/`stream-json`), added scheduled runs and the fan-out pattern
+  - **`teams.md`** → "Parallelism & Agent Teams": added git worktrees / dual-instance as the simpler first rung and a "start simple — don't reach for a team until simpler approaches fail" gate; teams reframed as the last resort
+  - **`hooks.md`**: a Stop hook framed as the verification gate (the #1 practice made deterministic) + guardrail (security) hooks
+  - **`productivity-tips.md`**: plan mode introduced early, "let Claude interview you into a spec" grounding technique, course-correction mechanics; **`output-styles.md`** updated to the current four styles (Default/Proactive/Explanatory/Learning); **`commands-ref.md`**: added `/rewind`, `/permissions`, `/mcp`, plan-mode entry
+
 ### Docs
 
 - Synced the `docs/` design/dev-reference set to the shipped runtime so contributors aren't misled by stale specs (these files are not loaded at runtime). Each doc now carries a `Sync status (2026-06-19)` note. Reconciled: `curriculum-v1.1.md` (levels reframed as a feature scaffold, five-practices spine, verification first), `cost-guide-v1.0.md` (reframed as the opt-in `/coach:cost` reference data — cost off by default), `diagnostic-v1.1.md` (output leads with the readiness verdict; schema gains `verification_ready` / `verification_gate` / `practice_gaps`; anti-patterns led by missing verification), `requirements.md` (cost-at-every-level + token-footer mandates reverted; `/coach:recap`, `/coach:compare`, `plugins.md` added; `plugin.json` permissions/agent-`tools:` gotchas), and `self-learning-discovery-v1.0.md` (current models/effort facts, cost demoted in discovery classification)
