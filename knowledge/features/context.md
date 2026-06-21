@@ -1,5 +1,5 @@
 <!-- file: knowledge/features/context.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L3 -->
 
@@ -11,7 +11,7 @@ Context engineering is the most critical discipline in agentic AI development. A
 
 **Definition**: The set of strategies for curating and maintaining the optimal set of tokens during LLM inference.
 
-**Why it matters**: LLM performance degrades as context fills — a phenomenon called **context rot**. Every token introduced depletes an "attention budget."
+**Why it matters**: The context window is the fundamental constraint, and it fills fast. LLM performance degrades as context fills — a phenomenon called **context rot** — because the model has a limited attention budget and every token introduced depletes it. This single fact is the root reason behind most Claude Code best practices: `/clear`, `/compact`, subagents, and lean CLAUDE.md files all exist to keep the working context small and relevant.
 
 ## Key Concepts
 
@@ -69,6 +69,23 @@ The single most cost-effective workflow habit:
 4. Start next task with fresh context
 ```
 
+### Checkpoints & Rewind (Safe Exploration)
+
+Claude Code takes an automatic **checkpoint at each user prompt**, so you can always get back to an earlier state.
+
+- **`/rewind`** opens a menu to restore to a previous checkpoint. You can restore the **code**, the **conversation**, or **both** — independently — and you can choose to summarize the work from or up to a chosen point.
+- **`Esc` then `Esc`** interrupts a run in progress so you can change course before things go further off track.
+
+Two ways to use it:
+
+- **Beginner — safe exploration**: Checkpoints let you try bold edits without fear. If an approach doesn't pan out, roll back cleanly and try again. Experiment first, undo later.
+- **Course correction**: When the context has gotten polluted — Claude went down a wrong path, the conversation is full of dead ends — the high-leverage move is to **stop and rewind rather than fight a degraded context**. Restoring the conversation to a clean point removes the wrong turns from the attention budget, which is faster and more reliable than arguing your way out.
+
+Limits to know:
+
+- Checkpoints persist for **~30 days**, then expire. They are **not a git replacement** — keep committing.
+- Only edits made through Claude's **Read/Write/Edit tools** are tracked. Files changed by **raw bash** commands (e.g. `sed`, redirects, `mv`) are **not** captured by a rewind.
+
 ### CLAUDE.md Best Practices
 
 ```markdown
@@ -111,7 +128,7 @@ This keeps the always-loaded file lean while detail lives in files that are pull
 - Maintain lightweight identifiers (paths, links)
 - Load details only when the task requires them
 
-**The Explore subagent**: Use for read-only codebase discovery without polluting your main context.
+**Subagents keep the main thread small**: Delegate investigation and read-only codebase discovery to a subagent (e.g. the Explore agent). The subagent burns its own context window reading files and returns only the conclusion, so the main thread stays lean — the same root goal as `/clear` and `/compact`. For *parallel* isolated work on separate branches, see git worktrees in `knowledge/features/teams.md`.
 
 ### Monitoring Context
 
@@ -130,6 +147,7 @@ This keeps the always-loaded file lean while detail lives in files that are pull
 - [ ] Do you use the commit-and-clear pattern?
 - [ ] Can you explain context rot to a colleague?
 - [ ] Have you set up context monitoring?
+- [ ] Do you reach for `/rewind` to course-correct instead of fighting a polluted context?
 
 ## Why It Matters
 
@@ -147,3 +165,4 @@ This keeps the always-loaded file lean while detail lives in files that are pull
 - [Context Engineering for AI Agents (Anthropic)](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 - [Claude Code Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices)
 - [Using CLAUDE.md Files](https://claude.com/blog/using-claude-md-files)
+- [Claude Code docs (checkpoints, /rewind, context commands)](https://code.claude.com/docs/en/)

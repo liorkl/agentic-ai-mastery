@@ -144,6 +144,7 @@ Load ONLY relevant knowledge files:
 | Topic | Load File |
 |-------|-----------|
 | CLI orientation, what is Claude Code | knowledge/features/cli-orientation.md |
+| Permission modes, plan mode, auto mode, sandboxing, safe operation | knowledge/features/permissions.md |
 | Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |
 | Models, effort levels | knowledge/features/models.md |
 | Output customization | knowledge/features/output-styles.md |

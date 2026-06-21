@@ -1,5 +1,5 @@
 <!-- file: knowledge/features/headless.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L8 -->
 
@@ -14,18 +14,27 @@ Headless mode runs Claude Code programmatically. The harness pattern enables mul
 ### Headless Mode Basics
 
 ```bash
-# Non-interactive execution
+# One-off, non-interactive execution (also: --print)
 claude -p "prompt"
 
-# With output format
+# Output format: text (default) | json | stream-json
+claude -p "prompt" --output-format text
 claude -p "prompt" --output-format json
 
-# Streaming JSON output
-claude -p "prompt" --output-format streaming-json
+# Newline-delimited JSON for real-time streaming
+claude -p "prompt" --output-format stream-json --verbose
 
 # With model selection
 claude -p "prompt" --model haiku
+
+# Scope which tools Claude may use without prompting
+claude -p "prompt" --allowedTools "Read,Edit,Bash"
 ```
+
+`text` prints plain text; `json` wraps the result with session ID and metadata
+(the text is in the `result` field); `stream-json` emits one JSON event per line
+as tokens are produced. Pipe data in over stdin like any CLI tool:
+`cat build.log | claude -p "explain this error" > out.txt`.
 
 ### CI/CD Integration Patterns
 
@@ -115,15 +124,58 @@ claude -p "Generate release notes from commits since last tag: $(git log --oneli
 
 **Progress file as context**: Cheapest possible inter-session state transfer.
 
-### Claude Agent SDK
+### Scheduled and Autonomous Runs
 
-Renamed from Claude Code SDK (September 2025). Powers Claude Code but also non-coding agents.
+You don't have to invoke every run by hand. Three concept-level options:
+
+- **Scheduled cloud agents ("Routines")** — run a prompt on a cron schedule in
+  the cloud, unattended.
+- **Desktop scheduled tasks** — schedule a run on your machine.
+- **`/loop`** — repeat a prompt (or slash command) on an interval *within a
+  session*; omit the interval to let Claude self-pace.
+
+Exact invocation varies by surface and changes over time — check the docs rather
+than memorizing flags. Anything scheduled or looping runs unattended, so it
+**must** carry a verification gate (see the fan-out pattern below).
+
+### Fan-Out Pattern
+
+When the same task applies across many items (files, packages, services), loop
+over the list and call `claude -p` once per item, with the tool scope restricted
+to just what that item needs:
+
+```bash
+# Restrict tools per item; pre-approve only what's required
+for f in $(git diff --name-only origin/main); do
+  claude -p "Add a missing JSDoc comment to the exported functions in $f" \
+    --allowedTools "Read,Edit"
+done
+```
+
+Each invocation gets a fresh, focused context (no cross-item bleed) and can be
+parallelized. For unattended safety, pair the restricted `--allowedTools` scope
+with the `dontAsk` permission mode, which denies anything not in your
+`permissions.allow` rules so a stray action aborts the run instead of hanging on
+a prompt. See `knowledge/features/permissions.md` for how the permission modes
+and allow/deny rules work — don't duplicate them here.
+
+**Every fan-out run needs a verification gate.** Unattended automation has no
+human watching, so give Claude a check it can run itself — a test, a linter, a
+type-check, a schema validation — and make passing it the bar for "done." Without
+a gate, a fan-out silently propagates the same mistake across every item.
+
+### Claude Agent SDK (formerly the Claude Code SDK)
+
+The **Claude Agent SDK** (renamed from the Claude Code SDK) exposes the same
+building blocks that power the Claude Code CLI — tools, hooks, subagents, MCP,
+permissions, and session management — for programmatic and embedded use (CI,
+custom apps, services). It supports streaming JSON output and structured outputs.
 
 **Capabilities**:
-- Agent lifecycle management
-- Tool registration
-- State persistence
-- Workflow orchestration
+- Same agent loop, tools, and context management as the CLI
+- Tool registration, hooks, subagents, MCP servers
+- Permission modes and tool-approval callbacks
+- Session management and state persistence
 - Automatic compaction for long-running agents
 
 **SDKs available**:
@@ -131,9 +183,9 @@ Renamed from Claude Code SDK (September 2025). Powers Claude Code but also non-c
 - TypeScript
 
 **When to use SDK vs. headless mode**:
-- Simple automation → Headless mode
-- Complex agent workflows → SDK
-- Building a product with agents → SDK
+- Simple scripting/CI → headless mode (`claude -p`)
+- Complex agent workflows, structured outputs, native message objects → SDK
+- Embedding agents in a product or service → SDK
 
 ## Mastery Checks
 
@@ -164,5 +216,7 @@ Without `--max-turns`/`--timeout-minutes`, an unattended agent can loop on a stu
 ## Official Resources
 
 - [Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [Agent SDK Documentation](https://docs.anthropic.com/en/docs/claude-code/sdk)
+- [Run Claude Code Programmatically (Headless)](https://code.claude.com/docs/en/headless)
+- [Claude Agent SDK Documentation](https://docs.claude.com/en/docs/agent-sdk/overview)
+- [Permission Modes](https://code.claude.com/docs/en/permission-modes)
 - [Autonomous Coding Quickstart](https://github.com/anthropics/claude-quickstarts/tree/main/autonomous-coding)

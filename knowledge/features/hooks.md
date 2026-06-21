@@ -1,5 +1,5 @@
 <!-- file: knowledge/features/hooks.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L6 -->
 
@@ -15,13 +15,17 @@ Hooks are scripts that run on specific lifecycle events, **outside** the agentic
 
 ### Hook Events
 
+Well-known lifecycle events you'll use most:
+
 | Event | When It Fires | Use Cases |
 |-------|--------------|-----------|
-| `PreToolUse` | Before Claude uses a tool | Intercept, modify, block |
+| `PreToolUse` | Before Claude uses a tool | Intercept, block, protect paths |
 | `PostToolUse` | After Claude uses a tool | Validate, log, alert |
-| `Stop` | When Claude finishes responding | Quality checks |
-| `TeammateIdle` | When a team member finishes (L9) | Reassign, redirect |
-| `TaskCompleted` | When a task is marked done (L9) | Gate on tests, lint |
+| `Stop` | When Claude finishes responding | Verification gate (test/build/lint) |
+| `SessionStart` | When a session begins | Load context, set up state |
+| `UserPromptSubmit` | When you submit a prompt | Inject context, pre-flight checks |
+
+Task-oriented events (e.g. `TaskCompleted`) also exist for agent-team flows. For the full, current event list and payload schemas, see the [hooks docs](https://code.claude.com/docs/en/hooks).
 
 ### Configuration
 
@@ -63,7 +67,7 @@ Hooks are configured in `.claude/settings.json` or `.claude/settings.local.json`
 
 ### Essential Hook Patterns
 
-**Security hook** — Block secrets:
+**Guardrail hook (security)** — A `PreToolUse` hook can block a dangerous command or protect a path *before* the tool runs:
 ```bash
 #!/bin/bash
 # PreToolUse hook for Edit/Write
@@ -73,6 +77,8 @@ if grep -E "(API_KEY|SECRET|PASSWORD)=" "$1"; then
 fi
 exit 0
 ```
+
+This is the deterministic complement to permission rules. For the broader permissions / deny-rule model (which tools and paths are allowed at all), see `knowledge/features/permissions.md` — hooks add custom logic on top of it rather than replacing it.
 
 **Quality hook** — Auto-lint after edits:
 ```bash
@@ -92,7 +98,7 @@ import sys
 # Alert if session exceeds budget
 ```
 
-**Test gate hook** — Require tests before complete:
+**Verification gate (the #1 practice, made deterministic)** — A `Stop` hook that runs the project's test/build/lint before Claude can finish is THE way to enforce verification automatically. It closes the loop unattended: Claude cannot declare done while the suite is red, and exit code 2 feeds the failure straight back for correction.
 ```bash
 #!/bin/bash
 # Stop hook
@@ -143,8 +149,8 @@ Consider running formatters only on `Stop`, not every `PostToolUse`.
 **Hooks are deterministic — that's the whole point.** They enforce rules with plain code, no LLM judgment, so a security or quality gate fires every single time instead of "usually."
 
 **Reliability you can't get from prompting**:
-- A PreToolUse block on secrets cannot be talked around or forgotten
-- Quality gates (lint, test) catch errors before they compound into rework
+- A `Stop` hook running the test/build/lint suite turns the #1 practice — verification — into something that fires every time, with no human in the loop
+- A `PreToolUse` block on secrets or protected paths cannot be talked around or forgotten
 - Exit code 2 feeds the failure back to Claude, turning a hook into an automatic correction loop
 
 **Keep outputs minimal and actionable** — verbose hook output crowds the context and buries the one line Claude actually needs to act on.
@@ -153,5 +159,5 @@ Consider running formatters only on `Stop`, not every `PostToolUse`.
 
 ## Official Resources
 
-- [Skills and Hooks Starter Kit](https://github.com/DavidROliverBA/Daves-Claude-Code-Skills)
+- [Claude Code Hooks documentation](https://code.claude.com/docs/en/hooks)
 - [Claude Code Best Practices — Hooks section](https://www.anthropic.com/engineering/claude-code-best-practices)

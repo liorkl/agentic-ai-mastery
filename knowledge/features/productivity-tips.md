@@ -1,5 +1,5 @@
 <!-- file: knowledge/features/productivity-tips.md -->
-<!-- last-updated: 2026-06-19 -->
+<!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: 1-3 -->
 
@@ -43,13 +43,13 @@ Have Claude show evidence (the test output, the command and its result) rather t
 
 Letting Claude jump straight to code produces code that solves the wrong problem. Separate research from execution:
 
-1. **Explore** (plan mode) — "read /src/auth and explain how sessions work." No edits.
+1. **Explore** (plan mode) — "read /src/auth and explain how sessions work." Claude researches and proposes; no edits land until you approve.
 2. **Plan** — "I want to add Google OAuth. What changes? Write a plan." Edit the plan if needed.
 3. **Code** — leave plan mode, "implement the plan, write tests, run them, fix failures."
 
-Plan mode (`Shift+Tab` twice) is most valuable when the approach is uncertain, the change spans multiple files, or you don't know the code. Skip it for one-sentence changes — if you can describe the diff in a sentence, just ask.
+Enter plan mode interactively by cycling permission modes with `Shift+Tab` (see the [docs](https://code.claude.com/docs/en/) for the exact keys in your build). It's most valuable when the approach is uncertain, the change spans multiple files, or you don't know the code. Skip it for one-line diffs — if you can describe the change in a sentence, just ask.
 
-For larger features, have Claude **interview you first**: "Interview me about this feature using AskUserQuestion, then write a spec to SPEC.md." Then execute the spec in a fresh session.
+**Let Claude interview you.** For a fuzzy task, have Claude ask *you* clarifying questions to build a short spec, then start fresh from it: "Interview me about this feature using AskUserQuestion, then write a spec to SPEC.md." Execute the spec in a fresh session. This is a concrete way to practice grounding the prompt (§3) before any code is written.
 
 ---
 
@@ -74,7 +74,7 @@ The strong prompt: points at the file, points at an **example pattern to mirror*
 The best results come from tight feedback loops. Correct Claude the moment it drifts:
 
 - **`Esc`** — stop mid-action; context is preserved, redirect.
-- **`Esc Esc` / `/rewind`** — restore a previous conversation/code checkpoint.
+- **`/rewind`** — restore a previous conversation/code checkpoint and try a different approach (see `knowledge/features/context.md` for how checkpoints work).
 - **`/clear`** — reset between unrelated tasks.
 
 If you've corrected Claude more than twice on the same issue, the context is polluted with failed attempts. **`/clear` and start fresh with a better prompt** that bakes in what you learned — a clean session almost always beats a long one full of dead ends.
@@ -100,13 +100,7 @@ Don't ask Claude to "build the entire feature" at once. Scaffold → review → 
 
 ### 7. Match the Model to the Task
 
-| Task | Model |
-|------|-------|
-| Simple edits, renaming, formatting, one-liners | `haiku` |
-| Bug fixes, feature work, most daily coding | `sonnet` |
-| Architecture, complex reasoning, hard debugging, long autonomous runs | `opus` (or `fable` for the hardest) |
-
-Switch mid-session with `/model haiku` / `/model sonnet`. Tune depth with `effort` (low → max) rather than looking for a thinking-token budget. (Cost angle: the opt-in `/coach:cost`.)
+Opus 4.8 is the default and handles most work; switch mid-session with `/model` when a task is simpler (cheaper, faster) or harder. Tune *thinking depth* separately with `effort` (`low` / `medium` / `high` / `xhigh` / `max`) — this replaced the old `budget_tokens`. Higher effort means more reasoning before acting; reach for it on architecture and hard debugging, dial down for routine edits. See `knowledge/features/models.md` for the full model/effort guidance. (Cost angle: the opt-in `/coach:cost`.)
 
 ---
 

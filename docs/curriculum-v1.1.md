@@ -27,6 +27,16 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 
 **Key terminology shift (Sep 2025):** Anthropic formally introduced **context engineering** as the successor to prompt engineering. The curriculum reflects this — prompting is Level 1, but context engineering is a discipline that pervades Levels 2-10. As Anthropic defines it: "the set of strategies for curating and maintaining the optimal set of tokens during LLM inference."
 
+**Phase-1 additions (2026-06-21):** After a review against current Anthropic docs/best-practices and popular community resources, the runtime knowledge base was refreshed to mid-2026 reality **without renumbering this ladder**. Topics added or expanded, folded into the existing levels:
+- **Permission modes, plan mode, auto mode, sandboxing** — new `knowledge/features/permissions.md`, taught at L0 (the autonomy ↔ oversight dial).
+- **Checkpoints & rewind** as safe-exploration and course-correction (`context.md`, L0–L1).
+- **MCP context cost & progressive disclosure** — connecting all tool defs upfront is an anti-pattern; code-execution/progressive disclosure cut a real workflow ~150k→~2k tokens (L7, `mcp.md`).
+- **Claude Agent SDK** (renamed from "Claude Code SDK"), scheduled runs, and the fan-out pattern (L8, `headless.md`).
+- **Git worktrees / dual-instance** as the simpler parallel pattern, plus a "start simple — don't reach for an agent team until a single call + verification fails" gate (L9, `teams.md`).
+- Current **output styles** including the **Learning** style (relevant to coaching).
+
+A **structural re-order** (merge context into the memory level, promote permissions/checkpoints/subagents/MCP earlier, add a Parallel-Work rung) is planned as a separate Phase-2 pass — see the docs/ proposal when it lands.
+
 ---
 
 ## Level 0: Foundations — "First Contact"
