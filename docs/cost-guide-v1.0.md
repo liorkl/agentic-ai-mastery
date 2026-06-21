@@ -93,7 +93,7 @@ The highest-leverage single action. Most developers default to Opus for everythi
 
 **Effort levels**: The `effort` setting (low/medium/high/xhigh/max) controls adaptive thinking depth. Lower effort = fewer thinking tokens = cheaper. Use low for routine tasks, reserve xhigh/max only for genuinely complex reasoning. This replaced the old `budget_tokens` thinking-budget knob — you no longer set a raw token budget; you pick an effort level and thinking adapts.
 
-**Agent-level model routing**: When building custom agents (Level 4), specify cheaper models for agents that do simple work:
+**Agent-level model routing**: When building custom agents (Level 5), specify cheaper models for agents that do simple work:
 
 ```yaml
 # .claude/agents/reviewer.md frontmatter
@@ -216,7 +216,7 @@ Each enabled MCP server injects tool definitions into your system prompt. With 1
 /context
 
 # Disable servers you're not actively using
-# Or use Tool Search (Level 6) to load tools on-demand
+# Or use Tool Search (Level 3) to load tools on-demand
 ```
 
 **Community wisdom**: Most developers who install 15 MCP servers end up using only 4 daily. The other 11 are pure context waste.
@@ -369,7 +369,22 @@ Based on community-reported averages with Sonnet as default:
 > No evidence of /clear or /compact usage in session patterns → Flag as highest-priority cost issue
 > Sessions consistently hitting auto-compact (95%) → "You're paying premium rates on bloated context for many messages before auto-compact kicks in"
 
-### Level 3: Skills & Commands — Build Efficient Skills
+### Level 3: MCP Integration — Tool Economy
+
+**What to teach:**
+- Each MCP server injects tool definitions into context (typically 200-1,000 tokens per server)
+- 10 servers × 500 tokens = 5,000 tokens loaded on every single message
+- Tool Search dynamically loads tools only when needed — the cost-efficient approach at scale
+- Audit tool usage: most developers use only 3-4 MCP servers daily despite having 10+ installed
+
+**Coaching prompt:**
+> "Run `/context` right now. How much of your context budget is MCP tool definitions? If it's more than 5%, you have servers consuming tokens without providing value."
+
+**Diagnostic addition:**
+> 10+ MCP servers in .mcp.json → Flag with: "Community consensus: most use only 4 daily. Disable or switch to Tool Search."
+> Tool Search not enabled with many servers → Flag as cost optimization opportunity
+
+### Level 4: Skills & Commands — Build Efficient Skills
 
 **What to teach:**
 - Progressive disclosure in skills is a cost feature: metadata loads at startup (small), core instructions load on demand (medium), nested resources load only when needed (targeted)
@@ -379,7 +394,7 @@ Based on community-reported averages with Sonnet as default:
 **Coaching prompt:**
 > "A well-structured skill with progressive disclosure costs 1/10th the context budget of a monolithic instruction file. Structure skills like you'd structure a lazy-loading web app."
 
-### Level 4: Custom Agents — Agent Cost Architecture
+### Level 5: Custom Agents — Agent Cost Architecture
 
 **What to teach:**
 - Every agent gets its own context window — including its system prompt, CLAUDE.md, etc.
@@ -395,7 +410,7 @@ Based on community-reported averages with Sonnet as default:
 > Agents without model specification → Flag: "Defaulting to your session model. Could this agent use Haiku?"
 > Agents without tool restrictions → Flag: "Unrestricted agents may read/write unnecessarily"
 
-### Level 5: Hooks — Automated Cost Protection
+### Level 6: Hooks — Automated Cost Protection
 
 **What to teach:**
 - Hooks run OUTSIDE the agentic loop (deterministic, zero token cost)
@@ -421,21 +436,6 @@ Based on community-reported averages with Sonnet as default:
 **Diagnostic addition:**
 > No hooks configured → Mention cost-monitoring hooks as a quick win
 > No test/lint hooks → "Pre-commit quality gates are the highest-ROI hook pattern"
-
-### Level 6: MCP Integration — Tool Economy
-
-**What to teach:**
-- Each MCP server injects tool definitions into context (typically 200-1,000 tokens per server)
-- 10 servers × 500 tokens = 5,000 tokens loaded on every single message
-- Tool Search dynamically loads tools only when needed — the cost-efficient approach at scale
-- Audit tool usage: most developers use only 3-4 MCP servers daily despite having 10+ installed
-
-**Coaching prompt:**
-> "Run `/context` right now. How much of your context budget is MCP tool definitions? If it's more than 5%, you have servers consuming tokens without providing value."
-
-**Diagnostic addition:**
-> 10+ MCP servers in .mcp.json → Flag with: "Community consensus: most use only 4 daily. Disable or switch to Tool Search."
-> Tool Search not enabled with many servers → Flag as cost optimization opportunity
 
 ### Level 7: Headless & Harness Pattern — Automation Cost Control
 

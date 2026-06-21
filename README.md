@@ -112,10 +112,10 @@ The coaching skill also activates automatically when you ask learning-related qu
 | L0 | Foundations & setup — first session, model selection, permission modes, checkpoints/rewind |
 | L1 | Prompting & the core loop — grounded prompts, plan mode, output styles, thinking effort |
 | L2 | Project memory & context — CLAUDE.md, rules, @path, scoping, context hygiene |
-| L3 | Skills — reusable workflows (the cure for CLAUDE.md bloat) |
-| L4 | Subagents — delegation and context isolation |
-| L5 | Hooks — deterministic quality gates (incl. the verification gate) |
-| L6 | MCP — external tools, with progressive disclosure |
+| L3 | MCP — external context & reach (git, Slack, Jira, docs, logs, AWS; plus actions like Playwright) |
+| L4 | Skills — reusable workflows (the cure for CLAUDE.md bloat) |
+| L5 | Subagents — delegation and context isolation |
+| L6 | Hooks — deterministic quality gates (incl. the verification gate) |
 | L7 | Headless, SDK & CI — non-interactive runs, the Agent SDK, automation |
 | L8 | Parallel work — git worktrees, dual-instance (writer + reviewer) |
 | L9 | Agent teams — multi-agent orchestration (start simple first) |

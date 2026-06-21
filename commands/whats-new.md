@@ -183,7 +183,7 @@ Group discoveries by:
 
 **Nested skills auto-discovery** — Feb 19
 Skills in nested `.claude/skills` directories now auto-discovered.
-→ Affects: Level 3 | Useful for monorepos
+→ Affects: Level 4 | Useful for monorepos
 
 **Context window percentage in status** — Feb 18
 New status line shows context usage percentage.

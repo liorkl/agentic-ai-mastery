@@ -4,6 +4,8 @@
 
 > **Ladder re-order (2026-06-21):** The level ladder was re-ordered — old L2 (project config) and L3 (context engineering) MERGED into a single L2 "Project Memory & Context"; old L4–L8 each shifted down one (skills L4→L3, agents L5→L4, hooks L6→L5, MCP L7→L6, headless L8→L7); a new L8 "Parallel Work" (git worktrees / dual-instance) was added; L9 (teams) and L10 (plugins/governance) unchanged.
 
+> **MCP moved to L3 (2026-06-21):** MCP / `.mcp.json` (external context & reach) moved up to Level 3; the L3–L6 block rotated accordingly — skills/commands L3→L4, agents L4→L5, hooks L5→L6. Levels 0, 1, 2, 7, 8, 9, 10 unchanged.
+
 ## Project: agentic-ai-mastery
 
 **Version:** 1.1
@@ -160,10 +162,10 @@ agentic-ai-mastery/                        # ~/liorklibansky/dev/agentic-ai-mast
 │
 ├── knowledge/                             # Reference files, read on-demand
 │   ├── features/
-│   │   ├── agents.md                      # L4 content
-│   │   ├── skills.md                      # L3 content
-│   │   ├── hooks.md                       # L5 content
-│   │   ├── mcp.md                         # L6 content
+│   │   ├── agents.md                      # L5 content
+│   │   ├── skills.md                      # L4 content
+│   │   ├── hooks.md                       # L6 content
+│   │   ├── mcp.md                         # L3 content
 │   │   ├── models.md                      # L0-L1 content
 │   │   ├── context.md                     # L2 content
 │   │   ├── output-styles.md               # L1 content
@@ -475,10 +477,10 @@ Map scan results to curriculum levels using the highest-level feature detected:
 | No configuration at all | Level 0 |
 | Basic CLAUDE.md exists | Level 1 |
 | CLAUDE.md with quality score ≥6/10 + settings.json (and/or multiple CLAUDE.md + rules/ + @path imports) | Level 2 |
-| skills/ with SKILL.md format | Level 3 |
-| agents/ with custom agents | Level 4 |
-| hooks/ with configured hooks | Level 5 |
-| .mcp.json with servers | Level 6 |
+| .mcp.json with servers | Level 3 |
+| skills/ with SKILL.md format | Level 4 |
+| agents/ with custom agents | Level 5 |
+| hooks/ with configured hooks | Level 6 |
 | claude-progress.txt + headless indicators | Level 7 |
 | git worktrees / dual-instance parallel work | Level 8 |
 | Agent teams config (experimental flag) | Level 9 |
@@ -640,7 +642,7 @@ One entry per discovery finding:
   "classification": "curriculum-relevant",  // curriculum-relevant, diagnostic-relevant, informational, noise
   "title": "Nested skills auto-discovery",
   "description": "Skills in nested .claude/skills directories now auto-discovered",
-  "affected_levels": [3],
+  "affected_levels": [4],
   "practice_relevance": null,     // which of the five cross-cutting practices this touches, if any
   "status": "pending"             // pending, integrated, dismissed
 }
@@ -853,7 +855,7 @@ Given level-4-with-gaps mock, when coach runs assessment, then gaps include "CLA
 Given anti-patterns mock, when coach runs assessment, then all expected anti-patterns are flagged with correct severity.
 
 **AC-04: Level-appropriate teaching**
-Given user at Level 2, when asking about agents (Level 4), coach explains prerequisites needed rather than teaching agents directly.
+Given user at Level 2, when asking about agents (Level 5), coach explains prerequisites needed rather than teaching agents directly.
 
 **AC-05: Cost off by default**
 Given any regular teaching interaction (`/coach:next`, exercise, or skill-triggered coaching), the response includes NO cost or token content. Cost content and a token estimate appear ONLY when the user runs the opt-in `/coach:cost` command.

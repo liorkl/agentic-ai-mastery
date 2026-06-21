@@ -184,14 +184,14 @@ The coach's strategy file is a living document that the coach itself updates:
 - Exercises without clear success criteria (user unsure if they did it right)
 
 ### Active Experiments
-- Trying: Teaching hooks through a verification-gate use case (relevant to Level 5)
+- Trying: Teaching hooks through a verification-gate use case (relevant to Level 6)
 - Hypothesis: A concrete verification hook will motivate faster adoption than the security use case
 - Result: [pending — will evaluate in 3 sessions]
 
 ## Priority Adjustments
 - Level 2 needs extra session on /compact (user skipped custom instructions)
-- Skip Level 3 slash commands (deprecated), go straight to skills
-- Level 5 hooks: lead with verification hook, not security hook
+- Skip Level 4 slash commands (deprecated), go straight to skills
+- Level 6 hooks: lead with verification hook, not security hook
 ```
 
 ### 1.6 Feedback Collection (Lightweight)
@@ -214,7 +214,7 @@ The coach doesn't interrupt workflow with surveys. It collects signals passively
 | Pattern | Detection | Coach Response |
 |---------|-----------|----------------|
 | User stuck at same level for 5+ sessions | Level hasn't incremented in outcomes.jsonl | "We've been at Level N for a while. Let's diagnose what's blocking progress." |
-| User applying advanced techniques but skipping fundamentals | Level 4+ detected but Level 2 gaps | "Your agents are sophisticated, but your CLAUDE.md has gaps that undermine them." |
+| User applying advanced techniques but skipping fundamentals | Level 5+ detected but Level 2 gaps | "Your agents are sophisticated, but your CLAUDE.md has gaps that undermine them." |
 | User asking same question multiple times | Similar topics in outcomes.jsonl | "We've covered this before — let me try a different approach." |
 | Coach teachings not being applied | Low application rate across topics | Shift from teaching to pairing — work through a real task together |
 | User only engages with coach for new features | Discovery sessions >> coaching sessions | Balance: "New feature X is great, and it connects to Level N concept you haven't finished" |
@@ -389,14 +389,14 @@ cost as a secondary detail.
   "raw_changelog_entry": "Added automatic discovery of skills from nested .claude/skills directories...",
 
   "curriculum_impact": {
-    "affected_levels": [3],
+    "affected_levels": [4],
     "action": "update",
-    "detail": "Level 3 should teach nested skills directory pattern for monorepo/multi-module projects"
+    "detail": "Level 4 should teach nested skills directory pattern for monorepo/multi-module projects"
   },
 
   "diagnostic_impact": {
     "new_scan_target": ".claude/skills/**/SKILL.md",
-    "detail": "Scan for nested skill directories as indicator of Level 3+ sophistication"
+    "detail": "Scan for nested skill directories as indicator of Level 4+ sophistication"
   },
 
   "cost_impact": null,  // secondary note only; surfaced via opt-in /coach:cost, never a lead signal
@@ -475,7 +475,7 @@ Each knowledge file follows a standard structure:
 - Agent teams on Bedrock/Vertex need env var propagation fix (fixed in 2.1.8)
 
 ### Coaching Relevance
-- Level 4 curriculum topic
+- Level 5 curriculum topic
 - Verification: read-only/tool-restricted agents make explore→plan→code and review steps safer
 - Diagnostic: check for tool restrictions, model specification, description quality
 - Cost note (opt-in): agents without a model: field default to the session model
@@ -499,7 +499,7 @@ After each discovery run, the coach updates a digest the user can optionally rea
 
 ### 🟢 New Capabilities
 - **Nested skill discovery**: Skills in subdirectories now auto-discovered
-  → Relevant to your Level 3 work. Useful for monorepo structures.
+  → Relevant to your Level 4 work. Useful for monorepo structures.
 
 - **Context window percentage in status line**: New fields for easier monitoring
   → Helps with Level 2 context engineering. Use in custom status hooks.
@@ -516,7 +516,7 @@ After each discovery run, the coach updates a digest the user can optionally rea
   → Update any agent/config that still sets `budget_tokens`.
 
 ### 📚 Curriculum / Knowledge Updates Needed
-- Level 3: Add nested skills directory pattern
+- Level 4: Add nested skills directory pattern
 - Knowledge base: Add knowledge/features/plugins.md
 - Models: Refresh to June-2026 lineup (default claude-opus-4-8)
 - Diagnostic: Add context_window percentage check to scan

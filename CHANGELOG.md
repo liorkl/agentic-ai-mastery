@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **New L8 — Parallel Work** (git worktrees / dual-instance) inserted before **L9 Agent Teams**, which is now gated by a "start simple — earn the team" criterion (Building Effective Agents); **L10 — Distribution & Mastery**
   - **L0 — Foundations & Setup** absorbs permission modes + checkpoints; **L1 — Prompting & the Core Loop**
   - Level detection gained a `worktrees`=L8 signal; skills/agents/hooks/MCP/headless detection renumbered to match the engine
+  - **MCP moved to L3** (right after Project Memory & Context), reframed as *external context & reach* — it gathers context from git/Slack/Jira/docs/logs/AWS and acts on them (Playwright, Chrome DevTools). Skills→L4, Subagents→L5, Hooks→L6. Rationale: MCP is fundamentally a context mechanism, so it belongs adjacent to the context level (also matches Anthropic's extension-priority ordering, which puts MCP before skills and hooks); placing it right after L2 means it's learned cost-aware (progressive disclosure + vetting)
 
 ### Docs
 

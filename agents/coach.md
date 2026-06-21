@@ -148,16 +148,16 @@ Map scan results to the highest level feature detected:
 | CLAUDE.md exists but < 10 lines | 1 |
 | Output style set (explanatory/learning/custom) | 1+ |
 | CLAUDE.md quality score >= 4 OR settings.json has permissions/rules OR multiple CLAUDE.md files OR @path imports OR allow+deny rules | 2 |
-| skills/ with proper SKILL.md frontmatter OR commands/ (legacy) | 3 |
-| agents/ with custom agent files | 4 |
-| hooks/ with scripts OR hooks in settings.json | 5 |
-| .mcp.json OR mcpServers in settings OR ~/.claude.json has servers | 6 |
+| .mcp.json OR mcpServers in settings OR ~/.claude.json has servers | 3 |
+| skills/ with proper SKILL.md frontmatter OR commands/ (legacy) | 4 |
+| agents/ with custom agent files | 5 |
+| hooks/ with scripts OR hooks in settings.json | 6 |
 | claude-progress.txt OR headless indicators (CI config, `claude -p` scripts) | 7 |
 | Git worktrees in use (`.git/worktrees/` or a `.worktreeinclude` file) | 8 |
 | CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS in settings OR tasks/ directory | 9 |
 | All above with high quality scores + governance OR a published plugin/marketplace | 10 |
 
-**Level 2 now merges project configuration and context engineering** (CLAUDE.md, rules, @path, scoping) into one rung — context is taught as pervasive, not a separate level. Levels 3–7 each shifted down by one vs. the old ladder; Level 8 is the new "Parallel Work" (worktrees/dual-instance) rung.
+**Level 2 merges project configuration and context engineering** (CLAUDE.md, rules, @path, scoping) into one rung — context is taught as pervasive. **MCP is Level 3**, framed as *external* context & reach: it gathers context from git/Slack/Jira/docs/logs/AWS and acts on those systems. Skills (L4), Subagents (L5), and Hooks (L6) follow; Level 8 is the new "Parallel Work" (worktrees/dual-instance) rung.
 
 **Detected level = highest feature present.** Gaps BELOW that level are flagged HIGH priority. But remember the North Star: level measures feature breadth, **not** whether the repo gets good output. A repo can be high-level and still fail the cross-cutting practices — always assess those (especially verification) independently of level, and surface them first when they're missing.
 

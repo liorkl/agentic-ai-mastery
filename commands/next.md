@@ -64,10 +64,10 @@ Based on topic, read ONE file from knowledge/:
 | 1 | Output styles | knowledge/features/output-styles.md |
 | 1-2 | Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |
 | 2 | CLAUDE.md, context & memory (merged: config + context engineering) | knowledge/features/context.md |
-| 3 | Skills | knowledge/features/skills.md |
-| 4 | Subagents | knowledge/features/agents.md |
-| 5 | Hooks | knowledge/features/hooks.md |
-| 6 | MCP | knowledge/features/mcp.md |
+| 3 | MCP — external context & reach | knowledge/features/mcp.md |
+| 4 | Skills | knowledge/features/skills.md |
+| 5 | Subagents | knowledge/features/agents.md |
+| 6 | Hooks | knowledge/features/hooks.md |
 | 7 | Headless, SDK & CI | knowledge/features/headless.md |
 | 8 | Parallel work: git worktrees, dual-instance | knowledge/features/teams.md |
 | 9 | Agent teams | knowledge/features/teams.md |
