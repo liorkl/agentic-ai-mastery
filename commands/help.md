@@ -12,7 +12,7 @@ Display the following command reference to the user:
 |---------|-------------|
 | `/coach:assess` | Scan your Claude Code environment and report your skill level, gaps, and anti-patterns |
 | `/coach:next` | Learn the next concept for your level — best for greenfield projects or building new skills |
-| `/coach:execute` | Fix the gaps in an existing project step by step, with the why explained inline |
+| `/coach:execute` | Work your assessment plan step by step — practices (verification first), then gaps, with the why inline |
 | `/coach:exercise` | Get a hands-on exercise for your current skill level |
 | `/coach:status` | Show current coaching level, last assessment date, and discovery staleness |
 | `/coach:recap` | Progress recap — what you've practiced and how your repo got more Claude-ready over time |

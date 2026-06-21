@@ -1,5 +1,5 @@
 ---
-description: "Fix the gaps in an existing project step by step — applies your assessment plan with the why explained inline"
+description: "Work your assessment plan step by step — cross-cutting practices (verification first), then feature gaps, with the why explained inline"
 ---
 
 # /coach:execute — Step-by-Step Plan Execution
@@ -12,6 +12,11 @@ Assessment creates a plan. Execute turns the plan into applied knowledge.
 The goal is not just to fix gaps — it's to understand why each fix matters
 so the developer builds real intuition, not just a checklist.
 
+The plan leads with the cross-cutting practices (verification first), then the
+feature gaps — because a practice like "Claude can verify its own work here"
+moves output quality more than the next feature. Practices are coached
+*hands-on* here, not merely explained.
+
 ## Execution Steps
 
 ### 1. Load Assessment
@@ -19,7 +24,8 @@ so the developer builds real intuition, not just a checklist.
 ```
 Read ~/.claude/coaching/state/assessments.jsonl
   → Get the LAST entry (most recent assessment)
-  → Extract: detected_level, gaps, anti_patterns, project_path
+  → Extract: detected_level, gaps, anti_patterns, practice_gaps,
+    verification_ready, verification_gate, project_path
 ```
 
 If no assessment exists:
@@ -42,9 +48,10 @@ Read ~/.claude/coaching/state/execution-state.json
   "project_path": "<project_path from assessment>",
   "steps": [
     {
-      "id": "<gap.gap or anti_pattern.id>",
-      "type": "gap | anti_pattern",
-      "priority": "HIGH | MEDIUM | LOW",
+      "id": "<practice_gap slug | gap.gap | anti_pattern.id>",
+      "type": "practice | gap | anti_pattern",
+      "is_habit": "<true for behavioral practices with no file artifact, else false>",
+      "priority": "CRITICAL | HIGH | MEDIUM | LOW",
       "summary": "<one-line description>",
       "status": "pending | done | skipped",
       "completed_at": null
@@ -56,13 +63,34 @@ Read ~/.claude/coaching/state/execution-state.json
 
 **Building steps from assessment:**
 
-Order steps by priority:
-1. Gaps with `priority: HIGH` (ordered as they appear)
-2. Anti-patterns with `severity: HIGH` or `CRITICAL`
-3. Gaps with `priority: MEDIUM`
-4. Anti-patterns with `severity: MEDIUM`
-5. Gaps with `priority: LOW`
-6. Anti-patterns with `severity: LOW`
+Practices outrank features — a missing cross-cutting practice (especially verification) is a more important step than the next feature gap. Order steps like this:
+
+1. **Verification & security first:**
+   - Security anti-patterns (CRITICAL) — safety can't wait (no deny rules, `dangerouslySkipPermissions`)
+   - `verification_ready: false` (or a `no-verification` practice gap) → a CRITICAL `practice` step: give Claude a check it can run
+   - `verification_gate: false` (when verification is ready) → a HIGH `practice` step: make the check run automatically
+2. **Other `practice_gaps`** (HIGH) — one `practice` step per slug, built from the Practice Catalog below
+3. Gaps with `priority: HIGH` (ordered as they appear)
+4. Anti-patterns with `severity: HIGH` or `CRITICAL` (any not already placed in step 1)
+5. Gaps with `priority: MEDIUM`
+6. Anti-patterns with `severity: MEDIUM`
+7. Gaps with `priority: LOW`
+8. Anti-patterns with `severity: LOW`
+
+**Practice Catalog** — practices are coached *hands-on* here, not just explained:
+
+| Signal | Step summary | Kind | How to implement | How to verify |
+|--------|--------------|------|------------------|---------------|
+| `verification_ready: false` / `no-verification` | Give Claude a check it can run | config | Add the repo's real test/build/lint command to CLAUDE.md | Read CLAUDE.md for a runnable command; if safe, run it once |
+| `verification_gate: false` | Make the check run automatically | config | Add a Stop hook in `.claude/settings.json` that runs the check before Claude finishes | Read settings.json; confirm the Stop hook is present |
+| `no-plan-mode-habit` | Plan before multi-file work | habit | Use plan mode (Shift+Tab → "plan") for unfamiliar or multi-file tasks; optionally add a one-line "plan-first for X" note to CLAUDE.md | Confirm they know the keybind and when to reach for it |
+| `vague-prompts` | Ground every prompt | habit | Point at specific files, an example pattern to follow, and the symptom — not "fix the bug" | Confirm they can restate a recent vague prompt in grounded form |
+| `no-clear-between-tasks` / `no-context-hygiene` | Keep context clean | habit (may pair with a CLAUDE.md trim) | `/clear` between unrelated tasks; keep CLAUDE.md short; use subagents for investigation | Behavioral; if a CLAUDE.md trim is involved, re-check the line count |
+| `no-course-correction` | Course-correct early | habit | Stop and redirect the moment Claude drifts; `/clear` and re-prompt rather than fight a polluted context | Confirm they'll interrupt and redirect instead of pushing through |
+
+Set each practice step's `is_habit` from the **Kind** column (`config` → false, `habit` → true). `config` steps use the normal apply / done / skip + verify flow; `habit` steps are handled in **Step 6b**.
+
+If a practice overlaps a `gap`, `anti_pattern`, or assessment `recommendation` (e.g. verification often also appears as a recommendation), create ONE step — typed `practice` — and don't duplicate it.
 
 ### 3. Check Completion
 
@@ -155,6 +183,18 @@ After applying, confirm what was done:
 
 Then proceed as if the user said "done" — mark complete, log, advance.
 
+### 6b. Practice Steps — Behavioral Habits
+
+For a step with `type: "practice"` and `is_habit: true`, there is no file to create — the change is a working habit, not config. Adapt the flow:
+
+- **Options:** replace the closing prompt with:
+  `Type **got it** once you've taken it in (you'll practice it in your next sessions), **skip** to come back later, or ask anything about it first.`
+- **No "apply":** there is nothing to implement with a tool. If the practice has an *optional* artifact (e.g. a one-line CLAUDE.md note for plan-first), you may offer it, but don't require it.
+- **Verification (Step 7) becomes a quick check, not a file read:** confirm understanding or commitment in one line — e.g. "✓ You can now restate a vague prompt in grounded form — that's the habit." If they're unsure, answer and re-present rather than advancing.
+- **Logging (Step 9):** use `coaching_action: "practiced"`, `applied: false`, `evidence_type: "acknowledged"`.
+
+`config` practice steps (verification command, verification gate, a CLAUDE.md trim) keep the normal apply / done / skip + file-verification flow and log `coaching_action: "applied"`, `evidence_type: "env_change"`.
+
 ### 7. On "done" or after "apply" — Verify the Fix
 
 Before marking complete, verify the fix was actually applied using Claude's tools:
@@ -186,6 +226,7 @@ After verification passes, check if the completed step and the next pending step
 
 | Completed | Next | Bridge hint |
 |---|---|---|
+| verification command (CLAUDE.md) | verification gate (Stop hook) | "Claude now has a command to run — the next step makes a hook run it automatically before Claude finishes, so the loop closes without you watching." |
 | L4 skill gap | L5 agent gap | "The skill you just created can be wired into your agent in the next step — we'll reference it from the agent's system prompt." |
 | L5 agent gap | any | "Your agent is ready. Consider which skills it should call on — we'll connect them if needed." |
 | settings.json deny rules | any | "Deny rules apply to all tools, including any agents you create — no extra config needed." |
@@ -215,6 +256,8 @@ After confirming, append to `~/.claude/coaching/state/outcomes.jsonl`:
   "notes": "User applied: <step summary>"
 }
 ```
+
+For **practice** steps, log per **Step 6b**: habit steps use `coaching_action: "practiced"`, `applied: false`, `evidence_type: "acknowledged"`; config-backed practice steps use `applied: true`, `evidence_type: "env_change"`.
 
 Then show a brief reinforcement:
 ```
@@ -292,4 +335,81 @@ applies to ALL tools (Read, Edit, Bash). One settings.json protects the whole pr
 
 Type **apply** to let me implement this for you, **done** if you've already applied it,
 **skip** to come back later, or ask any question before proceeding.
+```
+
+For a **config-backed practice** (`verification_ready: false`) on FounderFinder:
+
+```markdown
+---
+## Step 1 of 5 — Give Claude a Check It Can Run
+
+**Priority:** CRITICAL
+
+### What You're Doing
+
+Add your project's real test/build/lint command to `CLAUDE.md` so Claude can
+verify its own changes instead of waiting for you to catch mistakes.
+
+### Why This Matters
+
+This is the single biggest lever on output quality. Right now Claude finishes a
+change and hands it back unchecked — you're the test runner. FounderFinder has a
+`package.json` with a `test` script; once Claude knows the command, it runs it,
+sees failures, and iterates until green on its own.
+
+### How to Implement
+
+Add a Verification section to your `CLAUDE.md` (shown indented):
+
+    ## Verification
+
+    Run tests: `npm test`
+    Run one file: `npm test -- src/foo.test.ts`
+    Type-check: `npm run typecheck`
+
+### The Mental Model
+
+A session where Claude can run a check is one it can finish; a session where it
+can't is one you babysit. Verification is the difference — it's why this is step 1.
+
+---
+
+Type **apply** to let me implement this for you, **done** if you've already applied it,
+**skip** to come back later, or ask any question before proceeding.
+```
+
+For a **habit practice** (`vague-prompts`) — note the different options and no file to apply:
+
+```markdown
+---
+## Step 3 of 5 — Ground Every Prompt
+
+**Priority:** HIGH
+
+### What You're Doing
+
+Build the habit of pointing Claude at specific files, an example pattern to
+follow, and the actual symptom — instead of "fix the bug" or "make it better."
+
+### Why This Matters
+
+Your recent prompts ("clean up the auth code") send Claude exploring blind. A
+grounded prompt — "in `src/auth/session.ts`, the refresh token isn't rotated on
+renewal; follow the pattern in `login.ts`" — gets the right change on the first
+try. Precision up front beats correction after.
+
+### How to Implement
+
+Nothing to install — this is a working habit. Next time, before you hit enter,
+add the three anchors: which file(s), which pattern to follow, what's wrong.
+
+### The Mental Model
+
+Claude is only as grounded as your prompt. Naming the file, the pattern, and the
+symptom turns an open-ended search into a targeted edit.
+
+---
+
+Type **got it** once you've taken it in (you'll practice it in your next sessions),
+**skip** to come back later, or ask anything about it first.
 ```
