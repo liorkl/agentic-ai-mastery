@@ -27,19 +27,18 @@ Mastery is not about memorizing commands. It's about developing **engineering ju
 
 **Key terminology shift (Sep 2025):** Anthropic formally introduced **context engineering** as the successor to prompt engineering. The curriculum reflects this — prompting is Level 1, but context engineering is a discipline that pervades Levels 2-10. As Anthropic defines it: "the set of strategies for curating and maintaining the optimal set of tokens during LLM inference."
 
-**Phase-1 additions (2026-06-21):** After a review against current Anthropic docs/best-practices and popular community resources, the runtime knowledge base was refreshed to mid-2026 reality **without renumbering this ladder**. Topics added or expanded, folded into the existing levels:
-- **Permission modes, plan mode, auto mode, sandboxing** — new `knowledge/features/permissions.md`, taught at L0 (the autonomy ↔ oversight dial).
-- **Checkpoints & rewind** as safe-exploration and course-correction (`context.md`, L0–L1).
-- **MCP context cost & progressive disclosure** — connecting all tool defs upfront is an anti-pattern; code-execution/progressive disclosure cut a real workflow ~150k→~2k tokens (L7, `mcp.md`).
-- **Claude Agent SDK** (renamed from "Claude Code SDK"), scheduled runs, and the fan-out pattern (L8, `headless.md`).
-- **Git worktrees / dual-instance** as the simpler parallel pattern, plus a "start simple — don't reach for an agent team until a single call + verification fails" gate (L9, `teams.md`).
-- Current **output styles** including the **Learning** style (relevant to coaching).
+**Phase-2 re-order (2026-06-21):** The structural re-order is now **done**. The ladder was reshaped to match how the work actually compounds, while keeping the verification-first spine and the five cross-cutting practices intact:
+- **Old L2 (Project Configuration) + old L3 (Context Engineering) are merged into one L2 — "Project Memory & Context."** Configuration and context hygiene are the same discipline (curating the tokens Claude sees), so they now live together; overlapping `@path` / memory / context-rot material was deduped.
+- **L4–L8 shifted down by one** after the merge: old L4 (Skills) → L3, old L5 (Subagents) → L4, old L6 (Hooks) → L5, old L7 (MCP) → L6, old L8 (Headless/SDK) → L7.
+- **A new L8 — "Parallel Work: Worktrees & Dual-Instance"** is inserted **before** Agent Teams: git worktrees and the two-session (write/review) pattern are the simpler parallelism rung you reach for before a full team.
+- **Permission modes (default/acceptEdits/plan/auto/dontAsk/bypassPermissions) + the `auto` safety classifier, and checkpoints/rewind** are folded into **L0** as the autonomy ↔ oversight dial and safe-exploration tools.
+- **Agent Teams stays L9; Mastery stays L10** (reframed as distribution + operating at scale).
 
-A **structural re-order** (merge context into the memory level, promote permissions/checkpoints/subagents/MCP earlier, add a Parallel-Work rung) is planned as a separate Phase-2 pass — see the docs/ proposal when it lands.
+Context engineering still **pervades Levels 2-10**; verification-first still outranks feature breadth.
 
 ---
 
-## Level 0: Foundations — "First Contact"
+## Level 0: Foundations & Setup — "First Contact"
 **Goal:** Get productive fast. Understand what Claude Code _is_ and _isn't_ — and where it sits in the broader Claude ecosystem.
 **Mindset shift:** From "AI as autocomplete" → "AI as a junior developer I'm directing"
 
@@ -69,14 +68,26 @@ A **structural re-order** (merge context into the memory level, promote permissi
 - Keyboard shortcuts (`Shift+?` to see all, `Escape` to interrupt)
 - `/init` command: auto-generating your first CLAUDE.md
 
-#### 0.4 The Safety Model
-- Permission modes: default, `--allowlist`, `--dangerously-skip-permissions`
+#### 0.4 The Safety Model — Permission Modes & the Autonomy Dial
+- **Permission modes** — the autonomy ↔ oversight dial:
+  - **default** — ask before each consequential action
+  - **acceptEdits** — auto-accept file edits, still ask for the riskier stuff
+  - **plan** — read/plan only, no edits or commands (see Level 1)
+  - **auto** — let Claude decide, gated by the **`auto` safety classifier** that judges each action and still stops for genuinely risky ones
+  - **dontAsk** — stop prompting for a known-safe allowlist
+  - **bypassPermissions** (`--dangerously-skip-permissions`) — no prompts at all; only in a sandbox/throwaway env
 - Understanding what Claude asks permission for and why
 - Reading permission prompts carefully — not just hitting "yes"
 - Sandboxing basics for safe experimentation (`/sandbox`)
 - Permission wildcards: `Bash(npm run *)`, `Edit(/docs/**)`
 
-#### 0.5 Model Selection Basics
+#### 0.5 Checkpoints & Rewind — Safe Exploration
+- Claude Code snapshots state so you can explore boldly and roll back if a direction is wrong
+- `/rewind` to restore a previous checkpoint (conversation and/or file state)
+- Why this lowers the cost of letting Claude try something: a bad attempt is one rewind away
+- Pairs with course-correcting early — back out of drift instead of fighting it forward
+
+#### 0.6 Model Selection Basics
 - **Opus 4.8** (`claude-opus-4-8`) — Default model; strongest reasoning and coding, 1M context
 - **Fable 5** (`claude-fable-5`) — Frontier model for the hardest, most open-ended work, 1M context
 - **Sonnet 4.6** (`claude-sonnet-4-6`) — Fast, capable coding model, 1M context
@@ -84,7 +95,7 @@ A **structural re-order** (merge context into the memory level, promote permissi
 - When each model is appropriate (start with the default; reach for others by task fit, not habit)
 - Switching models: `--model` flag
 
-#### 0.6 When NOT to Use Claude Code
+#### 0.7 When NOT to Use Claude Code
 - Tasks where AI adds risk (security-critical, compliance, irreversible ops)
 - Understanding hallucination risks in code generation
 - The accountability principle: "You own the code in your PR, regardless of who wrote it"
@@ -99,38 +110,46 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
-## Level 1: Effective Prompting — "Speaking the Language"
-**Goal:** Learn to communicate intent clearly and get reliable results.
-**Mindset shift:** From "type and hope" → "precise delegation with success criteria"
+## Level 1: Prompting & the Core Loop — "Speaking the Language"
+**Goal:** Learn to communicate intent clearly, run the explore → plan → code → verify loop, and get reliable results.
+**Mindset shift:** From "type and hope" → "precise delegation with success criteria, planned before executed and verified after"
 
 ### Topics
 
-#### 1.1 Anatomy of a Good Prompt
+#### 1.1 The Core Loop: Explore → Plan → Code → Verify
+- The single most important habit: research and plan _before_ writing code, then give Claude a way to check its own work
+- **Explore** — read the relevant files / patterns first (use plan mode or the Explore subagent)
+- **Plan** — turn intent into a reviewed plan before any edits (plan mode, see 1.5)
+- **Code** — execute the approved plan
+- **Verify** — Claude runs a check it can see the result of (tests, build, lint, a script, a screenshot); the verification loop is the #1 lever on quality and is coached from the very start
+- Why doing this early beats bolting it on later: it shapes every habit above it on the ladder
+
+#### 1.2 Anatomy of a Good Prompt
 - Specificity: what, where, how, and constraints
 - Including success criteria ("the tests should pass", "match the existing code style")
 - Providing examples of desired output
 - Negative constraints: what NOT to do
 - Using XML tags for structure (Anthropic's recommended practice)
 
-#### 1.2 Context is Everything
+#### 1.3 Context is Everything
 - Why Claude's output quality depends on what it knows
 - Pointing Claude to relevant files explicitly
 - Using `@path` references to pull in specific context
 - The difference between "fix the bug" and "fix the null check in src/auth/validate.ts line 42"
 
-#### 1.3 Iterative Prompting
+#### 1.4 Iterative Prompting
 - Breaking large tasks into steps
 - Reviewing output before asking for the next step
 - Correcting course: "That's not what I meant — instead, do X"
 - When to `/clear` and start fresh vs. continuing the conversation
 
-#### 1.4 Plan Before Execute (Plan Mode)
+#### 1.5 Plan Before Execute (Plan Mode)
 - Activating Plan Mode (`Shift+Tab` twice)
 - Why "plan first, code second" produces better results
 - Reviewing and approving plans before execution
 - The spec-based workflow: write spec → have Claude interview you via AskUserQuestionTool → execute spec in new session
 
-#### 1.5 Output Styles (Feb 2026)
+#### 1.6 Output Styles (Feb 2026)
 - **Default** — Concise task completion, minimal explanation
 - **Explanatory** — Educational "Insights" blocks explaining implementation choices and patterns
 - **Learning** — Collaborative mode with `TODO(human)` markers for hands-on practice
@@ -138,7 +157,7 @@ A **structural re-order** (merge context into the memory level, promote permissi
 - When to use each: Explanatory for new codebases, Learning for skill-building
 - Relevance to coaching: the Learning output style IS a coaching interface
 
-#### 1.6 Adaptive Thinking & Effort (Claude 4.x)
+#### 1.7 Adaptive Thinking & Effort (Claude 4.x)
 - Adaptive thinking: Claude adjusts reasoning depth automatically based on task complexity
 - `effort` levels (low / medium / high / xhigh / max) replace the old manual `budget_tokens` / "extended thinking budget" knob — you set how hard to think, not a token count
 - When higher effort earns its keep (hard reasoning, tricky debugging) vs. when low effort is enough
@@ -154,34 +173,37 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
-## Level 2: Project Configuration — "Teaching Claude About Your Project"
-**Goal:** Set up persistent context so Claude understands your project deeply.
-**Mindset shift:** From "one-off prompts" → "a configured development environment"
+## Level 2: Project Memory & Context — "Teaching Claude About Your Project"
+**Goal:** Set up persistent project memory _and_ actively manage the context window — two halves of the same discipline: curating the tokens Claude sees.
+**Mindset shift:** From "one-off prompts in an infinite conversation" → "a configured environment where context is a finite resource I engineer"
+
+**Why this level matters most:** Configuration (what you give Claude up front) and context hygiene (what you let accumulate during a session) are the same problem from two ends. Anthropic's own research shows performance degrades as context fills — a phenomenon called **context rot** — because every token introduced depletes an "attention budget." A great CLAUDE.md that you then drown in 200k tokens of stale conversation helps no one. This level teaches both: persist the right context, and keep the live window clean.
 
 ### Topics
 
 #### 2.1 CLAUDE.md — Your Project's Brain
 - What CLAUDE.md is and when Claude reads it (loaded into system prompt at startup)
 - Five essential sections: project description, build commands, code style, architecture, testing
-- What NOT to include: don't exceed ~150 lines; keep it focused
+- What NOT to include: don't exceed ~150 lines; keep it focused (a bloated CLAUDE.md is itself context rot you ship on every session)
 - Multiple CLAUDE.md files: root-level + subdirectory-specific (e.g., `/frontend/CLAUDE.md`)
 - Priority hierarchy: module-level > project-level > user-level (~/.claude/CLAUDE.md)
 - AGENTS.md symlink for cross-tool compatibility (Copilot, Cursor)
 - `/init` generates a starter; treat it as a starting point, not the final version
-- Using `@path` references to pull in other files modularly
+- Using `@path` references to pull in other files modularly — keep the entrypoint thin, load detail on demand
 
-#### 2.2 Memory System
+#### 2.2 Memory System & Auto-Memory
 - How Claude Code's memory works across sessions
 - `/memory` command for checking and editing
-- Auto-memory: Claude builds context automatically
+- Auto-memory: Claude builds persistent context automatically across conversations
 - CLAUDE.local.md for personal preferences (git-ignored)
-- The 200-line entrypoint limit and why it matters
-- Strategic use of memory for persistent preferences
+- The ~200-line entrypoint limit and why it matters
+- Strategic, scoped use of memory for persistent preferences — store the durable, not the disposable
 
-#### 2.3 Rules Files
+#### 2.3 Rules Files & Scoping
 - `.claude/rules/*.md` — modular topic-specific instructions
 - Path-scoped rules via frontmatter (apply only to certain directories)
 - When rules are better than CLAUDE.md entries (separation of concerns)
+- Scoping is a context tool: rules and module-level CLAUDE.md load only where relevant, so Claude isn't carrying frontend conventions while editing the backend
 
 #### 2.4 Settings & Configuration
 - `settings.json` hierarchy: managed → project shared → project local → user
@@ -191,104 +213,89 @@ A **structural re-order** (merge context into the memory level, promote permissi
 - Output style persistence per project (`.claude/settings.local.json`)
 - Environment variables: `CLAUDE_ENV_FILE`, `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR`
 
-### Mastery Check
-> Can you set up a project from scratch so that a _new team member_ using Claude Code would get high-quality results immediately, without any verbal instructions from you?
-
-### Official Resources
-- [Using CLAUDE.md Files (Anthropic Blog)](https://claude.com/blog/using-claude-md-files)
-- [Claude Code Settings Reference](https://code.claude.com/docs/en/settings)
-- [Manage Claude's Memory](https://code.claude.com/docs/en/memory)
-
----
-
-## Level 3: Context Engineering — "The Most Critical Discipline"
-**Goal:** Master the #1 constraint in agentic development: the context window.
-**Mindset shift:** From "infinite conversation" → "context is a finite resource with diminishing returns that I actively engineer"
-
-**Why this level matters most:** Anthropic's own research shows that LLM performance degrades as context fills — a phenomenon called **context rot**. Every token introduced depletes an "attention budget." This level teaches you to think in context — considering the holistic state available to the LLM at any given time.
-
-### Topics
-
-#### 3.1 Understanding the Context Window
+#### 2.5 Understanding the Context Window
 - What goes into context: system prompt, CLAUDE.md, messages, file reads, tool results, MCP tool definitions
 - How context fills up (it happens faster than you think)
 - The n² attention problem: every token attends to every other token
 - Performance degradation past ~50% context fill: forgetting instructions, increased errors
-- Monitoring context usage with custom status line
+- Monitoring context usage with a custom status line
 
-#### 3.2 Context Hygiene
-- `/clear` — when and why to use it aggressively
+#### 2.6 Context Hygiene
+- `/clear` — when and why to use it aggressively (start fresh for a new task, don't continue indefinitely)
 - `/compact` — automatic summarization when approaching limits (Anthropic's built-in compaction)
-- Starting new sessions for new tasks (not continuing indefinitely)
-- The "context rot" problem: why AI gets worse the longer you chat
+- `/rewind` — drop back to a clean checkpoint when a session has gone off the rails (also a Level 0 safe-exploration tool)
+- The **context rot** problem: why AI gets worse the longer you chat, and how the attention budget runs down
 - `/resume` to restart conversations with prior context
 
-#### 3.3 Strategic Context Loading
+#### 2.7 Strategic Context Loading
 - **Just-in-time retrieval** vs. upfront loading (Anthropic's recommended approach)
 - Maintaining lightweight identifiers (file paths, stored queries, links) over full file contents
-- Using the Explore subagent for read-only codebase discovery
+- Using the Explore subagent for read-only codebase discovery (push investigation out of the main window)
 - Progressive disclosure: loading information only when the task requires it
 - The metadata advantage: folder hierarchies and naming conventions as implicit signals
 
-#### 3.4 Token-Efficient Workflows
+#### 2.8 Token-Efficient Workflows
 - Commit-and-clear pattern: complete a unit of work, commit, clear, move on
 - Using scratchpads and intermediate files to persist state between sessions
 - Reducing verbose tool outputs (e.g., trimming test output, filtering logs)
 - Recognizing when context is degraded: signs and recovery strategies
 - Tool Search feature: dynamic MCP tool loading when tools exceed 10% of context
 
-#### 3.5 The Right Altitude (Anthropic's Framework)
-- System prompts should be neither too specific (brittle) nor too vague (unguided)
+#### 2.9 The Right Altitude (Anthropic's Framework)
+- System prompts and CLAUDE.md should be neither too specific (brittle) nor too vague (unguided)
 - The "Goldilocks zone" for instructions: specific enough to guide, flexible enough for heuristics
 - Minimal viable context: the smallest set of high-signal tokens for the desired outcome
 - Testing: start with minimal prompt on best model, then add based on failure modes
 
 ### Mastery Check
-> Can you complete a complex multi-file feature implementation without context degradation, and explain your context strategy to another developer?
+> Can you set up a project from scratch so a _new team member_ gets high-quality results immediately with no verbal instructions from you — AND complete a complex multi-file feature without context degradation, explaining your context strategy to another developer?
 
 ### Official Resources
+- [Using CLAUDE.md Files (Anthropic Blog)](https://claude.com/blog/using-claude-md-files)
+- [Claude Code Settings Reference](https://code.claude.com/docs/en/settings)
+- [Manage Claude's Memory](https://code.claude.com/docs/en/memory)
 - [Context Engineering for AI Agents (Anthropic Engineering)](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 - [Claude Code Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices)
 - [Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 
 ---
 
-## Level 4: Skills & Slash Commands — "Reusable Workflows"
+## Level 3: Skills & Slash Commands — "Reusable Workflows"
 **Goal:** Stop repeating yourself. Encode proven workflows using the Agent Skills open standard.
 **Mindset shift:** From "ad-hoc instructions each time" → "workflow engineering with progressive disclosure"
 
 ### Topics
 
-#### 4.1 Slash Commands (Legacy, Still Supported)
-- What they are: prompt templates stored as `.claude/commands/*.md`
-- Creating project-level vs. user-level commands
-- Parameterized commands with `$ARGUMENTS`
-- Frontmatter for allowed tools and descriptions
-- Note: Skills are now recommended over commands for new work
-
-#### 4.2 Agent Skills — The Open Standard (Dec 2025)
-- `.claude/skills/` — the current best practice
+#### 3.1 Agent Skills — The Open Standard (Dec 2025)
+- `.claude/skills/` — the current best practice; lead here, commands are legacy
 - Skills as an **open standard**: portable across Claude.ai, Claude Code, Cowork, and the API
 - Anatomy of a SKILL.md: name + description in frontmatter (scanned at startup), body loaded on demand
 - Supporting files: scripts, resources, reference docs bundled in the skill folder
 - Partner skills: Atlassian, Canva, Figma, Notion, Cloudflare, Stripe, Zapier
 - Built-in skills: PDF, DOCX, XLSX, PPTX (power Claude.ai's file creation)
 
-#### 4.3 Progressive Disclosure Architecture
+#### 3.2 Slash Commands (Legacy, Still Supported)
+- What they are: prompt templates stored as `.claude/commands/*.md`
+- Creating project-level vs. user-level commands
+- Parameterized commands with `$ARGUMENTS`
+- Frontmatter for allowed tools and descriptions
+- Note: Skills are now recommended over commands for new work
+
+#### 3.3 Progressive Disclosure Architecture
 - **3-level loading**: metadata → core instructions → nested resources
 - Why this matters: context efficiency by design
 - Metadata (name + description) loaded at startup costs minimal tokens
 - Body loaded only when task matches — no wasted context on irrelevant skills
 - Skills can include executable code that Claude runs without loading into context
 
-#### 4.4 Designing Good Skills
+#### 3.4 Designing Good Skills
 - Clear trigger descriptions (so Claude knows when to use them)
 - Step-by-step procedures that produce consistent results
 - Including examples of good and bad output
 - Testing skills with the skill-creator workflow: draft → eval → iterate → improve
 - Using the `evals/` directory for structured skill testing
 
-#### 4.5 Skill Composition & Distribution
+#### 3.5 Skill Composition & Distribution
 - Skills that invoke other skills or reference supporting documents
 - Building a personal skill library (user-level `~/.claude/skills/`)
 - Community skills: [Anthropic Skills Repository](https://github.com/anthropics/skills)
@@ -306,45 +313,48 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
-## Level 5: Custom Agents — "Specialized Team Members"
-**Goal:** Create focused AI agents that handle specific types of work.
-**Mindset shift:** From "one general assistant" → "a team of specialists I designed"
+## Level 4: Custom Agents (Subagents) — "Context Isolation as a Tool"
+**Goal:** Create focused AI agents that handle specific types of work — and keep their context out of your main window.
+**Mindset shift:** From "one general assistant in one context window" → "a team of specialists I designed, each with its own isolated context"
+
+**Frame first:** A subagent is, above all, a **context-isolation tool**. Its own window does the noisy work — searching the codebase, reading dozens of files, churning through tool output — and returns only the conclusion to the parent. That keeps the main conversation clean (Level 2 made this matter). Specialization and tool restriction are the second benefit, not the first.
 
 ### Topics
 
-#### 5.1 What Custom Agents Are
+#### 4.1 What Custom Agents Are
 - Markdown files with YAML frontmatter in `.claude/agents/`
 - Own context window, system prompt, tool access, permissions, model, and visual color
+- **Context isolation**: a subagent's reads and tool output stay in _its_ window; only the result returns to the parent
 - **Automatic delegation**: Claude routes tasks based on description — like tool invocation
 - Project-level vs. user-level agents (`~/.claude/agents/`)
 
-#### 5.2 Agent Design Principles
+#### 4.2 Agent Design Principles
 - One agent, one job (code reviewer ≠ code writer ≠ test writer)
 - Constraining tool access (read-only agents can't use Write, Edit, NotebookEdit)
 - Model selection per agent (Haiku 4.5 for fast, high-volume subagent work; Opus 4.8 for the orchestrating agent)
 - Writing effective descriptions so auto-delegation works reliably
 - Background color coding for visual identification in terminal
 
-#### 5.3 Built-in Subagents
+#### 4.3 Built-in Subagents
 - **Explore** — Fast, read-only codebase search and analysis (uses Sonnet by default)
 - **Plan** — Research and analysis without file changes
 - **General-purpose** — Default delegation target
 - When to use built-in vs. custom agents
 
-#### 5.4 Creating Your First Agents
+#### 4.4 Creating Your First Agents
 - Using `/agents` command → Create new agent → Generate with Claude (recommended)
 - Manual creation: YAML frontmatter + system prompt
 - The essential starter set: Reviewer (read-only), Planner, Implementer, Tester
 - Iterating on agent prompts based on real results
 
-#### 5.5 Subagent Patterns
+#### 4.5 Subagent Patterns
 - Task delegation: when Claude invokes an agent automatically
 - Explicit invocation via `/agent` command
 - Fan-out: multiple agents working on different aspects
 - Builder-Validator pattern: implementation agent + read-only validation agent
 - Context isolation: subagents don't inherit parent conversation history
 
-#### 5.6 Designing the Coach Agent (Meta-Exercise)
+#### 4.6 Designing the Coach Agent (Meta-Exercise)
 - Building the coaching agent itself as a mastery exercise
 - Persistence patterns (JSONL progress tracking)
 - Diagnostic questioning techniques
@@ -359,26 +369,28 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
-## Level 6: Hooks — "Deterministic Quality Gates"
+## Level 5: Hooks — "Deterministic Quality Gates"
 **Goal:** Add automated guardrails that run outside the AI loop.
 **Mindset shift:** From "trust but verify manually" → "automated enforcement at every step"
 
+**The `Stop` hook is the verification gate.** It's where the Level 1 verification loop becomes non-optional: when Claude finishes responding, a deterministic check runs (tests, build, lint) and blocks "done" until it passes — no LLM judgment involved.
+
 ### Topics
 
-#### 6.1 What Hooks Are
+#### 5.1 What Hooks Are
 - Scripts that run on specific lifecycle events, _outside_ the agentic loop
 - Not AI — deterministic code (shell scripts, Python) that enforces rules
 - The critical distinction: hooks are reliable because they don't involve LLM judgment
 - Hooks are typically under 100 lines, with clear comments
 
-#### 6.2 Hook Events
+#### 5.2 Hook Events
 - `PreToolUse` — before Claude uses a tool (intercept, modify, block)
 - `PostToolUse` — after Claude uses a tool (validate, log, alert)
-- `Stop` — when Claude finishes responding (enforce quality checks)
+- `Stop` — when Claude finishes responding (enforce quality checks) — **the verification gate**
 - `TeammateIdle` — when a team member finishes (reassign, redirect) — Level 9
 - `TaskCompleted` — when a task is marked done (gate on tests, lint) — Level 9
 
-#### 6.3 Essential Hook Patterns
+#### 5.3 Essential Hook Patterns
 - **Security hooks:** Block secrets before they reach your repo
 - **Quality hooks:** Run linter/formatter after every file edit (ruff, prettier, eslint)
 - **Logging hooks:** Track what Claude does for audit/debugging
@@ -386,7 +398,7 @@ A **structural re-order** (merge context into the memory level, promote permissi
 - **Test hooks:** Require tests to pass before marking work complete
 - **Status line hooks:** Custom status display showing context usage, DDD progress, etc.
 
-#### 6.4 Writing Production Hooks
+#### 5.4 Writing Production Hooks
 - Keep hooks fast (they block the workflow)
 - Exit code conventions: 0 = pass, 1 = error, 2 = send feedback to Claude
 - Exit code 2 is powerful: it sends the hook's output back as feedback
@@ -403,19 +415,21 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
-## Level 7: MCP Integration — "Extending Claude's Reach"
+## Level 6: MCP Integration — "Extending Claude's Reach"
 **Goal:** Connect Claude Code to external tools and data sources via the Model Context Protocol.
 **Mindset shift:** From "Claude works with my files" → "Claude works with my entire toolchain"
 
+**Mind the context cost.** Every connected MCP server's tool definitions sit in the window from the first token — connecting all of them upfront is an anti-pattern (Level 2 again). Prefer **progressive disclosure** / code-execution loading: one real workflow dropped from ~150k to ~2k tokens by loading tool defs on demand instead of all at once. Tool Search (6.3) is how Claude Code does this automatically.
+
 ### Topics
 
-#### 7.1 What MCP Is
+#### 6.1 What MCP Is
 - Model Context Protocol: an **open standard** for connecting AI to external services
 - MCP servers expose tools that Claude can invoke
 - Adding MCP servers: `claude mcp add <name> -- <command>`
 - MCP configuration locations: `.mcp.json` (project), `.claude/settings.local.json`, `~/.claude.json`
 
-#### 7.2 Essential MCP Servers
+#### 6.2 Essential MCP Servers
 - **Context7 / docs fetcher** — Up-to-date library docs, prevents hallucinated APIs
 - **Browser automation** (Puppeteer, Playwright) — Claude tests your UI, sees console logs
 - **Chrome DevTools** — Claude inspects DOM, network, console in your real browser
@@ -424,19 +438,19 @@ A **structural re-order** (merge context into the memory level, promote permissi
 - **GitHub** — Claude manages issues, PRs, repos
 - **Excalidraw** — Claude generates architecture diagrams
 
-#### 7.3 Tool Search — Dynamic Tool Loading (Late 2025)
+#### 6.3 Tool Search — Dynamic Tool Loading (Late 2025)
 - When MCP tools exceed 10% of your context window, Tool Search activates
 - Dynamically loads only relevant MCP tools instead of all at once
 - Critical for users with many MCP servers configured
 - Can be disabled if you prefer upfront loading (increases context usage)
 
-#### 7.4 When MCP is Worth the Complexity
+#### 6.4 When MCP is Worth the Complexity
 - Don't add servers you won't use regularly
 - Community wisdom: "Went overboard with 15 MCP servers — ended up using only 4 daily."
 - Evaluating MCP server quality, reliability, and maintenance
 - Security considerations: what access are you granting?
 
-#### 7.5 Building Custom MCP Servers
+#### 6.5 Building Custom MCP Servers
 - When to build vs. use existing
 - FastMCP (Python) vs. MCP SDK (TypeScript)
 - Designing tools Claude will actually use well (clear names, minimal overlap)
@@ -452,25 +466,27 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
-## Level 8: Headless, CI/CD & Long-Running Agents — "Claude in Your Pipeline"
+## Level 7: Headless, SDK & CI — "Claude in Your Pipeline"
 **Goal:** Run Claude Code programmatically and across multiple context windows.
 **Mindset shift:** From "interactive assistant" → "programmable component in my engineering system"
 
 ### Topics
 
-#### 8.1 Headless Mode
+#### 7.1 Headless Mode
 - `claude -p "prompt"` — non-interactive execution
 - Output formats: plain text, JSON (`--output-format json`), streaming JSON
 - Use cases: pre-commit hooks, CI checks, automated code review, documentation generation
+- **Scheduled runs:** cron / CI triggers for unattended jobs (nightly review, doc sync)
 
-#### 8.2 CI/CD Integration Patterns
+#### 7.2 CI/CD & Fan-Out Patterns
 - PR review bot: Claude reviews every pull request
 - Automated test generation on new files
 - Documentation sync: regenerate docs when code changes
 - Release notes generation from commit history
+- **Fan-out:** run many headless invocations in parallel over a batch of inputs (files, PRs, repos), then gather results
 - Cost management for automated usage
 
-#### 8.3 The Harness Pattern for Long-Running Agents (Nov 2025)
+#### 7.3 The Harness Pattern for Long-Running Agents (Nov 2025)
 - **The problem:** Complex projects can't be completed in one context window
 - **Initializer agent:** First session sets up environment — init.sh, feature list, progress file, initial git commit
 - **Coding agent:** Every subsequent session makes incremental progress, then leaves structured updates
@@ -480,8 +496,8 @@ A **structural re-order** (merge context into the memory level, promote permissi
 - **Clean state principle:** Every session ends in a merge-ready state
 - This pattern bridges the gap between context windows like shift handoffs between engineers
 
-#### 8.4 The Claude Agent SDK (Sep 2025)
-- Renamed from Claude Code SDK — now a general agent platform
+#### 7.4 The Claude Agent SDK (Sep 2025)
+- **Claude Agent SDK** — renamed from "Claude Code SDK"; now a general agent platform
 - Powers Claude Code, but also deep research, video creation, note-taking, and non-coding tasks
 - Building standalone agents: Python and TypeScript SDKs
 - Agent lifecycle, tool registration, state persistence, workflow orchestration
@@ -498,16 +514,56 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
+## Level 8: Parallel Work — Worktrees & Dual-Instance — "Two Hands Before a Team"
+**Goal:** Get the speed of parallelism with almost none of the coordination cost — by running independent plain CLI sessions, not an orchestrated team.
+**Mindset shift:** From "one session, one branch, one task at a time" → "isolated parallel checkouts and a write/review split, before you ever reach for Agent Teams"
+
+**Why this rung exists:** Most "I need parallelism" moments don't need an orchestrated team (Level 9) with its message-passing, shared task lists, and token overhead. They need two ordinary sessions that don't step on each other. This is the simpler, cheaper, more predictable parallelism rung — master it first.
+
+### Topics
+
+#### 8.1 Git Worktrees — Isolated Checkouts
+- `git worktree add ../feature-x feature-x` — a second working directory for a different branch off the same repo
+- Each worktree is a real, isolated checkout: a Claude session in one can't collide with edits, builds, or test runs in another
+- Run two (or more) Claude Code sessions, one per worktree, making parallel changes that never touch the same files
+- Clean up with `git worktree remove` when the branch lands
+- When to reach for it: two genuinely independent changes (two features, or a feature + a refactor) you want progressing at once
+
+#### 8.2 The Dual-Instance Pattern — Writer + Reviewer
+- Two plain CLI sessions on the **same** work: one **writes**, one **reviews**
+- The writer implements; the reviewer runs read-only, critiques the diff, runs tests, and feeds findings back
+- A lightweight, human-mediated version of the Builder–Validator pattern — no team machinery, no automatic message delivery
+- Why it works: the reviewer session has fresh, uncontaminated context (Level 2) and isn't invested in the writer's approach
+- Pairs naturally with worktrees: writer in one checkout, reviewer pointed at the same branch or a sibling worktree
+
+#### 8.3 Choosing the Right Parallelism
+- Worktrees + dual-instance: independent or write/review work, minimal coordination, predictable cost — start here
+- Subagents (Level 4): parallel work whose results you want folded back into _one_ context, isolation handled for you
+- Agent Teams (Level 9): many interdependent tasks needing shared state and coordination — the heaviest tool, reach for it last
+- The guiding rule: add coordination machinery only when simpler parallelism actually fails
+
+### Mastery Check
+> Can you run two productive Claude Code sessions in parallel — via worktrees or a writer/reviewer split — and articulate why you chose this over a subagent or an agent team?
+
+### Official Resources
+- [Claude Code Best Practices — parallel sessions & worktrees](https://www.anthropic.com/engineering/claude-code-best-practices)
+- [git worktree documentation](https://git-scm.com/docs/git-worktree)
+
+---
+
 ## Level 9: Agent Teams — "Multi-Agent Orchestration"
 **Goal:** Coordinate multiple Claude instances working in parallel.
 **Mindset shift:** From "one agent, one task" → "orchestrating a team of autonomous agents"
 
+**Start simple — earn the team.** This is the last rung for a reason. Per Anthropic's "Building effective agents": prefer **workflows before agents**, and the simplest thing that works before either. **Don't reach for a team until a single call + verification has actually failed**, then a subagent (Level 4), then worktrees / dual-instance (Level 8) — and only then a team. Teams trade latency and token cost for parallelism and can **compound errors** across agents; the coordination is a liability you take on deliberately, not a default.
+
 ### Topics
 
 #### 9.1 When to Use Agent Teams
-- Tasks that benefit from parallel independent work
-- The cost-benefit analysis: teams consume more tokens but finish faster
-- Not everything needs a team — solo agents are often better
+- **The gate:** only after a single call + verification fails, and a subagent or a worktree/dual-instance split (Level 8) won't do — escalate, don't start here
+- Tasks that benefit from parallel _interdependent_ work needing shared state
+- The cost-benefit analysis: teams consume more tokens, add latency, and risk compounding errors — but finish wide work faster
+- Not everything needs a team — solo agents and the Level 8 patterns are often better
 - **Experimental status:** Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` in settings
 - Fast Mode: higher-speed responses for interactive team work
 
@@ -549,9 +605,9 @@ A **structural re-order** (merge context into the memory level, promote permissi
 
 ---
 
-## Level 10: Mastery — "Engineering with AI Agents"
-**Goal:** Integrate everything into a professional engineering practice.
-**Mindset shift:** From "using a tool" → "designing AI-augmented engineering systems"
+## Level 10: Distribution & Mastery — "Operating at Scale"
+**Goal:** Integrate everything into a professional engineering practice — and distribute that practice so a whole team operates at this level, not just you.
+**Mindset shift:** From "using a tool well myself" → "designing AI-augmented engineering systems and shipping them to others"
 
 ### Topics
 
@@ -631,12 +687,13 @@ Always-on supporting disciplines: **Accountability** (you own the output — AI 
 
 | Week | Levels | Focus |
 |------|--------|-------|
-| 1 | 0-1 | Get productive. Start using Claude Code daily. Take Claude 101 on Anthropic Academy. |
-| 2-3 | 2-3 | Configure your project. Master context engineering. Read Anthropic's context engineering article. |
-| 4-5 | 4-5 | Build skills using the open standard. Create your first custom agent. |
-| 6-7 | 6-7 | Add hooks and MCP integrations. Take the MCP course on DeepLearning.AI. |
-| 8-10 | 8-9 | Implement the harness pattern for long-running work. Try agent teams. |
-| Ongoing | 10 | System design, team leadership, product thinking. |
+| 1 | 0-1 | Get productive. Learn permission modes, plan mode, and the explore → plan → code → verify loop. Take Claude 101 on Anthropic Academy. |
+| 2-3 | 2 | Configure project memory AND master context engineering (one level now). Read Anthropic's context engineering article. |
+| 4-5 | 3-4 | Build skills using the open standard. Create your first custom agent (a context-isolation tool). |
+| 6-7 | 5-6 | Add hooks (the Stop verification gate) and MCP integrations. Take the MCP course on DeepLearning.AI. |
+| 8-9 | 7-8 | Run headless/SDK and CI workflows. Practice worktrees + dual-instance parallelism. |
+| 9-10 | 9 | Earn the team: only when simpler parallelism fails, try agent teams. |
+| Ongoing | 10 | Distribution: package a Claude-ready setup as a plugin; team leadership, governance, product thinking. |
 
 ---
 
@@ -650,7 +707,7 @@ This curriculum is the backbone of the coaching agent's knowledge. The agent sho
 4. **Leverage Output Styles** — recommend Explanatory for exploration, Learning for skill-building
 5. **Track patterns** — note recurring mistakes and strengths in the JSONL progress log
 6. **Celebrate progress** — but with substance ("Your context management improved — you cleared 3x more often")
-7. **Adapt pacing** — experienced developers may skip Level 0-1 but still need Level 3 (context engineering catches everyone)
+7. **Adapt pacing** — experienced developers may skip Level 0-1 but still need Level 2 (project memory + context engineering catches everyone)
 8. **Reference official sources** — point to Anthropic Academy courses, engineering blog posts, and official docs
 9. **Stay current** — the ecosystem evolves monthly; curriculum should be reviewed regularly
 

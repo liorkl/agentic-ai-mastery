@@ -51,6 +51,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **`hooks.md`**: a Stop hook framed as the verification gate (the #1 practice made deterministic) + guardrail (security) hooks
   - **`productivity-tips.md`**: plan mode introduced early, "let Claude interview you into a spec" grounding technique, course-correction mechanics; **`output-styles.md`** updated to the current four styles (Default/Proactive/Explanatory/Learning); **`commands-ref.md`**: added `/rewind`, `/permissions`, `/mcp`, plan-mode entry
 
+### Changed — curriculum re-ordered for impact (Phase 2, mid-2026)
+
+- Re-ordered the L0–L10 ladder so structure follows **leverage, not feature-dependency** (the framing Anthropic foregrounds: everything serves context, verification closes the loop). Applied consistently across the runtime (level detection in `agents/coach.md`, the `/coach:next` level→file map, `/coach:exercise` groups, `/coach:cost` sections, `/coach:execute` bridge hints, `/coach:whats-new` examples), the knowledge-file `curriculum_level` metadata, the README level table, and the design docs (`curriculum`, `diagnostic`, `requirements`, `self-learning-discovery`, `cost-guide`):
+  - **Merged** old L2 (Project Configuration) + old L3 (Context Engineering) into **L2 — Project Memory & Context** (context is pervasive, not a standalone rung)
+  - Old L4–L8 each shift down one: **L3 Skills · L4 Subagents · L5 Hooks · L6 MCP · L7 Headless/SDK/CI**
+  - **New L8 — Parallel Work** (git worktrees / dual-instance) inserted before **L9 Agent Teams**, which is now gated by a "start simple — earn the team" criterion (Building Effective Agents); **L10 — Distribution & Mastery**
+  - **L0 — Foundations & Setup** absorbs permission modes + checkpoints; **L1 — Prompting & the Core Loop**
+  - Level detection gained a `worktrees`=L8 signal; skills/agents/hooks/MCP/headless detection renumbered to match the engine
+
 ### Docs
 
 - Synced the `docs/` design/dev-reference set to the shipped runtime so contributors aren't misled by stale specs (these files are not loaded at runtime). Each doc now carries a `Sync status (2026-06-19)` note. Reconciled: `curriculum-v1.1.md` (levels reframed as a feature scaffold, five-practices spine, verification first), `cost-guide-v1.0.md` (reframed as the opt-in `/coach:cost` reference data — cost off by default), `diagnostic-v1.1.md` (output leads with the readiness verdict; schema gains `verification_ready` / `verification_gate` / `practice_gaps`; anti-patterns led by missing verification), `requirements.md` (cost-at-every-level + token-footer mandates reverted; `/coach:recap`, `/coach:compare`, `plugins.md` added; `plugin.json` permissions/agent-`tools:` gotchas), and `self-learning-discovery-v1.0.md` (current models/effort facts, cost demoted in discovery classification)

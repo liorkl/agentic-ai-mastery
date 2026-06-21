@@ -93,7 +93,7 @@ The highest-leverage single action. Most developers default to Opus for everythi
 
 **Effort levels**: The `effort` setting (low/medium/high/xhigh/max) controls adaptive thinking depth. Lower effort = fewer thinking tokens = cheaper. Use low for routine tasks, reserve xhigh/max only for genuinely complex reasoning. This replaced the old `budget_tokens` thinking-budget knob — you no longer set a raw token budget; you pick an effort level and thinking adapts.
 
-**Agent-level model routing**: When building custom agents (Level 5), specify cheaper models for agents that do simple work:
+**Agent-level model routing**: When building custom agents (Level 4), specify cheaper models for agents that do simple work:
 
 ```yaml
 # .claude/agents/reviewer.md frontmatter
@@ -216,7 +216,7 @@ Each enabled MCP server injects tool definitions into your system prompt. With 1
 /context
 
 # Disable servers you're not actively using
-# Or use Tool Search (Level 7) to load tools on-demand
+# Or use Tool Search (Level 6) to load tools on-demand
 ```
 
 **Community wisdom**: Most developers who install 15 MCP servers end up using only 4 daily. The other 11 are pure context waste.
@@ -340,7 +340,9 @@ Based on community-reported averages with Sonnet as default:
 **Key insight for coaching:**
 > First-try success rate IS a cost metric. An 80% first-try rate means 20% of your spend is rework. Improving prompt quality has compounding returns.
 
-### Level 2: Project Configuration — Configuration as Cost Control
+### Level 2: Project Memory & Context — Configuration and Context as Cost Control
+
+> Old Level 2 (Project Configuration) and Level 3 (Context Engineering) were merged into this single Level 2.
 
 **What to teach:**
 - CLAUDE.md is loaded every session — keep it lean (<150 lines)
@@ -348,18 +350,6 @@ Based on community-reported averages with Sonnet as default:
 - Include "DO NOT read" directories (node_modules, dist, .next, build artifacts)
 - Test commands prevent the most expensive failure: Claude guessing build/test patterns
 - Rules files (`.claude/rules/*.md`) load contextually — cheaper than putting everything in CLAUDE.md
-
-**Coaching prompt:**
-> "Every line in CLAUDE.md is read on every message. Is everything in there earning its keep? Move infrequent context to rules files that load only when relevant."
-
-**Diagnostic addition:**
-> CLAUDE.md > 150 lines without `@path` references → Flag as cost issue
-> Missing test commands → Flag: "Claude will guess, fail, retry — most expensive pattern"
-> No excluded directories → Flag: "Claude may read node_modules or build outputs"
-
-### Level 3: Context Engineering — The Cost-Critical Level
-
-**What to teach:**
 - Context is THE cost lever. Everything else is optimization at the margin.
 - Token costs scale quadratically with attention (n² problem in transformer architecture)
 - Performance AND accuracy degrade past ~50% context fill — you're paying more for worse results
@@ -370,13 +360,16 @@ Based on community-reported averages with Sonnet as default:
 - The "right altitude" framework saves money by avoiding over-specification (too much context) and under-specification (too many retries)
 
 **Coaching prompt:**
-> "Context engineering IS cost engineering. Every token in your context window is re-read on every message. A 100K context window at message 20 has cost you 2M input tokens just in history re-reads."
+> "Every line in CLAUDE.md is read on every message. Is everything in there earning its keep? Move infrequent context to rules files that load only when relevant. Context engineering IS cost engineering — a 100K context window at message 20 has cost you 2M input tokens just in history re-reads."
 
 **Diagnostic addition:**
+> CLAUDE.md > 150 lines without `@path` references → Flag as cost issue
+> Missing test commands → Flag: "Claude will guess, fail, retry — most expensive pattern"
+> No excluded directories → Flag: "Claude may read node_modules or build outputs"
 > No evidence of /clear or /compact usage in session patterns → Flag as highest-priority cost issue
 > Sessions consistently hitting auto-compact (95%) → "You're paying premium rates on bloated context for many messages before auto-compact kicks in"
 
-### Level 4: Skills & Commands — Build Efficient Skills
+### Level 3: Skills & Commands — Build Efficient Skills
 
 **What to teach:**
 - Progressive disclosure in skills is a cost feature: metadata loads at startup (small), core instructions load on demand (medium), nested resources load only when needed (targeted)
@@ -386,7 +379,7 @@ Based on community-reported averages with Sonnet as default:
 **Coaching prompt:**
 > "A well-structured skill with progressive disclosure costs 1/10th the context budget of a monolithic instruction file. Structure skills like you'd structure a lazy-loading web app."
 
-### Level 5: Custom Agents — Agent Cost Architecture
+### Level 4: Custom Agents — Agent Cost Architecture
 
 **What to teach:**
 - Every agent gets its own context window — including its system prompt, CLAUDE.md, etc.
@@ -402,7 +395,7 @@ Based on community-reported averages with Sonnet as default:
 > Agents without model specification → Flag: "Defaulting to your session model. Could this agent use Haiku?"
 > Agents without tool restrictions → Flag: "Unrestricted agents may read/write unnecessarily"
 
-### Level 6: Hooks — Automated Cost Protection
+### Level 5: Hooks — Automated Cost Protection
 
 **What to teach:**
 - Hooks run OUTSIDE the agentic loop (deterministic, zero token cost)
@@ -429,7 +422,7 @@ Based on community-reported averages with Sonnet as default:
 > No hooks configured → Mention cost-monitoring hooks as a quick win
 > No test/lint hooks → "Pre-commit quality gates are the highest-ROI hook pattern"
 
-### Level 7: MCP Integration — Tool Economy
+### Level 6: MCP Integration — Tool Economy
 
 **What to teach:**
 - Each MCP server injects tool definitions into context (typically 200-1,000 tokens per server)
@@ -444,7 +437,7 @@ Based on community-reported averages with Sonnet as default:
 > 10+ MCP servers in .mcp.json → Flag with: "Community consensus: most use only 4 daily. Disable or switch to Tool Search."
 > Tool Search not enabled with many servers → Flag as cost optimization opportunity
 
-### Level 8: Headless & Harness Pattern — Automation Cost Control
+### Level 7: Headless & Harness Pattern — Automation Cost Control
 
 **What to teach:**
 - Headless mode (`claude -p "prompt"`) enables batching, which is 50% cheaper

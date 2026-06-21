@@ -109,17 +109,17 @@ The coaching skill also activates automatically when you ask learning-related qu
 
 | Level | Focus |
 |-------|-------|
-| L0 | First contact — using Claude Code for the first time |
-| L1 | Basic configuration — output styles, model selection |
-| L2 | Quality configuration — CLAUDE.md, settings |
-| L3 | Context engineering — rules, @imports, multiple CLAUDE.md |
-| L4 | Skills framework — creating and using skills |
-| L5 | Custom agents — delegation, sub-agents |
-| L6 | Hooks system — event-driven automation |
-| L7 | MCP servers — external tool integration |
-| L8 | Headless mode — CI/CD, SDK, harness pattern |
-| L9 | Agent teams — multi-agent orchestration |
-| L10 | System design — governance, quality gates, full mastery |
+| L0 | Foundations & setup — first session, model selection, permission modes, checkpoints/rewind |
+| L1 | Prompting & the core loop — grounded prompts, plan mode, output styles, thinking effort |
+| L2 | Project memory & context — CLAUDE.md, rules, @path, scoping, context hygiene |
+| L3 | Skills — reusable workflows (the cure for CLAUDE.md bloat) |
+| L4 | Subagents — delegation and context isolation |
+| L5 | Hooks — deterministic quality gates (incl. the verification gate) |
+| L6 | MCP — external tools, with progressive disclosure |
+| L7 | Headless, SDK & CI — non-interactive runs, the Agent SDK, automation |
+| L8 | Parallel work — git worktrees, dual-instance (writer + reviewer) |
+| L9 | Agent teams — multi-agent orchestration (start simple first) |
+| L10 | Distribution & mastery — plugins, governance, operating at scale |
 
 ## Auto-Triggered Coaching
 

@@ -62,15 +62,16 @@ Based on topic, read ONE file from knowledge/:
 | 0 | Permission modes, plan mode, safe operation, sandboxing | knowledge/features/permissions.md |
 | 0-1 | Model selection | knowledge/features/models.md |
 | 1 | Output styles | knowledge/features/output-styles.md |
-| 1-3 | Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |
-| 2-3 | CLAUDE.md, context | knowledge/features/context.md |
-| 4 | Skills | knowledge/features/skills.md |
-| 5 | Agents | knowledge/features/agents.md |
-| 6 | Hooks | knowledge/features/hooks.md |
-| 7 | MCP | knowledge/features/mcp.md |
-| 8 | Headless | knowledge/features/headless.md |
-| 9 | Teams | knowledge/features/teams.md |
-| 10 | Plugins — packaging & sharing a Claude-ready setup with the team | knowledge/features/plugins.md |
+| 1-2 | Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |
+| 2 | CLAUDE.md, context & memory (merged: config + context engineering) | knowledge/features/context.md |
+| 3 | Skills | knowledge/features/skills.md |
+| 4 | Subagents | knowledge/features/agents.md |
+| 5 | Hooks | knowledge/features/hooks.md |
+| 6 | MCP | knowledge/features/mcp.md |
+| 7 | Headless, SDK & CI | knowledge/features/headless.md |
+| 8 | Parallel work: git worktrees, dual-instance | knowledge/features/teams.md |
+| 9 | Agent teams | knowledge/features/teams.md |
+| 10 | Distribution & mastery — packaging & sharing a Claude-ready setup | knowledge/features/plugins.md |
 
 Do NOT load `knowledge/pricing/pricing-current.md` here — cost/token coaching is off by default and lives in the opt-in `/coach:cost` command.
 

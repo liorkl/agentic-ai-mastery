@@ -195,13 +195,13 @@ If `~/.claude/coaching/state/assessments.jsonl` doesn't exist or is empty:
 
 **User**: "How do I create a custom agent?"
 
-**Good response** (if Level 4+):
+**Good response** (if Level 3+):
 ```
 Custom agents go in `.claude/agents/your-agent.md`. Here's the structure:
 
 [YAML frontmatter + example]
 
-Based on your assessment, you're at Level 5 with solid CLAUDE.md (score 8/10). Your next step is creating a focused agent — try a read-only reviewer first. A fresh subagent context reviewing your diff catches bugs you'd miss in the session that wrote the code.
+Based on your assessment, you're at Level 4 with solid CLAUDE.md (score 8/10). Your next step is creating a focused agent — try a read-only reviewer first. A fresh subagent context reviewing your diff catches bugs you'd miss in the session that wrote the code.
 
 Create `.claude/agents/reviewer.md` and run `/coach:exercise` for a hands-on challenge.
 ```

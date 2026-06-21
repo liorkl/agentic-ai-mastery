@@ -1,7 +1,7 @@
 <!-- file: knowledge/features/teams.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
-<!-- curriculum_level: L9 -->
+<!-- curriculum_level: L8-L9 -->
 
 # Parallelism & Agent Teams
 

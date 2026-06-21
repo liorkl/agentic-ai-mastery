@@ -1,7 +1,7 @@
 <!-- file: knowledge/features/context.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
-<!-- curriculum_level: L3 -->
+<!-- curriculum_level: L2 -->
 
 # Context Engineering
 

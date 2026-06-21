@@ -227,8 +227,8 @@ After verification passes, check if the completed step and the next pending step
 | Completed | Next | Bridge hint |
 |---|---|---|
 | verification command (CLAUDE.md) | verification gate (Stop hook) | "Claude now has a command to run — the next step makes a hook run it automatically before Claude finishes, so the loop closes without you watching." |
-| L4 skill gap | L5 agent gap | "The skill you just created can be wired into your agent in the next step — we'll reference it from the agent's system prompt." |
-| L5 agent gap | any | "Your agent is ready. Consider which skills it should call on — we'll connect them if needed." |
+| L3 skill gap | L4 agent gap | "The skill you just created can be wired into your agent in the next step — we'll reference it from the agent's system prompt." |
+| L4 agent gap | any | "Your agent is ready. Consider which skills it should call on — we'll connect them if needed." |
 | settings.json deny rules | any | "Deny rules apply to all tools, including any agents you create — no extra config needed." |
 
 Only show the bridge hint when both steps are present and pending. Skip silently otherwise.

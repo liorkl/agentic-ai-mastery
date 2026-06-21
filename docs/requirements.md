@@ -2,6 +2,8 @@
 
 > **Sync status (2026-06-19):** Reconciled to the shipped plugin — verification-first / five-practices coaching, cost coaching OFF BY DEFAULT (cost + token estimate only in /coach:cost), added /coach:recap + /coach:compare + knowledge/features/plugins.md, assessment schema gained verification_ready / verification_gate / practice_gaps, current June-2026 models.
 
+> **Ladder re-order (2026-06-21):** The level ladder was re-ordered — old L2 (project config) and L3 (context engineering) MERGED into a single L2 "Project Memory & Context"; old L4–L8 each shifted down one (skills L4→L3, agents L5→L4, hooks L6→L5, MCP L7→L6, headless L8→L7); a new L8 "Parallel Work" (git worktrees / dual-instance) was added; L9 (teams) and L10 (plugins/governance) unchanged.
+
 ## Project: agentic-ai-mastery
 
 **Version:** 1.1
@@ -158,15 +160,15 @@ agentic-ai-mastery/                        # ~/liorklibansky/dev/agentic-ai-mast
 │
 ├── knowledge/                             # Reference files, read on-demand
 │   ├── features/
-│   │   ├── agents.md                      # L5 content
-│   │   ├── skills.md                      # L4 content
-│   │   ├── hooks.md                       # L6 content
-│   │   ├── mcp.md                         # L7 content
+│   │   ├── agents.md                      # L4 content
+│   │   ├── skills.md                      # L3 content
+│   │   ├── hooks.md                       # L5 content
+│   │   ├── mcp.md                         # L6 content
 │   │   ├── models.md                      # L0-L1 content
-│   │   ├── context.md                     # L3 content
+│   │   ├── context.md                     # L2 content
 │   │   ├── output-styles.md               # L1 content
 │   │   ├── teams.md                       # L9 content
-│   │   ├── headless.md                    # L8 content
+│   │   ├── headless.md                    # L7 content
 │   │   └── plugins.md                     # L10 content (packaging & sharing a Claude-ready setup)
 │   ├── commands/
 │   │   └── commands-ref.md
@@ -374,7 +376,7 @@ Agent body contains full scan logic, level detection algorithm, quality scoring 
 #### FR-PLUGIN-05: Coaching Behavior Rules
 
 1. **Verification first.** Before relying on Claude's work, establish how it will be checked. Lead every level's coaching with the five cross-cutting practices (verify → explore→plan→code → ground the prompt → course-correct early → manage context).
-2. **Never skip levels.** If user is Level 3, don't teach Level 7 concepts even if asked. Instead explain what prerequisites are needed. Remember levels are a feature scaffold, not a score — the goal is a Claude-ready repo and great outcomes.
+2. **Never skip levels.** If user is Level 2, don't teach Level 6 concepts even if asked. Instead explain what prerequisites are needed. Remember levels are a feature scaffold, not a score — the goal is a Claude-ready repo and great outcomes.
 3. **Always ground in real work.** Don't give abstract explanations. Reference the user's actual files and configuration.
 4. **Cost awareness is off by default.** Do NOT mention cost or token implications in regular teaching. Cost content and the token estimate live ONLY in the opt-in `/coach:cost` command.
 5. **Flag anti-patterns immediately.** If the scan detects a security or correctness anti-pattern, mention it regardless of what was asked.
@@ -472,13 +474,13 @@ Map scan results to curriculum levels using the highest-level feature detected:
 |-----------------|---------------|
 | No configuration at all | Level 0 |
 | Basic CLAUDE.md exists | Level 1 |
-| CLAUDE.md with quality score ≥6/10 + settings.json | Level 2 |
-| Multiple CLAUDE.md + rules/ + @path imports | Level 3 |
-| skills/ with SKILL.md format | Level 4 |
-| agents/ with custom agents | Level 5 |
-| hooks/ with configured hooks | Level 6 |
-| .mcp.json with servers | Level 7 |
-| claude-progress.txt + headless indicators | Level 8 |
+| CLAUDE.md with quality score ≥6/10 + settings.json (and/or multiple CLAUDE.md + rules/ + @path imports) | Level 2 |
+| skills/ with SKILL.md format | Level 3 |
+| agents/ with custom agents | Level 4 |
+| hooks/ with configured hooks | Level 5 |
+| .mcp.json with servers | Level 6 |
+| claude-progress.txt + headless indicators | Level 7 |
+| git worktrees / dual-instance parallel work | Level 8 |
 | Agent teams config (experimental flag) | Level 9 |
 | All of the above with quality + governance | Level 10 |
 
@@ -592,7 +594,7 @@ The assessment output leads with a readiness verdict plus verification status; t
     { "practice": "verify", "severity": "high", "note": "No test command grounded in CLAUDE.md" },
     { "practice": "manage_context", "severity": "medium", "note": "CLAUDE.md 237 lines, loaded every message" }
   ],
-  "detected_level": 3,                    // footnote — feature scaffold, not a score
+  "detected_level": 2,                    // footnote — feature scaffold, not a score
   "claude_md_score": 7,
   "features_detected": ["claude_md", "settings_json", "rules_dir", "path_imports"],
   "features_missing_below_level": ["test_commands"],
@@ -615,7 +617,7 @@ One entry per coaching interaction:
 {
   "timestamp": "2026-06-19T15:00:00Z",
   "session_id": "coach-20260619",
-  "user_level_at_time": 3,
+  "user_level_at_time": 2,
   "topic": "context-engineering",
   "subtopic": "compact-custom-instructions",
   "coaching_action": "taught",    // taught, reinforced, exercised, flagged-antipattern
@@ -638,7 +640,7 @@ One entry per discovery finding:
   "classification": "curriculum-relevant",  // curriculum-relevant, diagnostic-relevant, informational, noise
   "title": "Nested skills auto-discovery",
   "description": "Skills in nested .claude/skills directories now auto-discovered",
-  "affected_levels": [4],
+  "affected_levels": [3],
   "practice_relevance": null,     // which of the five cross-cutting practices this touches, if any
   "status": "pending"             // pending, integrated, dismissed
 }
@@ -845,13 +847,13 @@ No mock environments or test scripts. Testing is done by installing globally and
 Given mock environment at level N, when coach runs assessment, then detected level equals N (±1).
 
 **AC-02: Gap detection**
-Given level-5-with-gaps mock, when coach runs assessment, then gaps include "CLAUDE.md quality below Level 2 standard" with HIGH priority.
+Given level-4-with-gaps mock, when coach runs assessment, then gaps include "CLAUDE.md quality below Level 2 standard" with HIGH priority.
 
 **AC-03: Anti-pattern detection**
 Given anti-patterns mock, when coach runs assessment, then all expected anti-patterns are flagged with correct severity.
 
 **AC-04: Level-appropriate teaching**
-Given user at Level 3, when asking about agents (Level 5), coach explains prerequisites needed rather than teaching agents directly.
+Given user at Level 2, when asking about agents (Level 4), coach explains prerequisites needed rather than teaching agents directly.
 
 **AC-05: Cost off by default**
 Given any regular teaching interaction (`/coach:next`, exercise, or skill-triggered coaching), the response includes NO cost or token content. Cost content and a token estimate appear ONLY when the user runs the opt-in `/coach:cost` command.

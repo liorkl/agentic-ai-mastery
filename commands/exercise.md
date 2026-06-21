@@ -162,7 +162,7 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 - Success: Understand when to switch models
 - Verify: Check `/context` after each
 
-### Level 2-3: Context Engineering
+### Level 2: Project Memory & Context
 
 **Exercise: Quality CLAUDE.md**
 - Add all 10 quality elements to CLAUDE.md
@@ -174,47 +174,54 @@ Append to `~/.claude/coaching/state/outcomes.jsonl`:
 - Success: CLAUDE.md under 100 lines, rules/ has 3+ files
 - Verify: `wc -l CLAUDE.md && ls .claude/rules/`
 
-### Level 4: Skills
+### Level 3: Skills
 
 **Exercise: First Skill**
 - Create a skill that auto-triggers on a pattern
 - Success: Skill activates without explicit invocation
 - Verify: Test the trigger phrase
 
-### Level 5: Agents
+### Level 4: Subagents
 
 **Exercise: Read-Only Reviewer**
 - Create an agent with only Read, Glob, Grep tools
 - Success: Agent can review but not modify files
 - Verify: `/agent reviewer` on a file
 
-### Level 6: Hooks
+### Level 5: Hooks
 
 **Exercise: Lint Hook**
 - Create PostToolUse hook that lints after Edit
 - Success: Lint runs automatically on edits
 - Verify: Make an edit, see lint output
 
-### Level 7: MCP
+### Level 6: MCP
 
 **Exercise: Add MCP Server**
 - Configure an MCP server for your workflow
 - Success: Server shows in `/mcp list`
 - Verify: Use a tool from the server
 
-### Level 8: Headless
+### Level 7: Headless
 
 **Exercise: Headless PR Review**
 - Run `claude -p` for automated code review
 - Success: Review output in JSON format
 - Verify: `claude -p "Review changes" --output-format json`
 
+### Level 8: Parallel Work
+
+**Exercise: Worktree Dual-Instance**
+- Create a git worktree on a new branch; run one Claude session writing in it and a second session reviewing the diff
+- Success: parallel work with no file collisions; the reviewer catches an issue before merge
+- Verify: `git worktree list` shows the isolated checkout
+
 ### Level 9: Teams
 
-**Exercise: Two-Agent Task**
-- Configure two agents that work on different modules
-- Success: Parallel work without file conflicts
-- Verify: Both agents produce results
+**Exercise: Orchestrated Team**
+- Configure an agent team (lead + teammate) with a shared task list — only after confirming a simpler dual-instance setup wasn't enough
+- Success: teammates coordinate on the shared task list without file conflicts
+- Verify: both produce results that integrate cleanly
 
 ## Avoid
 
