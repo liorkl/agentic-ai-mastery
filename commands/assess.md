@@ -22,12 +22,13 @@ Delegate the full assessment to the **coach** agent with this task:
 
 The coach agent will return a structured report. Display it to the user in this order:
 
-1. **Detected Level** (L0-L10) with a one-line explanation of what that level means
-2. **CLAUDE.md Score** (X/10) with element breakdown
-3. **Features Found** — what's configured and working well
-4. **Gaps** — missing foundations below detected level (these are HIGH priority)
-5. **Anti-Patterns** — issues found with severity and specific fix recommendations
-6. **Top 3 Next Steps** — prioritized actions to improve
+1. **Getting the best out of Claude here?** — the headline: a 1-2 line verdict on the cross-cutting practices, led by verification (can Claude verify its own work here — a test/build/lint command, and ideally a gate that runs it?). This goes **above** the level number.
+2. **Detected Level** (L0-L10) with a one-line explanation — and an explicit note that level = feature breadth, not output quality
+3. **CLAUDE.md Score** (X/10) with element breakdown
+4. **Features Found** — what's configured and working well
+5. **Gaps** — missing foundations below detected level (these are HIGH priority)
+6. **Anti-Patterns** — issues found with severity and specific fix recommendations
+7. **Top 3 Next Steps** — prioritized actions. Order by leverage, not by level: a missing practice (especially verification) outranks the next feature
 
 ### 4. Outcome Logging
 
