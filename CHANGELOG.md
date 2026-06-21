@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README install instructions pointed at a non-existent owner (`liorklibansky`) — corrected the marketplace-add and clone commands to `liorkl`, so installation actually works
 - Version badge in README (`1.0.0`) now matches `plugin.json` (`1.0.1`)
 - Malformed `never_reads` array in `marketplace.json` (one comma-joined string → a proper list)
+- `/coach:execute` was missing from the README command table (it was already in `/coach:help`, the curriculum, and the assess/status CTAs) — added the row so the documented command set is complete
 - `agents/coach.md` tool frontmatter used scoped `Bash(...)` entries that don't grant the tool at the agent level — replaced with plain tool names (permission scoping stays in `.claude/settings.json`)
 
 ### Changed
