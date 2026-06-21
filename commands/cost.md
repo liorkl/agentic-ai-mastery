@@ -42,11 +42,12 @@ From latest assessment, extract:
 | Level | Key Cost Topics |
 |-------|-----------------|
 | 0-1 | Model selection, effort levels, basic pricing |
-| 2-3 | CLAUDE.md overhead, /clear vs /compact |
-| 4-5 | Agent context windows, model: haiku for simple agents |
-| 6 | Hooks are free (outside agentic loop) |
-| 7 | MCP server token overhead, Tool Search |
-| 8 | Batch API (50% savings), headless guardrails |
+| 2 | CLAUDE.md overhead, /clear vs /compact |
+| 3-4 | Agent context windows, model: haiku for simple agents |
+| 5 | Hooks are free (outside agentic loop) |
+| 6 | MCP server token overhead, progressive disclosure |
+| 7 | Batch API (50% savings), headless guardrails |
+| 8 | Parallel sessions (worktrees/dual-instance — each its own context) |
 | 9 | Team multiplication (N agents × full context) |
 
 ### 4. Load Level-Appropriate Content
@@ -143,7 +144,7 @@ End every response with this footer:
 
 **Action:** "Try Haiku for your next documentation task. Compare the result."
 
-### Levels 2-3: Context Efficiency
+### Level 2: Context Efficiency
 
 **Key concepts:**
 - CLAUDE.md loads every message
@@ -157,7 +158,7 @@ End every response with this footer:
 - "Your CLAUDE.md is [N] lines. Target: <150."
 - "Use /clear when switching tasks."
 
-### Levels 4-5: Agent Economics
+### Levels 3-4: Agent Economics
 
 **Key concepts:**
 - Each agent gets own context window
@@ -169,7 +170,7 @@ End every response with this footer:
 
 **Action:** "Add `model: haiku` to your reviewer agent."
 
-### Level 6: Hooks Are Free
+### Level 5: Hooks Are Free
 
 **Key concepts:**
 - Hooks run outside agentic loop
@@ -179,7 +180,7 @@ End every response with this footer:
 
 **ROI example:** "$0 lint hook saves $0.50 per caught error"
 
-### Level 7: MCP Overhead
+### Level 6: MCP Overhead
 
 **Key concepts:**
 - Each server adds 200-1000 tokens to every message
@@ -189,7 +190,7 @@ End every response with this footer:
 
 **Action:** "Run /context. If MCP tools >5%, remove unused servers."
 
-### Level 8: Batch API
+### Level 7: Batch API
 
 **Key concepts:**
 - 50% discount on batch operations
@@ -198,6 +199,15 @@ End every response with this footer:
 - Critical guardrails: --max-turns, --timeout-minutes
 
 **Action:** "Enable Batch API for CI/CD pipelines."
+
+### Level 8: Parallel Sessions
+
+**Key concepts:**
+- Worktrees / dual-instance run multiple concurrent sessions — each carries its own full context
+- Cheaper than an agent team (no broadcast overhead), but still N× the per-session context
+- Use for independent tracks (e.g. one writes, one reviews); converge before merging
+
+**Action:** "Run a worktree session per independent task; close them when merged."
 
 ### Level 9: Team Multiplication
 

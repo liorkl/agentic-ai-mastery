@@ -1,7 +1,7 @@
 <!-- file: knowledge/ecosystem/api.md -->
 <!-- last-updated: 2026-06-19 -->
 <!-- source: https://platform.claude.com/docs/en/about-claude/models/overview -->
-<!-- curriculum_level: L8+ -->
+<!-- curriculum_level: L7+ -->
 
 # Claude API for Developers
 

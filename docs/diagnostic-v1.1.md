@@ -2,6 +2,8 @@
 ## Passive Skill Assessment via Environment Scanning
 
 > **Sync status (2026-06-19):** Reconciled to the shipped assessment — output leads with a "getting the best out of Claude?" verdict and verification readiness (level is a footnote); schema adds verification_ready / verification_gate / practice_gaps; anti-patterns lead with missing verification; cost coaching off by default.
+>
+> **Re-order (2026-06-21):** Renumbered to match the engine (`agents/coach.md`) after a curriculum re-order — old L2 (project config) and L3 (context engineering) merged into a single **L2 Project Memory & Context**; L4–L8 shifted down by one (skills→L3, subagents→L4, hooks→L5, MCP→L6, headless/SDK→L7); a new **L8 Parallel Work** (worktrees/dual-instance) rung was inserted before Agent Teams (L9). Verify against the engine before relying on any level number here.
 
 **Version:** 1.1 — June 2026
 **Purpose:** Enable the coaching agent to assess whether a developer is getting the best work out of Claude in their project, by scanning their project and global configuration.
@@ -18,16 +20,16 @@
 
 ```
 .claude/
-├── commands/          → Level 4 (Slash Commands — legacy, still supported)
-├── skills/            → Level 4 (Skills — current open standard, Dec 2025)
-├── agents/            → Level 5 (Custom Agents)
-├── hooks/             → Level 6 (Deterministic Quality Gates)
+├── commands/          → Level 3 (Slash Commands — legacy, still supported)
+├── skills/            → Level 3 (Skills — current open standard, Dec 2025)
+├── agents/            → Level 4 (Custom Agents)
+├── hooks/             → Level 5 (Deterministic Quality Gates)
 ├── rules/             → Level 2 (Modular Rules)
 ├── settings.json      → Level 2 (Project Configuration)
 ├── settings.local.json→ Level 2 (Personal overrides, output style persistence)
 ├── tasks/             → Level 9 (Agent Teams)
 ├── output-styles/     → Level 1 (Custom Output Styles, Feb 2026)
-└── .mcp.json          → Level 7 (MCP Integration)
+└── .mcp.json          → Level 6 (MCP Integration)
 ```
 
 #### What to check and what it means:
@@ -39,16 +41,16 @@
 | `.claude/settings.json` | Yes, minimal | Basic awareness | Level 2 |
 | `.claude/settings.json` | Has permission wildcards + deny rules | Understands safety model | Level 2+ |
 | `.claude/rules/*.md` | No | Everything in CLAUDE.md or nothing | Level 0-2 |
-| `.claude/rules/*.md` | Yes, path-scoped via frontmatter | Modular thinking | Level 2-3 |
-| `.claude/commands/` | Yes, has files | Building reusable workflows (legacy) | Level 4 |
-| `.claude/skills/` | Yes, has files | Current best practice (open standard) | Level 4+ |
-| `.claude/skills/*/evals/` | Yes | Testing skills with structured evals | Level 4+ (advanced) |
-| `.claude/agents/` | Yes, has files | Custom agent design | Level 5 |
-| `.claude/agents/` | Agents have tool restrictions | Mature agent design | Level 5+ |
-| `.claude/agents/` | Agents specify model (e.g., Haiku for simple tasks) | Right-model-for-the-task design | Level 5+ |
-| `.claude/hooks/` | Yes, has scripts | Quality automation | Level 6 |
+| `.claude/rules/*.md` | Yes, path-scoped via frontmatter | Modular thinking | Level 2 |
+| `.claude/commands/` | Yes, has files | Building reusable workflows (legacy) | Level 3 |
+| `.claude/skills/` | Yes, has files | Current best practice (open standard) | Level 3+ |
+| `.claude/skills/*/evals/` | Yes | Testing skills with structured evals | Level 3+ (advanced) |
+| `.claude/agents/` | Yes, has files | Custom agent design | Level 4 |
+| `.claude/agents/` | Agents have tool restrictions | Mature agent design | Level 4+ |
+| `.claude/agents/` | Agents specify model (e.g., Haiku for simple tasks) | Right-model-for-the-task design | Level 4+ |
+| `.claude/hooks/` | Yes, has scripts | Quality automation | Level 5 |
 | `.claude/output-styles/` | Yes, has custom styles | Advanced personalization | Level 1+ (awareness) |
-| `.mcp.json` | Yes | External tool integration | Level 7 |
+| `.mcp.json` | Yes | External tool integration | Level 6 |
 | `.claude/tasks/` | Yes | Agent teams usage | Level 9 |
 
 ---
@@ -60,12 +62,13 @@
 | `CLAUDE.md` | No | No project context | Level 0 |
 | `CLAUDE.md` | Yes, < 10 lines | Minimal / auto-generated (`/init`) | Level 0-1 |
 | `CLAUDE.md` | Yes, 10-50 lines, well-structured | Good project context | Level 2 |
-| `CLAUDE.md` | Yes, 50-150 lines, sections | Comprehensive configuration | Level 2-3 |
+| `CLAUDE.md` | Yes, 50-150 lines, sections | Comprehensive configuration | Level 2 |
 | `CLAUDE.md` | Yes, long and unfocused | Possibly over-stuffed (anti-pattern — recommend keeping it short and focused, split into rules/) | Level 2 (needs coaching) |
-| `CLAUDE.md` | Multiple files (root + subdirs) | Architecture-aware config | Level 3+ |
-| `AGENTS.md` | Yes (symlinked to CLAUDE.md) | Cross-tool compatibility awareness | Level 4+ |
+| `CLAUDE.md` | Multiple files (root + subdirs) | Architecture-aware config | Level 2+ |
+| `AGENTS.md` | Yes (symlinked to CLAUDE.md) | Cross-tool compatibility awareness | Level 3+ |
 | `CLAUDE.local.md` | Yes | Personal preferences separated | Level 2+ |
-| `claude-progress.txt` | Yes | Using harness pattern for long-running agents | Level 8 |
+| `claude-progress.txt` | Yes | Using harness pattern for long-running agents | Level 7 |
+| `.git/worktrees/` or `.worktreeinclude` | Yes | Parallel work (worktrees / dual-instance) | Level 8 |
 
 #### CLAUDE.md Quality Heuristics
 
@@ -109,13 +112,13 @@ Scan the contents of CLAUDE.md and score for:
 | Path | Signal |
 |------|--------|
 | `~/.claude/CLAUDE.md` exists | User-level preferences (Level 2+) |
-| `~/.claude/CLAUDE.md` has coding style prefs | Consistent cross-project standards (Level 3) |
-| `~/.claude/commands/` has files | Personal workflow library (Level 4) |
-| `~/.claude/skills/` has files | Portable skill library across projects (Level 4+) |
-| `~/.claude/agents/` has files | Portable agents across projects (Level 5+) |
+| `~/.claude/CLAUDE.md` has coding style prefs | Consistent cross-project standards (Level 2) |
+| `~/.claude/commands/` has files | Personal workflow library (Level 3) |
+| `~/.claude/skills/` has files | Portable skill library across projects (Level 3+) |
+| `~/.claude/agents/` has files | Portable agents across projects (Level 4+) |
 | `~/.claude/output-styles/` has files | Custom output styles (Level 1+ awareness) |
 | `~/.claude/settings.json` customized | Global defaults configured (Level 2) |
-| `~/.claude.json` has MCP servers | Global MCP integration (Level 7) |
+| `~/.claude.json` has MCP servers | Global MCP integration (Level 6) |
 
 ---
 
@@ -158,8 +161,8 @@ If the coaching agent has read access to git:
 | Commit message quality | Scan for descriptive vs. generic messages | Follows commit hygiene practices |
 | `.claude/` files in git history | `git log --all -- .claude/` | Evolving configuration over time |
 | CLAUDE.md revisions | `git log -p CLAUDE.md` | Iterates on project context |
-| Progress files in repo | `find . -name "claude-progress.txt"` | Using harness pattern (Level 8) |
-| Feature list JSON | `find . -name "features.json" -path "*claude*"` | Structured long-running work (Level 8) |
+| Progress files in repo | `find . -name "claude-progress.txt"` | Using harness pattern (Level 7) |
+| Feature list JSON | `find . -name "features.json" -path "*claude*"` | Structured long-running work (Level 7) |
 
 ---
 
@@ -178,7 +181,7 @@ Parse `settings.json` for sophistication signals:
   }
 }
 
-// Level 2-3: Thoughtful permissions with denials
+// Level 2: Thoughtful permissions with denials
 {
   "permissions": {
     "allow": ["Bash(npm run *)", "Edit(src/**)"],
@@ -186,12 +189,12 @@ Parse `settings.json` for sophistication signals:
   }
 }
 
-// Level 5: Model selection for agents
+// Level 4: Model selection for agents
 {
   // Detected in agent files, not settings
 }
 
-// Level 6: Hooks configured
+// Level 5: Hooks configured
 {
   "hooks": {
     "PreToolUse": [{ "hooks": [{"type": "command", "command": "..."}] }],
@@ -200,12 +203,12 @@ Parse `settings.json` for sophistication signals:
   }
 }
 
-// Level 7: MCP servers
+// Level 6: MCP servers
 {
   "mcpServers": { "github": {...}, "playwright": {...} }
 }
 
-// Level 8: Sandbox configuration
+// Level 7: Sandbox configuration
 {
   "sandbox": {
     "enabled": true,
@@ -223,7 +226,7 @@ Parse `settings.json` for sophistication signals:
 
 ---
 
-### 7. Agent File Quality Scan (Level 5+ Deep Dive)
+### 7. Agent File Quality Scan (Level 4+ Deep Dive)
 
 If `.claude/agents/` exists, scan each `.md` file for:
 
@@ -245,7 +248,7 @@ If `.claude/agents/` exists, scan each `.md` file for:
 
 ---
 
-### 8. Skill File Quality Scan (Level 4+ Deep Dive)
+### 8. Skill File Quality Scan (Level 3+ Deep Dive)
 
 If `.claude/skills/` exists:
 
@@ -270,7 +273,7 @@ If `.claude/skills/` exists:
 
 ---
 
-### 9. Hook Quality Scan (Level 6+ Deep Dive)
+### 9. Hook Quality Scan (Level 5+ Deep Dive)
 
 If `.claude/hooks/` exists or hooks are defined in `settings.json`:
 
@@ -291,7 +294,7 @@ If `.claude/hooks/` exists or hooks are defined in `settings.json`:
 
 ---
 
-### 10. Long-Running Agent Pattern Detection (Level 8 — New)
+### 10. Long-Running Agent Pattern Detection (Level 7)
 
 Scan for evidence of the harness pattern:
 
@@ -317,16 +320,16 @@ function detectLevel(scan_results):
     // Level 0-1 indicators
     if no CLAUDE.md:
         return { level: 0, reason: "No CLAUDE.md found" }
-    
+
     if CLAUDE.md exists but < 10 lines:
         score = 1
         signals.add("CLAUDE.md exists but minimal")
-    
+
     // Level 1+ awareness indicators
     if output_style is set (explanatory/learning/custom):
         signals.add("Uses output styles — learning-oriented")
-    
-    // Level 2 indicators
+
+    // Level 2 indicators (Project Memory & Context — merged config + context engineering)
     if CLAUDE.md quality score >= 4:
         score = max(score, 2)
     if settings.json has custom permissions:
@@ -335,55 +338,56 @@ function detectLevel(scan_results):
         score = max(score, 2)
     if CLAUDE.local.md exists:
         score = max(score, 2)
-    
-    // Level 3 indicators
-    if CLAUDE.md quality score >= 7:
-        score = max(score, 3)
     if multiple CLAUDE.md files (root + subdirs):
-        score = max(score, 3)
+        score = max(score, 2)
     if settings.json has both allow AND deny rules:
-        score = max(score, 3)
+        score = max(score, 2)
     if CLAUDE.md uses @path references:
-        score = max(score, 3)
-    
-    // Level 4 indicators
+        score = max(score, 2)
+
+    // Level 3 indicators
     if skills/ has files with proper SKILL.md frontmatter:
-        score = max(score, 4)
+        score = max(score, 3)
     elif commands/ has files (legacy):
-        score = max(score, 4)
+        score = max(score, 3)
         signals.add("Using commands/ (legacy) — recommend migrating to skills/")
     if skills have evals/:
         signals.add("Testing skills with structured evals — advanced practice")
-    
-    // Level 5 indicators
+
+    // Level 4 indicators
     if agents/ has files:
-        score = max(score, 5)
+        score = max(score, 4)
     if agents have tool restrictions:
-        score = max(score, 5)
+        score = max(score, 4)
     if agents specify non-default model:
         signals.add("Right-model-for-the-task agent design")
     if multiple agents with different roles:
-        score = max(score, 5)
-    
-    // Level 6 indicators
+        score = max(score, 4)
+
+    // Level 5 indicators
     if hooks/ has scripts OR hooks in settings.json:
-        score = max(score, 6)
+        score = max(score, 5)
     if hooks cover multiple event types:
-        score = max(score, 6)
+        score = max(score, 5)
     if hooks use exit code 2:
         signals.add("Advanced hook pattern — feedback to Claude")
-    
-    // Level 7 indicators
+
+    // Level 6 indicators
     if .mcp.json OR mcpServers in settings OR ~/.claude.json has servers:
-        score = max(score, 7)
-    
-    // Level 8 indicators
+        score = max(score, 6)
+
+    // Level 7 indicators
     if evidence of headless usage (CI config, scripts with `claude -p`):
-        score = max(score, 8)
+        score = max(score, 7)
     if progress files or feature list JSON found:
-        score = max(score, 8)
+        score = max(score, 7)
         signals.add("Using harness pattern for long-running agents")
-    
+
+    // Level 8 indicators (Parallel Work — worktrees / dual-instance)
+    if .git/worktrees/ has entries OR a .worktreeinclude file exists:
+        score = max(score, 8)
+        signals.add("Using git worktrees for parallel work")
+
     // Level 9 indicators
     if CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS in settings:
         score = max(score, 9)
@@ -391,7 +395,7 @@ function detectLevel(scan_results):
         score = max(score, 9)
     if TeammateIdle or TaskCompleted hooks exist:
         signals.add("Agent teams quality gates configured")
-    
+
     // Lead signals: verification readiness comes first, level is a footnote
     verification_ready = scan_results.has_test_build_lint_command
     verification_gate  = scan_results.has_verification_hook  // e.g. a Stop hook running tests
@@ -415,12 +419,12 @@ function detectLevel(scan_results):
 
 ### Gap Detection (Critical Feature)
 
-A developer might have agents (Level 5) but a weak CLAUDE.md (Level 1 quality). The coach must detect these gaps:
+A developer might have agents (Level 4) but a weak CLAUDE.md (Level 1 quality). The coach must detect these gaps:
 
 ```
 function detectGaps(current_level, scan_results):
     gaps = []
-    
+
     for level in range(0, current_level):
         if not levelFullyMet(level, scan_results):
             gaps.add({
@@ -428,14 +432,14 @@ function detectGaps(current_level, scan_results):
                 missing: whatsMissing(level, scan_results),
                 priority: "HIGH"
             })
-    
+
     return gaps
 ```
 
 **Example gap report:**
 ```json
 {
-  "detected_level": 5,
+  "detected_level": 4,
   "gaps": [
     {
       "level": 2,
@@ -452,7 +456,7 @@ function detectGaps(current_level, scan_results):
       "recommendation": "Try /output-style learning for hands-on skill building"
     },
     {
-      "level": 4,
+      "level": 3,
       "gap": "Using commands/ (legacy) but not skills/ (open standard)",
       "impact": "Commands aren't portable across Claude.ai, Cowork, and API",
       "priority": "LOW",
@@ -566,9 +570,9 @@ Each scan appends to `.claude/coaching/assessments.jsonl`. The verdict and verif
 
 | Scan Says | Prompt Says | Coach Action |
 |-----------|------------|-------------|
-| Level 5 (has agents) | Poor delegation | Coach agent design, not creation |
+| Level 4 (has agents) | Poor delegation | Coach agent design, not creation |
 | Level 1 (no config) | Good task decomposition | Coach configuration — developer thinks well already |
-| Level 6 (has hooks) | Hooks are broken/empty | Coach hook implementation quality |
+| Level 5 (has hooks) | Hooks are broken/empty | Coach hook implementation quality |
 | No output style | Asking for explanations often | Recommend Explanatory or Learning output style |
 | Has skills but no evals | Skills produce inconsistent results | Coach the eval → iterate → improve cycle |
 | Has progress files | Sessions still lose context | Coach the harness pattern more deeply |
