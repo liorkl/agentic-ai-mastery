@@ -10,19 +10,30 @@ A Claude Code **plugin** that coaches developers to master agentic AI developmen
 
 ```
 .claude-plugin/plugin.json    → Plugin manifest
-commands/*.md                  → Four user-invoked slash commands:
-                                 assess (measure) → apply (change)
-                                 learn (teach) → progress (report)
-skills/coaching/SKILL.md       → Auto-triggered coaching behavior
-agents/coach.md                → Sub-agent for complex flows (assessment, discovery)
-knowledge/**/*.md              → Curriculum content, read on-demand
-docs/                          → Design documents (dev reference only)
+commands/*.md                 → Four slash commands, one job each:
+                                assess (measure) → apply (change)
+                                learn (teach)    → progress (report)
+                                assess + apply take a `me` | `repo` scope
+skills/coaching/SKILL.md      → Auto-triggered coaching behavior
+agents/coach.md               → Read-only scanner/assessor sub-agent
+knowledge/
+  knowledge-map.md            → THE routing table (never duplicate it)
+  personal-env/**             → Mission 1: the developer's own ~/.claude setup
+  repo-ready/**               → Mission 2: what gets committed to the repo
+  shared/**                   → Cross-cutting practices (both missions)
+  pricing/**                  → Loaded only on an explicit cost question
+  ecosystem/**                → Adjacent topics (Claude API, Cowork)
+docs/DESIGN.md                → Design notes (dev reference only)
 ```
+
+**The two missions.** Mission 1 makes a developer's personal environment effective
+(`~/.claude/`, travels with them). Mission 2 makes a repo Claude-ready (committed, so the
+team benefits). They fail independently — never average them into one score.
 
 **Runtime state** (created by plugin at first use):
 
-- `~/.claude/coaching/state/` — assessments, outcomes, discoveries (JSONL + JSON)
-- Plugin writes here using Claude's Write tool
+- `~/.claude/coaching/state/` — assessments and outcomes (JSONL)
+- Assessment records carry a `scope` field (`me` or `repo`)
 - State persists across sessions and projects
 
 ## Local Test Workflow
@@ -95,11 +106,15 @@ python3 -m json.tool .claude-plugin/plugin.json
 python3 -m json.tool .claude-plugin/marketplace.json
 ```
 
-## Design Documents (Read Before Implementing)
+## Design Notes
 
-- `docs/requirements.md` — Scope, plugin components, acceptance criteria, implementation plan
-- `docs/curriculum-v1.1.md` — Full 11-level curriculum content
-- `docs/diagnostic-v1.1.md` — Environment scan targets and heuristics
+`docs/DESIGN.md` — the two missions, design principles, and where the authoritative
+answer lives for each question.
+
+**The runtime is the specification.** `agents/coach.md` owns the scanner, level ladder,
+scoring, and assessment schema; `knowledge/knowledge-map.md` owns knowledge routing.
+Do not create a parallel design doc that restates them — the previous set drifted into
+self-contradiction and was deleted.
 
 ## Conventions
 

@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/headless.md -->
+<!-- file: knowledge/personal-env/headless.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L7 -->
@@ -156,7 +156,7 @@ Each invocation gets a fresh, focused context (no cross-item bleed) and can be
 parallelized. For unattended safety, pair the restricted `--allowedTools` scope
 with the `dontAsk` permission mode, which denies anything not in your
 `permissions.allow` rules so a stray action aborts the run instead of hanging on
-a prompt. See `knowledge/features/permissions.md` for how the permission modes
+a prompt. See `knowledge/personal-env/permissions.md` for how the permission modes
 and allow/deny rules work — don't duplicate them here.
 
 **Every fan-out run needs a verification gate.** Unattended automation has no

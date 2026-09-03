@@ -61,26 +61,16 @@ Then stop.
 
 ### 4. Load Exactly One Knowledge File
 
-| Level | Topic | File |
-|-------|-------|------|
-| any | Cross-cutting practices: verification, plan-first, grounding prompts, course-correction, context hygiene | `knowledge/features/productivity-tips.md` |
-| 0 | CLI orientation, first session | `knowledge/features/cli-orientation.md` |
-| 0 | Permission modes, plan mode, safe operation, sandboxing | `knowledge/features/permissions.md` |
-| 0-1 | Model selection, effort | `knowledge/features/models.md` |
-| 1 | Output styles | `knowledge/features/output-styles.md` |
-| 1-2 | Productivity, prompting, context hygiene | `knowledge/features/productivity-tips.md` |
-| 2 | CLAUDE.md, context & memory | `knowledge/features/context.md` |
-| 3 | MCP — external context & reach | `knowledge/features/mcp.md` |
-| 4 | Skills | `knowledge/features/skills.md` |
-| 5 | Subagents | `knowledge/features/agents.md` |
-| 6 | Hooks | `knowledge/features/hooks.md` |
-| 7 | Headless, SDK & CI | `knowledge/features/headless.md` |
-| 8 | Parallel work: git worktrees, dual-instance | `knowledge/features/teams.md` |
-| 9 | Agent teams | `knowledge/features/teams.md` |
-| 10 | Distribution — packaging and sharing a Claude-ready setup | `knowledge/features/plugins.md` |
+```
+Read ${CLAUDE_PLUGIN_ROOT}/knowledge/knowledge-map.md
+  → the single routing table, organized by mission
+```
 
-One file, not several. Do **not** load `knowledge/pricing/pricing-current.md` — cost
-coaching is off by default and loads only on an explicit cost question.
+Pick the one file it points to and read it. The map also carries the routing rules:
+practice before feature, match the mission to the complaint, one file only, and never
+preload `pricing/`.
+
+Do not keep a copy of the table here — the map is the only place it lives.
 
 ### 5a. Deliver a Lesson (default)
 

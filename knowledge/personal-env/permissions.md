@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/permissions.md -->
+<!-- file: knowledge/personal-env/permissions.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/permission-modes -->
 <!-- curriculum_level: L0 -->

@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/hooks.md -->
+<!-- file: knowledge/repo-ready/hooks.md -->
 <!-- last-updated: 2026-09-03 -->
 <!-- source: https://code.claude.com/docs/en/hooks -->
 <!-- curriculum_level: L6 -->
@@ -126,7 +126,7 @@ fi
 exit 0
 ```
 
-This is the deterministic complement to permission rules. For the broader permissions / deny-rule model (which tools and paths are allowed at all), see `knowledge/features/permissions.md` — hooks add custom logic on top of it rather than replacing it.
+This is the deterministic complement to permission rules. For the broader permissions / deny-rule model (which tools and paths are allowed at all), see `knowledge/personal-env/permissions.md` — hooks add custom logic on top of it rather than replacing it.
 
 **Quality hook** — auto-lint after edits:
 

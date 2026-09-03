@@ -94,7 +94,7 @@ Use `ls` and `Glob` to check:
 | `.claude/settings.json` | Read | Permission wildcards, deny rules, hooks config |
 | `.claude/settings.local.json` | Read | Output style, personal overrides |
 | `.claude/rules/*.md` | Glob | Count, path-scoped frontmatter? |
-| `.claude/commands/*.md` | Glob | Count (legacy indicator) |
+| `.claude/commands/*.md` | Glob | Count (equivalent to skills) |
 | `.claude/skills/*/SKILL.md` | Glob | Count, frontmatter quality |
 | `.claude/skills/*/evals/` | Glob | Has eval directories? |
 | `.claude/agents/*.md` | Glob + Read first 30 lines | Count, YAML frontmatter, tool restrictions, model specified? |
@@ -136,7 +136,7 @@ Map scan results to the highest level feature detected:
 | Output style set (explanatory/learning/custom) | 1+ |
 | CLAUDE.md quality score >= 4 OR settings.json has permissions/rules OR multiple CLAUDE.md files OR @path imports OR allow+deny rules | 2 |
 | .mcp.json OR mcpServers in settings OR ~/.claude.json has servers | 3 |
-| skills/ with proper SKILL.md frontmatter OR commands/ (legacy) | 4 |
+| skills/ with proper SKILL.md frontmatter, or commands/*.md | 4 |
 | agents/ with custom agent files | 5 |
 | hooks/ with scripts OR hooks in settings.json | 6 |
 | claude-progress.txt OR headless indicators (CI config, `claude -p` scripts) | 7 |
@@ -178,7 +178,7 @@ Flag ALL of these with severity and impact. **The verification ones come first b
 | CLAUDE.md bloated (long, unfocused) | wc -l + content | medium | Bloated CLAUDE.md makes Claude *ignore* instructions — the rule that matters gets lost in the noise |
 | Agents with no tool restrictions | Agent file scan | medium | Unrestricted agents can take actions you didn't intend; read-only reviewers should be read-only |
 | 10+ MCP servers | .mcp.json count | medium | Context bloat; most teams use 3-4 daily |
-| commands/ instead of skills/ | Directory check | low | Legacy format, not portable across surfaces |
+
 | Hooks with no error handling | Script analysis | medium | A broken gate silently stops enforcing |
 | Skills without evals/ | Skill dir check | low | No way to measure or regression-test skill quality |
 | Long CLAUDE.md with no @imports | Content + structure | medium | Monolithic config, hard to maintain |
@@ -257,12 +257,25 @@ Write one JSONL line to `~/.claude/coaching/state/assessments.jsonl`:
 
 ## 8. Safety Rules — ABSOLUTE
 
+**This agent is read-only.** It measures; it never changes the developer's setup.
+
 - **NEVER** read: `.env*`, `*credentials*`, `*secret*`, `*.key`, `*.pem`, `*password*`, `*token*` (as filenames)
-- **NEVER** write outside `~/.claude/coaching/`
-- **NEVER** modify user's existing configuration files
-- **NEVER** modify user's project files
+- **NEVER** write anywhere except `~/.claude/coaching/` — that is this agent's only write scope
+- **NEVER** modify the user's configuration files or project files. Not as a courtesy: an
+  assessment that changes what it measures is not an assessment
 - **ALWAYS** inform the user what was scanned (list scan scope at end of assessment)
 - **ALWAYS** log scan scope in assessments.jsonl
+
+### Where writes actually happen
+
+Changes to a user's config or project files are made **only** by `/coach:apply`, and only:
+
+1. for the single step the user is currently on,
+2. after the exact content or diff has been shown, and
+3. after the user explicitly says `apply`.
+
+`/coach:apply` merges into existing files rather than overwriting them. Nothing in this
+plugin edits a user's setup silently, and this agent does not edit it at all.
 
 ## 9. Graceful Degradation
 

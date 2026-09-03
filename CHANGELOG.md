@@ -1,4 +1,77 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
+
+### Added — the two missions are now explicit
+
+- `/coach:assess` and `/coach:apply` take a **`me` | `repo` scope**. `me` is the
+  developer's own `~/.claude/` setup, which travels with them; `repo` is what gets
+  committed, so a teammate who has tuned nothing still gets good results. The two are
+  reported separately and never averaged — they fail independently, and averaging hides
+  which one to fix.
+- **`/coach:apply me` closes the plugin's biggest capability gap.** The coach already
+  scanned `~/.claude/settings.json`, `~/.claude/skills/`, `~/.claude/agents/`, MCP
+  configuration and keybindings — and nothing ever acted on any of it. Mission 1 was
+  measured and then only lectured about. There is now a catalogue of real personal-setup
+  fixes: permission allow rules, a global `CLAUDE.md`, a personal skill, a read-only
+  subagent on `model: haiku`, model/effort defaults, a statusline, and MCP trimming.
+- `knowledge/repo-ready/claude-md.md` — extracted the repo-level `CLAUDE.md` guidance that
+  was buried inside a personal context-hygiene file. Covers what belongs in the file and
+  what does not, the ~200-line target, path-scoped rules with the `paths` field, imports,
+  and the `AGENTS.md` import pattern.
+- `knowledge/knowledge-map.md` — one routing table, organized by mission, replacing the
+  copy that was duplicated verbatim in `SKILL.md` and the lesson command. Carries the
+  routing rules, including "match the mission to the complaint": "Claude keeps forgetting
+  our conventions" is a repo problem, "Claude keeps asking permission" is a personal-setup
+  problem, and answering in the wrong mission gives advice the developer cannot act on.
+
+### Changed
+
+- Reorganized `knowledge/` by mission: `personal-env/` (9 files), `repo-ready/` (5),
+  `shared/` (the cross-cutting practices, outranking both), plus `pricing/` and
+  `ecosystem/` as conditional. Replaces the single flat `features/` directory, which mixed
+  "fix your machine" and "fix your repo" advice with no way to tell them apart.
+- README leads with the two missions, and the L0–L10 ladder is now tagged per rung with
+  the mission it serves.
+- README's privacy section now states how its guarantees are actually enforced. The old
+  claim rested on model instructions plus a `trust` block in `marketplace.json` that
+  Claude Code ignores at load time. It now says so plainly and shows the `permissions.deny`
+  rules that provide real enforcement.
+
+### Fixed
+
+- **The agent contradicted the command it backs.** `agents/coach.md` rule 9 said "**NEVER**
+  modify user's existing configuration files / project files", while `/coach:apply` wrote
+  `CLAUDE.md` and `.claude/settings.json` on apply. One of them had to be wrong. Resolved
+  in favour of a clear boundary: the agent is read-only because an assessment that changes
+  what it measures is not an assessment, and all writes belong to `/coach:apply` — one
+  approved step at a time, diff shown first.
+- **Overwrite hazard.** `/coach:apply` now merges into existing config rather than writing
+  it from scratch. A `~/.claude/settings.json` written wholesale silently discards the
+  user's permissions, hooks, and statusline.
+- Dropped the "`commands/` instead of `skills/`" anti-pattern and the "legacy indicator"
+  label on `.claude/commands/`. Custom commands were **merged into** skills — both create
+  `/name` and both are current — so the plugin was penalising a non-problem while shipping
+  commands itself.
+- Restored the `# Changelog` header and Keep-a-Changelog preamble, dropped by an earlier
+  edit in this branch.
+
+### Removed
+
+- `docs/requirements.md`, `docs/curriculum-v1.1.md`, `docs/diagnostic-v1.1.md` (~2,300
+  lines), replaced by a 79-line `docs/DESIGN.md`. These were a parallel prose copy of the
+  engine that had to be hand-synced, and the sync had already failed:
+  `requirements.md` carried two stacked re-order banners that **contradicted each other**
+  (one asserted skills were Level 3, the next asserted skills moved from Level 3 to Level
+  4), and `diagnostic-v1.1.md` carried the line "Verify against the engine before relying
+  on any level number here." A document that tells you not to trust it has already failed.
+  `DESIGN.md` records the two missions and the design principles, and points at the
+  runtime for everything else.
 
 ### Removed — leaner surface (12 entry points -> 5)
 
@@ -57,7 +130,7 @@
 
 - **`/coach:progress week`** — progress recap from assessment + outcome history. Leads with how the repo got more Claude-ready (verification readiness, CLAUDE.md score, resolved anti-patterns) and what was practiced — makes the "team gradually gets better" loop visible. Read-only.
 - **`/coach:progress previous`** — before/after diff of two assessments for the current project, classifying each change as a gain or regression, led by verification readiness rather than the level number. Read-only.
-- **`knowledge/features/plugins.md`** — closes a content gap: plugin anatomy, validation, marketplace/install flow, when to build a plugin, and the permissions model (including the `plugin.json` permissions install-breaker caveat). Wired into the `/coach:learn` and skill knowledge tables.
+- **`knowledge/repo-ready/plugins.md`** — closes a content gap: plugin anatomy, validation, marketplace/install flow, when to build a plugin, and the permissions model (including the `plugin.json` permissions install-breaker caveat). Wired into the `/coach:learn` and skill knowledge tables.
 - `/help` now explains the passive coaching skill (auto-trigger, not a command) to remove a common point of confusion.
 
 ### Changed — re-centered on outcomes (get the best out of Claude)
@@ -89,7 +162,7 @@
 ### Added — curriculum content refresh (Phase 1, mid-2026)
 
 - After a live review against Anthropic's current docs/best-practices/Academy and popular community resources, refreshed the knowledge base to mid-2026 reality **without renumbering the L0–L10 ladder** (a structural re-order is a planned Phase 2):
-  - **`knowledge/features/permissions.md`** (new) — permission modes (default/acceptEdits/plan/auto/dontAsk/bypassPermissions), plan mode, the `auto` safety classifier, sandboxing, protected paths, and security/trust basics. Wired into the `/coach:learn` and skill knowledge tables at L0
+  - **`knowledge/personal-env/permissions.md`** (new) — permission modes (default/acceptEdits/plan/auto/dontAsk/bypassPermissions), plan mode, the `auto` safety classifier, sandboxing, protected paths, and security/trust basics. Wired into the `/coach:learn` and skill knowledge tables at L0
   - **Checkpoints & rewind** added to `context.md` (safe exploration + course-correction); context reframed as the fundamental constraint (context rot / attention budget)
   - **MCP context cost & progressive disclosure** added to `mcp.md` (the code-execution-with-MCP ~150k→~2k token result; connect only needed servers) plus an MCP vetting/trust note
   - **`headless.md`**: corrected "Claude Code SDK" → **Claude Agent SDK**, fixed the `--output-format` values (`text`/`json`/`stream-json`), added scheduled runs and the fan-out pattern

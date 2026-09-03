@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/mcp.md -->
+<!-- file: knowledge/personal-env/mcp.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L3 -->

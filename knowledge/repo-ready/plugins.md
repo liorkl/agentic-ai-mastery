@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/plugins.md -->
+<!-- file: knowledge/repo-ready/plugins.md -->
 <!-- last-updated: 2026-06-19 -->
 <!-- source: https://code.claude.com/docs/en/plugins -->
 <!-- curriculum_level: L10 -->

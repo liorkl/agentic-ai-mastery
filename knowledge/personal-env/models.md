@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/models.md -->
+<!-- file: knowledge/personal-env/models.md -->
 <!-- last-updated: 2026-09-03 -->
 <!-- source: https://www.anthropic.com/api#pricing -->
 
