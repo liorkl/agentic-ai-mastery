@@ -22,14 +22,22 @@ cd ~/dev/agentic-ai-mastery
 # 2. Activate the pre-push hook (one-time setup)
 git config core.hooksPath .githooks
 
-# 3. Add the local repo as a marketplace source in Claude Code
+# 3. Start Claude Code in a test project with the plugin loaded
+claude --plugin-dir ~/dev/agentic-ai-mastery
+
+# 4. Verify it loaded
+/help
+```
+
+That is the dev loop: no install, no version bump, no update cycle. Plugin changes are
+picked up on the next session launch, or `/reload-plugins` mid-session.
+
+Test the real install/update UX only when you are changing packaging itself:
+
+```bash
 claude plugin marketplace add ~/dev/agentic-ai-mastery
-
-# 4. Install the plugin locally
 claude plugin install coach@agentic-ai-mastery
-
-# 5. Verify installation
-/coach:help
+claude plugin update coach@agentic-ai-mastery
 ```
 
 The pre-push hook runs the same checks as CI (JSON validation, plugin.json key whitelist, file line limits) before every push, so issues are caught locally before they reach a PR.
@@ -115,7 +123,7 @@ Examples: `feat/l11-advanced-governance`, `fix/assess-state-path`, `docs/cost-gu
 
 Before marking your PR ready for review, confirm all of the following:
 
-- [ ] Tested locally with `claude plugin install coach@agentic-ai-mastery`
+- [ ] Tested locally with `claude --plugin-dir <repo>`
 - [ ] `claude plugin validate .` passes
 - [ ] All knowledge files are under 500 lines (`wc -l knowledge/**/*.md`)
 - [ ] Total knowledge base is under 5,000 lines
@@ -128,12 +136,14 @@ Before marking your PR ready for review, confirm all of the following:
 
 All files under `knowledge/` must follow this structure:
 
+Knowledge files start with an **HTML comment metadata header** — not YAML frontmatter.
+The authoritative spec is `.claude/rules/knowledge-limits.md`; this section must stay in
+sync with it.
+
 ```markdown
----
-level: L<N>
-topic: <short topic name>
-version: 1.0
----
+<!-- file: knowledge/<category>/<filename>.md -->
+<!-- last-updated: YYYY-MM-DD -->
+<!-- source: <upstream doc URL or "internal"> -->
 
 # <Title>
 
@@ -149,9 +159,9 @@ version: 1.0
 
 <How the coach verifies the developer has internalized this level>
 
-## Cost Implications
+## Why It Matters
 
-<How this topic affects token usage and cost>
+<Why this changes how the developer works>
 
 ## Official Resources
 
@@ -161,10 +171,15 @@ version: 1.0
 Additional rules for knowledge files:
 
 - Maximum **500 lines** per file — split if needed
-- Filename in **kebab-case**: `l3-context-engineering.md`
+- Filename in **kebab-case**, with no level prefix: `context.md`, not `l3-context-engineering.md`
+- No content before the metadata header
 - ATX headers (`#`, `##`, `###`) — no underline-style headers
 - No trailing whitespace
 - Blank line before and after every header
+- File ends with a single newline
+
+There is no `## Cost Implications` section — cost coaching is off by default, so cost
+facts live in `knowledge/pricing/` and load only on an explicit cost question.
 
 ## Do NOT
 

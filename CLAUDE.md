@@ -23,17 +23,6 @@ docs/                          → Design documents (dev reference only)
 - Plugin writes here using Claude's Write tool
 - State persists across sessions and projects
 
-## Validation
-
-```bash
-# Validate plugin structure
-claude plugin validate .
-
-# Verify knowledge files under limits
-wc -l knowledge/**/*.md        # Each file <500 lines
-cat knowledge/**/*.md | wc -l  # Total <5,000 lines
-```
-
 ## Local Test Workflow
 
 **Dev loop** — load plugin for a single session without installing (primary approach):
@@ -81,7 +70,7 @@ claude plugin update coach@agentic-ai-mastery
 - State writes ONLY to ~/.claude/coaching/**
 - MIT License
 
-## Validation Commands
+## Validation
 
 **Plugin validation:**
 
