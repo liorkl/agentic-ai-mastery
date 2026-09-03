@@ -30,7 +30,7 @@ The L0–L10 levels below are a feature-progression scaffold layered on top — 
 - Tracks progress across sessions
 - Discovers new Claude Code features and updates weekly
 
-Cost/token coaching is **off by default** — run `/coach:cost` if and when you want it.
+Cost/token coaching is **off by default** — just ask if you want it.
 
 ## Installation
 
@@ -75,33 +75,33 @@ claude plugin update coach@agentic-ai-mastery
 ### Verify Installation
 
 ```bash
-/coach:help
+/help
 ```
 
 You should see a list of available coaching commands.
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `/coach:assess` | Scan your environment and report skill level, gaps, and anti-patterns |
-| `/coach:next` | Get your next lesson based on current level and gaps |
-| `/coach:execute` | Work your assessment plan step by step — practices (verification first), then gaps, with the why inline |
-| `/coach:status` | Show current level, last assessment date, and discovery staleness |
-| `/coach:recap` | Progress recap — what you've practiced and how your repo got more Claude-ready |
-| `/coach:compare` | Before/after diff of your environment — concrete proof of improvement |
-| `/coach:exercise` | Get a hands-on exercise for your current skill level |
-| `/coach:whats-new` | Show recent Claude Code changes that affect your learning |
-| `/coach:discover` | Check for new Claude Code features and updates |
-| `/coach:cost` | Opt-in cost/token coaching for your current level (off by default) |
-| `/coach:help` | List all commands and current coaching state |
+Four commands. Each has one job, and they run in that order.
+
+| Command | Job | Arguments |
+|---------|-----|-----------|
+| `/coach:assess` | **Measure** — scan your environment, report readiness, gaps, and anti-patterns | |
+| `/coach:apply` | **Change** — work the assessment plan step by step, verification first, with the why inline | |
+| `/coach:learn` | **Teach** — the next highest-leverage thing, as a lesson or a hands-on exercise | `[topic \| exercise]` |
+| `/coach:progress` | **Report** — snapshot, narrative recap, or before/after diff | `[week \| month \| all \| previous \| since <date>]` |
+
+Plus one skill, `coaching`, which Claude invokes on its own when you ask a Claude Code
+question — you don't run it.
+
+Cost/token coaching is off by default across all of them; ask explicitly if you want it.
 
 ## Getting Started
 
 1. Install the plugin (see above)
 2. Open any project in Claude Code or Cowork
 3. Run `/coach:assess` to scan your environment
-4. Run `/coach:next` to get your first lesson
+4. Run `/coach:learn` to get your first lesson
 
 The coaching skill also activates automatically when you ask learning-related questions — no command needed.
 
@@ -135,8 +135,6 @@ No command needed — just ask naturally.
 The coach stores progress data in `~/.claude/coaching/state/`:
 - `assessments.jsonl` — environment scan history
 - `outcomes.jsonl` — coaching interaction outcomes
-- `discoveries.jsonl` — discovered features and updates
-- `discovery-state.json` — last scan timestamps
 - `strategies.md` — evolved coaching approach
 
 State persists across sessions and projects.

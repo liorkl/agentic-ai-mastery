@@ -1,10 +1,17 @@
 ---
 name: coaching
 description: >
-  Coaches developers on Claude Code and Cowork mastery. Triggers when the user
-  asks about learning, best practices, configuration, or features.
-  Examples: "how do I use agents", "what's the best way to structure CLAUDE.md",
-  "when should I use a skill vs a subagent", "teach me about hooks"
+  Coaches a developer toward getting better work out of Claude Code — their personal
+  setup and their repo's Claude-readiness. Use when the question is about Claude Code
+  or Cowork itself: CLAUDE.md, skills, subagents, hooks, MCP, permissions, plan mode,
+  context management, settings, or plugins.
+when_to_use: >
+  Trigger on questions about configuring or getting more out of Claude Code, such as
+  "how do I use subagents", "what's the best way to structure CLAUDE.md", "skill vs
+  subagent?", "teach me about hooks", "why does Claude keep missing my tests",
+  "how do I make this repo work better with Claude". Do NOT trigger for general
+  programming questions, or for best practices in a language or framework — this skill
+  is about the Claude Code environment, not about code.
 ---
 
 # Coaching Skill
@@ -38,7 +45,7 @@ This skill activates when detecting questions about:
 - Configuration ("how to set up...", "where does X go...")
 - Feature explanation ("what are agents", "explain skills")
 
-Cost/token optimization is handled separately by the opt-in `/coach:cost` command — see Rule 3.
+Cost/token optimization is off by default — see Rule 3.
 
 ## Before Every Response
 
@@ -77,7 +84,7 @@ If user asks about a topic above their level:
 - Do NOT teach advanced concepts to unprepared users
 
 Example: Level 2 user asks about agent teams (Level 9)
-→ "Agent teams are powerful but require mastering several foundations first. You're currently at Level 2 — let's solidify your CLAUDE.md and rules first. Run `/coach:next` when ready."
+→ "Agent teams are powerful but require mastering several foundations first. You're currently at Level 2 — let's solidify your CLAUDE.md and rules first. Run `/coach:learn` when ready."
 
 ### Rule 2: Ground in Real Work
 
@@ -90,7 +97,7 @@ Example: Level 2 user asks about agent teams (Level 9)
 
 Do NOT volunteer cost or token advice in normal coaching. Lead with capability, correctness, and good practice — not spend. Don't append "cost notes," token estimates, or "this saves X%" lines.
 
-Only bring up cost/tokens when the user explicitly asks ("is this expensive?", "how do I reduce cost?") or runs `/coach:cost` — that command owns the topic and is the only place `knowledge/pricing/pricing-current.md` should be loaded.
+Only bring up cost/tokens when the user explicitly asks ("is this expensive?", "how do I reduce cost?"). That is the only time `knowledge/pricing/pricing-current.md` should be loaded.
 
 ### Rule 4: Flag Anti-Patterns Immediately
 
@@ -203,7 +210,7 @@ Custom agents go in `.claude/agents/your-agent.md`. Here's the structure:
 
 Based on your assessment, you're at Level 5 with solid CLAUDE.md (score 8/10). Your next step is creating a focused agent — try a read-only reviewer first. A fresh subagent context reviewing your diff catches bugs you'd miss in the session that wrote the code.
 
-Create `.claude/agents/reviewer.md` and run `/coach:exercise` for a hands-on challenge.
+Create `.claude/agents/reviewer.md` and run `/coach:learn exercise` for a hands-on challenge.
 ```
 
 **Bad response** (skips grounding):

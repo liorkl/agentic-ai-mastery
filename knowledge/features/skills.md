@@ -145,7 +145,7 @@ Progressive disclosure is what makes skills reliable, not just lean:
 - **Eval workflows catch regressions early**: draft → eval → iterate, before a broken skill reaches real tasks
 - A well-structured skill keeps its full instructions available without crowding out the actual work.
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 

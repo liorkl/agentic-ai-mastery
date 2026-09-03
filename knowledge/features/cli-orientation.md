@@ -167,7 +167,7 @@ See `knowledge/commands/commands-ref.md` for the complete reference.
 - `/compact` and `/clear` preserve the signal that matters and drop the noise, keeping later turns sharp
 - Match the model to the task: `haiku` (`claude-haiku-4-5`) handles simple jobs well; reserve `claude-opus-4-8` for hard reasoning
 - The biggest quality drag is a large CLAUDE.md loaded on every turn — keep it tight so standing instructions stay prominent
-- (For the token/cost angle, use the opt-in `/coach:cost` command.)
+- (Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 

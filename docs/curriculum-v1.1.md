@@ -714,7 +714,7 @@ This curriculum is the backbone of the coaching agent's knowledge. The agent sho
 8. **Reference official sources** — point to Anthropic Academy courses, engineering blog posts, and official docs
 9. **Stay current** — the ecosystem evolves monthly; curriculum should be reviewed regularly
 
-**Coaching commands available to the developer:** `/coach:assess`, `/coach:next`, `/coach:execute`, `/coach:exercise`, `/coach:discover`, `/coach:status`, `/coach:help`, `/coach:whats-new`, and `/coach:recap` (a progress narrative of how far the developer has come) and `/coach:compare` (a before/after diff of a repo or workflow). Cost coaching is opt-in only via `/coach:cost`.
+**Coaching commands available to the developer:** `/coach:assess`, `/coach:learn`, `/coach:apply`, `/coach:learn exercise`, `/coach:assess`, `/coach:progress`, `/help`, `/coach:progress`, and `/coach:progress week` (a progress narrative of how far the developer has come) and `/coach:progress previous` (a before/after diff of a repo or workflow). Cost coaching is opt-in only via `/coach:cost`.
 
 ---
 

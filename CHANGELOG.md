@@ -1,26 +1,72 @@
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
+
+### Removed — leaner surface (12 entry points -> 5)
+
+- Consolidated 11 slash commands into **four**, each with one job: `/coach:assess`
+  (measure) -> `/coach:apply` (change) -> `/coach:learn` (teach) -> `/coach:progress`
+  (report). Every merge shared state and logic, not just theme:
+  - `/coach:next` + `/coach:exercise` -> **`/coach:learn`**. Both read the same
+    assessments, applied the same leverage ladder, routed to the same knowledge table,
+    and logged the same outcome; only the output shape differed. Now one command with a
+    lesson mode and an `exercise` mode.
+  - `/coach:status` + `/coach:recap` + `/coach:compare` -> **`/coach:progress`**. Three
+    commands over the same two state files, differing only by time window. Now one
+    command: no argument for a snapshot, `week`/`month`/`all` for a recap,
+    `previous`/`first`/`since <date>` for a diff.
+  - `/coach:execute` -> **`/coach:apply`**, named for what it does.
+- Removed `/coach:cost`. 886 lines across a command, a knowledge file, and a design doc
+  served a topic every other surface tells the plugin not to raise. The pricing *facts*
+  stay in `knowledge/pricing/pricing-current.md` and load only on an explicit cost
+  question; `docs/cost-guide-v1.0.md` is deleted.
+- Removed `/coach:help`. Native `/help` lists plugin commands, and with four commands
+  there is nothing left to disambiguate. A hand-written index — including its
+  `next`-vs-`execute` decision matrix — was itself the signal that the split was wrong.
+- Removed `/coach:discover` and `/coach:whats-new`, and the discovery protocol in
+  `agents/coach.md` that backed them. They were one feature split across two commands,
+  and the premise did not hold: a plugin shipping a staleness-prevention command was
+  itself 74 days and three model generations stale. Knowledge freshness moves to the
+  release pipeline instead of charging every user to re-discover it.
+- Removed `skills/coaching/evals/coaching-evals.md`. Three of its five cases asserted the
+  **opposite** of shipped behaviour — they failed a response for having "no cost or token
+  mention" while `SKILL.md` Rule 3 forbids volunteering cost — and nothing executed it.
+- Removed four dead design docs: `parallel-impl-phase-2.md` and
+  `claude-code-kickoff-instructions.md` (self-declared SUPERSEDED/HISTORICAL),
+  `project-CLAUDE.md` (a non-authoritative duplicate of the root `CLAUDE.md`), and
+  `self-learning-discovery-v1.0.md` (the design for the removed discovery protocol).
+  These shipped to every installer.
+
+### Changed
+
+- Narrowed the `coaching` skill description. It triggered on "learning, best practices,
+  configuration, or features" — broad enough to fire on any config question. It now names
+  Claude Code subjects explicitly and adds a `when_to_use` field with an exclusion for
+  general programming questions.
+- Every surviving command declares `disable-model-invocation: true` (these have side
+  effects and controlled timing), plus `allowed-tools` for its state reads and
+  `argument-hint` where it takes arguments. Previously no command declared any of them,
+  so a plugin about permission hygiene caused its own prompt storm.
+
+### Fixed
+
+- **Silent data loss in state logging.** Every command specified "append to
+  `outcomes.jsonl`" while using the Write tool, which *truncates*. Doing the obvious
+  thing destroyed the coaching history. Now spelled out: read, append, write the whole
+  file back.
 
 ### Added
 
-- **`/coach:recap`** — progress recap from assessment + outcome history. Leads with how the repo got more Claude-ready (verification readiness, CLAUDE.md score, resolved anti-patterns) and what was practiced — makes the "team gradually gets better" loop visible. Read-only.
-- **`/coach:compare`** — before/after diff of two assessments for the current project, classifying each change as a gain or regression, led by verification readiness rather than the level number. Read-only.
-- **`knowledge/features/plugins.md`** — closes a content gap: plugin anatomy, validation, marketplace/install flow, when to build a plugin, and the permissions model (including the `plugin.json` permissions install-breaker caveat). Wired into the `/coach:next` and skill knowledge tables.
-- `/coach:help` now explains the passive coaching skill (auto-trigger, not a command) to remove a common point of confusion.
+- **`/coach:progress week`** — progress recap from assessment + outcome history. Leads with how the repo got more Claude-ready (verification readiness, CLAUDE.md score, resolved anti-patterns) and what was practiced — makes the "team gradually gets better" loop visible. Read-only.
+- **`/coach:progress previous`** — before/after diff of two assessments for the current project, classifying each change as a gain or regression, led by verification readiness rather than the level number. Read-only.
+- **`knowledge/features/plugins.md`** — closes a content gap: plugin anatomy, validation, marketplace/install flow, when to build a plugin, and the permissions model (including the `plugin.json` permissions install-breaker caveat). Wired into the `/coach:learn` and skill knowledge tables.
+- `/help` now explains the passive coaching skill (auto-trigger, not a command) to remove a common point of confusion.
 
 ### Changed — re-centered on outcomes (get the best out of Claude)
 
 - Reframed the coaching spine from "which features do you have (L0–L10)" to "are you getting the best out of Claude, and is your repo built for it?" The L0–L10 ladder is now explicitly a feature scaffold, not a score
 - Made the high-leverage **cross-cutting practices the spine**, coached and assessed at every level, **verification first**: give Claude a check it can run, explore→plan→code, ground the prompt, course-correct early, manage context
 - `/coach:assess` now leads with a "getting the best out of Claude here?" verdict (verification readiness) above the level number; anti-patterns are led by "no test/build/lint command Claude can run" (now critical) and "no verification gate"; assessment state records `verification_ready` / `verification_gate` / `practice_gaps`
-- `/coach:next` orders lessons by leverage, not level — a missing practice (especially verification) outranks the next feature
-- `/coach:execute` now builds its step plan from `practice_gaps` + `verification_ready`/`verification_gate`, not just feature gaps and anti-patterns — so the cross-cutting practices get coached hands-on. Verification leads the plan (CRITICAL); behavioral habits (plan-mode, grounding, course-correction, context hygiene) are handled as `got it`/`skip` practice steps with no file to apply, while config-backed practices (a test command, a Stop-hook gate, a CLAUDE.md trim) keep the apply + file-verify flow
+- `/coach:learn` orders lessons by leverage, not level — a missing practice (especially verification) outranks the next feature
+- `/coach:apply` now builds its step plan from `practice_gaps` + `verification_ready`/`verification_gate`, not just feature gaps and anti-patterns — so the cross-cutting practices get coached hands-on. Verification leads the plan (CRITICAL); behavioral habits (plan-mode, grounding, course-correction, context hygiene) are handled as `got it`/`skip` practice steps with no file to apply, while config-backed practices (a test command, a Stop-hook gate, a CLAUDE.md trim) keep the apply + file-verify flow
 - CLAUDE.md scoring keeps verification commands weighted highest and now rewards pointing at an example pattern to follow; rewrote `productivity-tips.md` into a verification-first practices guide
 - README now explains what "mastery" means here (the five practices) so teams don't mistake the level number for skill
 
@@ -29,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README install instructions pointed at a non-existent owner (`liorklibansky`) — corrected the marketplace-add and clone commands to `liorkl`, so installation actually works
 - Version badge in README (`1.0.0`) now matches `plugin.json` (`1.0.1`)
 - Malformed `never_reads` array in `marketplace.json` (one comma-joined string → a proper list)
-- `/coach:execute` was missing from the README command table (it was already in `/coach:help`, the curriculum, and the assess/status CTAs) — added the row so the documented command set is complete
+- `/coach:apply` was missing from the README command table (it was already in `/help`, the curriculum, and the assess/status CTAs) — added the row so the documented command set is complete
 - `agents/coach.md` tool frontmatter used scoped `Bash(...)` entries that don't grant the tool at the agent level — replaced with plain tool names (permission scoping stays in `.claude/settings.json`)
 
 ### Changed
@@ -43,7 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added — curriculum content refresh (Phase 1, mid-2026)
 
 - After a live review against Anthropic's current docs/best-practices/Academy and popular community resources, refreshed the knowledge base to mid-2026 reality **without renumbering the L0–L10 ladder** (a structural re-order is a planned Phase 2):
-  - **`knowledge/features/permissions.md`** (new) — permission modes (default/acceptEdits/plan/auto/dontAsk/bypassPermissions), plan mode, the `auto` safety classifier, sandboxing, protected paths, and security/trust basics. Wired into the `/coach:next` and skill knowledge tables at L0
+  - **`knowledge/features/permissions.md`** (new) — permission modes (default/acceptEdits/plan/auto/dontAsk/bypassPermissions), plan mode, the `auto` safety classifier, sandboxing, protected paths, and security/trust basics. Wired into the `/coach:learn` and skill knowledge tables at L0
   - **Checkpoints & rewind** added to `context.md` (safe exploration + course-correction); context reframed as the fundamental constraint (context rot / attention budget)
   - **MCP context cost & progressive disclosure** added to `mcp.md` (the code-execution-with-MCP ~150k→~2k token result; connect only needed servers) plus an MCP vetting/trust note
   - **`headless.md`**: corrected "Claude Code SDK" → **Claude Agent SDK**, fixed the `--output-format` values (`text`/`json`/`stream-json`), added scheduled runs and the fan-out pattern
@@ -53,7 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed — curriculum re-ordered for impact (Phase 2, mid-2026)
 
-- Re-ordered the L0–L10 ladder so structure follows **leverage, not feature-dependency** (the framing Anthropic foregrounds: everything serves context, verification closes the loop). Applied consistently across the runtime (level detection in `agents/coach.md`, the `/coach:next` level→file map, `/coach:exercise` groups, `/coach:cost` sections, `/coach:execute` bridge hints, `/coach:whats-new` examples), the knowledge-file `curriculum_level` metadata, the README level table, and the design docs (`curriculum`, `diagnostic`, `requirements`, `self-learning-discovery`, `cost-guide`):
+- Re-ordered the L0–L10 ladder so structure follows **leverage, not feature-dependency** (the framing Anthropic foregrounds: everything serves context, verification closes the loop). Applied consistently across the runtime (level detection in `agents/coach.md`, the `/coach:learn` level→file map, `/coach:learn exercise` groups, `/coach:cost` sections, `/coach:apply` bridge hints, `/coach:progress` examples), the knowledge-file `curriculum_level` metadata, the README level table, and the design docs (`curriculum`, `diagnostic`, `requirements`, `self-learning-discovery`, `cost-guide`):
   - **Merged** old L2 (Project Configuration) + old L3 (Context Engineering) into **L2 — Project Memory & Context** (context is pervasive, not a standalone rung)
   - Old L4–L8 each shift down one: **L3 Skills · L4 Subagents · L5 Hooks · L6 MCP · L7 Headless/SDK/CI**
   - **New L8 — Parallel Work** (git worktrees / dual-instance) inserted before **L9 Agent Teams**, which is now gated by a "start simple — earn the team" criterion (Building Effective Agents); **L10 — Distribution & Mastery**
@@ -63,7 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Docs
 
-- Synced the `docs/` design/dev-reference set to the shipped runtime so contributors aren't misled by stale specs (these files are not loaded at runtime). Each doc now carries a `Sync status (2026-06-19)` note. Reconciled: `curriculum-v1.1.md` (levels reframed as a feature scaffold, five-practices spine, verification first), `cost-guide-v1.0.md` (reframed as the opt-in `/coach:cost` reference data — cost off by default), `diagnostic-v1.1.md` (output leads with the readiness verdict; schema gains `verification_ready` / `verification_gate` / `practice_gaps`; anti-patterns led by missing verification), `requirements.md` (cost-at-every-level + token-footer mandates reverted; `/coach:recap`, `/coach:compare`, `plugins.md` added; `plugin.json` permissions/agent-`tools:` gotchas), and `self-learning-discovery-v1.0.md` (current models/effort facts, cost demoted in discovery classification)
+- Synced the `docs/` design/dev-reference set to the shipped runtime so contributors aren't misled by stale specs (these files are not loaded at runtime). Each doc now carries a `Sync status (2026-06-19)` note. Reconciled: `curriculum-v1.1.md` (levels reframed as a feature scaffold, five-practices spine, verification first), `cost-guide-v1.0.md` (reframed as the opt-in `/coach:cost` reference data — cost off by default), `diagnostic-v1.1.md` (output leads with the readiness verdict; schema gains `verification_ready` / `verification_gate` / `practice_gaps`; anti-patterns led by missing verification), `requirements.md` (cost-at-every-level + token-footer mandates reverted; `/coach:progress week`, `/coach:progress previous`, `plugins.md` added; `plugin.json` permissions/agent-`tools:` gotchas), and `self-learning-discovery-v1.0.md` (current models/effort facts, cost demoted in discovery classification)
 - Marked `docs/parallel-impl-phase-2.md` **superseded** (token footers and the `plugin.json` permissions block it proposed were reverted) and flagged `docs/claude-code-kickoff-instructions.md` as a **historical** build log
 - Refreshed all `docs/` model/pricing/effort/syntax facts to June 2026 (`budget_tokens` → adaptive thinking + `effort`; `opusplan` → explore→plan→code; `@import` → `@path`); aligned the knowledge-file structure note in `CLAUDE.md` (`Cost Implications` → `Why It Matters`)
 

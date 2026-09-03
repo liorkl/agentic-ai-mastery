@@ -100,7 +100,7 @@ Don't ask Claude to "build the entire feature" at once. Scaffold → review → 
 
 ### 7. Match the Model to the Task
 
-Opus 5 is the default and handles most work; switch mid-session with `/model` when a task is simpler (cheaper, faster) or harder. Tune *thinking depth* separately with `effort` (`low` / `medium` / `high` / `xhigh` / `max`) — this replaced the old `budget_tokens`. Higher effort means more reasoning before acting; reach for it on architecture and hard debugging, dial down for routine edits. See `knowledge/features/models.md` for the full model/effort guidance. (Cost angle: the opt-in `/coach:cost`.)
+Opus 5 is the default and handles most work; switch mid-session with `/model` when a task is simpler (cheaper, faster) or harder. Tune *thinking depth* separately with `effort` (`low` / `medium` / `high` / `xhigh` / `max`) — this replaced the old `budget_tokens`. Higher effort means more reasoning before acting; reach for it on architecture and hard debugging, dial down for routine edits. See `knowledge/features/models.md` for the full model/effort guidance.
 
 ---
 

@@ -193,7 +193,7 @@ First confirm a lower rung of the parallelism ladder (worktrees, dual-instance) 
 
 Define module boundaries in CLAUDE.md so two agents never edit the same file, and prefer direct messages over broadcasts to keep coordination tight.
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 

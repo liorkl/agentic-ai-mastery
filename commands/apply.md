@@ -1,8 +1,11 @@
 ---
 description: "Work your assessment plan step by step — cross-cutting practices (verification first), then feature gaps, with the why explained inline"
+argument-hint: "[apply | done | skip | got it]"
+disable-model-invocation: true
+allowed-tools: Read(~/.claude/coaching/state/**)
 ---
 
-# /coach:execute — Step-by-Step Plan Execution
+# /coach:apply — Step-by-Step Plan Execution
 
 Walks the user through their assessment plan one step at a time. Each step combines **doing** (implementation) with **learning** (the why behind it).
 
@@ -242,10 +245,14 @@ Update execution-state.json:
 
 After confirming, append to `~/.claude/coaching/state/outcomes.jsonl`:
 
+These state files are append-only, but **the Write tool truncates**. To add a line:
+read the existing file, append the new line to its contents, and write the whole file
+back. Writing only the new line destroys the history.
+
 ```json
 {
   "timestamp": "<ISO 8601>",
-  "session_id": "execute-<YYYYMMDD>",
+  "session_id": "apply-<YYYYMMDD>",
   "user_level_at_time": <detected_level>,
   "topic": "<step type: gap or anti_pattern>",
   "subtopic": "<step id>",
@@ -274,13 +281,13 @@ Update execution-state.json:
 - Set `steps[current_index].status = "skipped"`
 - Increment `current_step_index`
 
-Show: "Skipped. You can re-run `/coach:execute` later to return to skipped steps."
+Show: "Skipped. You can re-run `/coach:apply` later to return to skipped steps."
 
 Then present the next step.
 
 ## Resuming
 
-When the user runs `/coach:execute` again mid-plan:
+When the user runs `/coach:apply` again mid-plan:
 - Show the progress header with how many steps are done/remaining
 - Jump directly to the first `pending` step
 - Add: "Resuming from where you left off."

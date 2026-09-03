@@ -158,7 +158,7 @@ This keeps the always-loaded file lean while detail lives in files that are pull
 - Build/test commands: Claude runs the real check instead of guessing.
 - DO NOT patterns: steer Claude away from the wrong files.
 
-(If you want the token/cost angle specifically, that's the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 

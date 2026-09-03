@@ -211,7 +211,7 @@ claude -p "..." --max-turns 20 --max-budget-usd 5
 
 Without `--max-turns`/`--max-budget-usd`, an unattended agent can loop on a stuck task with no one watching.
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 

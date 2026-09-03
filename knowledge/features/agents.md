@@ -178,7 +178,7 @@ You are a read-only reviewer. Never modify files.
 **Tool restrictions enforce correctness**:
 - A read-only reviewer literally cannot modify files, making the Builder-Validator split trustworthy
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 
