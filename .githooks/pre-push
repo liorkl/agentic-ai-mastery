@@ -22,35 +22,30 @@ for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .claude/sett
   fi
 done
 
-# 2. plugin.json schema key whitelist
+# 2. Plugin manifest validation (authoritative — knows the real schema)
 echo ""
-echo "--- plugin.json key whitelist ---"
-python3 - <<'EOF'
-import json, sys
+echo "--- plugin manifest (claude plugin validate --strict) ---"
+if command -v claude >/dev/null 2>&1; then
+  if claude plugin validate . --strict; then
+    echo "OK:   manifests valid under --strict"
+  else
+    echo "FAIL: claude plugin validate --strict reported problems"
+    exit_code=$FAIL
+  fi
+else
+  echo "SKIP: claude CLI not on PATH"
+fi
 
-ALLOWED_KEYS = {"name", "version", "description", "author", "license", "keywords", "homepage", "repository"}
-ALLOWED_AUTHOR_KEYS = {"name", "email", "url"}
+# 3. Template test suite (same script CI runs)
+echo ""
+echo "--- templates ---"
+if bash scripts/test-templates.sh; then
+  :
+else
+  exit_code=$FAIL
+fi
 
-data = json.load(open(".claude-plugin/plugin.json"))
-
-unknown = set(data.keys()) - ALLOWED_KEYS
-if unknown:
-    print(f"FAIL: plugin.json contains unrecognized keys: {unknown}")
-    print("These will cause 'claude plugin install' to fail.")
-    sys.exit(1)
-
-author = data.get("author", {})
-if isinstance(author, dict):
-    unknown_author = set(author.keys()) - ALLOWED_AUTHOR_KEYS
-    if unknown_author:
-        print(f"FAIL: plugin.json author contains unrecognized keys: {unknown_author}")
-        sys.exit(1)
-
-print("OK:   plugin.json keys are valid")
-EOF
-if [ $? -ne 0 ]; then exit_code=$FAIL; fi
-
-# 3. Knowledge file line limits (each <500)
+# 4. Knowledge file line limits (each <500)
 echo ""
 echo "--- knowledge file line limits ---"
 while IFS= read -r f; do
@@ -63,7 +58,7 @@ while IFS= read -r f; do
   fi
 done < <(find knowledge -name "*.md" 2>/dev/null)
 
-# 4. Knowledge base total line limit (<5000)
+# 5. Knowledge base total line limit (<5000)
 echo ""
 echo "--- knowledge base total ---"
 total=$(find knowledge -name "*.md" -exec cat {} + 2>/dev/null | wc -l)
@@ -74,7 +69,7 @@ else
   echo "OK:   total knowledge base is $total lines"
 fi
 
-# 5. Commands / skills / agents line limits (each <500)
+# 6. Commands / skills / agents line limits (each <500)
 echo ""
 echo "--- commands/skills/agents line limits ---"
 while IFS= read -r f; do

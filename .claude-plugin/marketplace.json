@@ -1,13 +1,7 @@
 {
   "name": "agentic-ai-mastery",
   "metadata": {
-    "description": "A coaching plugin marketplace for mastering agentic AI development with Claude Code and Cowork",
-    "trust": {
-      "reads": ["~/.claude/**", ".claude/**", "CLAUDE.md"],
-      "writes": ["~/.claude/coaching/**"],
-      "network": ["github.com (changelog)", "search.anthropic.com (discovery)"],
-      "never_reads": [".env", "credentials", "secrets", "keys", "tokens"]
-    }
+    "description": "A coaching plugin marketplace for mastering agentic AI development with Claude Code"
   },
   "owner": {
     "name": "Lior Klibansky"
@@ -16,7 +10,7 @@
     {
       "name": "coach",
       "source": "./",
-      "description": "Coaches developers to master agentic AI development through 11 progressive levels"
+      "description": "Coaches a developer on two missions: an effective personal Claude Code environment, and Claude-ready repos"
     }
   ]
 }

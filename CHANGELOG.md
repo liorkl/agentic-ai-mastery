@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added — templates that are tested, not described
+
+- `templates/` — working starter files for a Claude-ready repo: a `CLAUDE.md`, a
+  `settings.json` with permission allow/deny rules and both hooks wired up, a `Stop`
+  verification gate, a `PreToolUse` secret guardrail, a read-only review subagent on
+  `model: haiku`, and a task skill with `disable-model-invocation: true`.
+- `scripts/test-templates.sh` — runs those templates for real. Called by both
+  `.githooks/pre-push` and CI, so local and CI cannot drift. It asserts:
+  the hook config uses the required nested `hooks: [{type, command}]` array; hook scripts
+  parse and are executable; `block-secrets.sh` blocks a hardcoded secret with **exit 2**,
+  allows an env lookup, and does not false-positive on the word "token" in ordinary code;
+  `verify.sh` blocks a stop on failing tests, allows it on passing tests, and treats a repo
+  with nothing to verify as a pass rather than a failure; and skill/agent frontmatter
+  declares its required fields.
+- `.github/workflows/templates.yml` — runs the suite plus `shellcheck` on every push and PR.
+
+**Why this is the important change.** The accuracy bugs fixed earlier in this release
+existed because the guidance lived only in prose, and prose cannot fail a test. Both were
+re-injected deliberately to confirm the suite catches them: the flat matcher group is
+rejected, and `exit 1` where `exit 2` was meant is rejected. A third bug was found *by*
+writing the tests — the hook command interpolated `${CLAUDE_PROJECT_DIR}` unquoted, which
+breaks on any path containing a space. The documented form quotes it, and there is now an
+assertion for that too.
+
+### Changed
+
+- **Replaced the hand-maintained `plugin.json` key whitelist with `claude plugin validate
+  --strict`** in both `.githooks/pre-push` and CI. The whitelist allowed 8 keys; the real
+  schema has roughly 23, so it would have rejected `displayName`, `skills`, `commands`,
+  `agents`, `hooks`, `mcpServers`, `outputStyles`, `dependencies` and more. Verified
+  empirically: adding `displayName` and `keywords` produces no warning, while the
+  whitelist would have failed the push.
+- Its premise had also expired. The comment said a `permissions` key "causes install to
+  fail"; that was true when it was written, but validation now reports
+  `Unknown field 'permissions'. Claude Code ignores it at load time` — a warning, not a
+  failure. Confirmed by adding the key and running the validator. The gate outlived its bug.
+- `plugin.json` gained `displayName`, `license`, `homepage`, `repository`, and `keywords`
+  — all valid, all previously blocked by the whitelist.
+- Removed the `metadata.trust` block from `marketplace.json`. `claude plugin validate`
+  reports it as an unknown field that Claude Code ignores at load time, so it described a
+  guarantee nothing enforced. Removing it also lets `--strict` pass clean, which is what
+  makes `--strict` usable as a gate.
+- **Lifted the "no scripts, no templates" constraint** in `CLAUDE.md`. It was the root
+  cause: a rule that forbade testable artifacts guaranteed the guidance could only ever be
+  prose. Runtime components still use Claude's native tools; `templates/` and `scripts/`
+  are explicitly exempt because CI executes them.
+- `/coach:apply repo` now starts from the tested templates instead of composing files from
+  prose.
+- Split `commands/apply.md` (498 lines, two under the limit) by moving its three worked
+  step presentations to `references/apply-step-examples.md`, loaded on demand. Also removed
+  a leftover personal project name from those examples.
+
 ### Added — the two missions are now explicit
 
 - `/coach:assess` and `/coach:apply` take a **`me` | `repo` scope**. `me` is the
