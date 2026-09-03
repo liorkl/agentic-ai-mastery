@@ -165,7 +165,7 @@ See `knowledge/personal-env/commands-ref.md` for the complete reference.
 
 - A focused context window keeps Claude's answers accurate — every tool result and message adds to context and compounds, so prune aggressively
 - `/compact` and `/clear` preserve the signal that matters and drop the noise, keeping later turns sharp
-- Match the model to the task: `haiku` (`claude-haiku-4-5`) handles simple jobs well; reserve `claude-opus-4-8` for hard reasoning
+- Match the model to the task: `haiku` (`claude-haiku-4-5`) handles simple jobs well; reserve `claude-opus-5` for hard reasoning
 - The biggest quality drag is a large CLAUDE.md loaded on every turn — keep it tight so standing instructions stay prominent
 - (Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 

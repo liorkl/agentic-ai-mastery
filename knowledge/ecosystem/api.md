@@ -29,7 +29,7 @@ import anthropic
 client = anthropic.Anthropic()
 
 message = client.messages.create(
-    model="claude-sonnet-4-6",
+    model="claude-opus-5",
     max_tokens=1024,
     messages=[
         {"role": "user", "content": "Hello, Claude!"}
@@ -47,7 +47,7 @@ import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic();
 
 const message = await client.messages.create({
-  model: "claude-sonnet-4-6",
+  model: "claude-opus-5",
   max_tokens: 1024,
   messages: [
     { role: "user", content: "Hello, Claude!" }
@@ -84,7 +84,7 @@ tools = [
 
 ```python
 response = client.messages.create(
-    model="claude-sonnet-4-6",
+    model="claude-opus-5",
     max_tokens=1024,
     tools=tools,
     messages=[{"role": "user", "content": "What's the weather in Tokyo?"}]
@@ -104,7 +104,7 @@ for block in response.content:
 
 ```python
 with client.messages.stream(
-    model="claude-sonnet-4-6",
+    model="claude-opus-5",
     max_tokens=1024,
     messages=[{"role": "user", "content": "Write a story"}]
 ) as stream:
@@ -118,7 +118,7 @@ The old `thinking={"type": "enabled", "budget_tokens": N}` form is removed on th
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-8",
+    model="claude-opus-5",
     max_tokens=16000,
     thinking={"type": "adaptive"},
     output_config={"effort": "high"},  # low | medium | high | xhigh | max
@@ -159,7 +159,7 @@ Reduce costs for repeated prefixes:
 
 ```python
 response = client.messages.create(
-    model="claude-sonnet-4-6",
+    model="claude-opus-5",
     max_tokens=1024,
     system=[
         {
@@ -277,11 +277,11 @@ print(f"Output tokens: {response.usage.output_tokens}")
 ### Calculate Costs
 
 ```python
-def calculate_cost(usage, model="claude-sonnet-4-6"):
+def calculate_cost(usage, model="claude-opus-5"):
     rates = {
         "claude-fable-5": {"input": 10, "output": 50},
-        "claude-opus-4-8": {"input": 5, "output": 25},
-        "claude-sonnet-4-6": {"input": 3, "output": 15},
+        "claude-opus-5": {"input": 5, "output": 25},
+        "claude-sonnet-5": {"input": 2, "output": 10},
         "claude-haiku-4-5": {"input": 1, "output": 5},
     }
     rate = rates[model]
