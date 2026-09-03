@@ -173,7 +173,7 @@ You are a read-only reviewer. Never modify files.
 
 **Model selection shapes capability**:
 - Agents without a `model:` field inherit the session model
-- Use `claude-haiku-4-5` for fast, mechanical work and `claude-sonnet-4-6`/`claude-opus-4-8` where deeper reasoning matters
+- Use `claude-haiku-4-5` for fast, mechanical work and `claude-sonnet-5`/`claude-opus-5` where deeper reasoning matters
 
 **Tool restrictions enforce correctness**:
 - A read-only reviewer literally cannot modify files, making the Builder-Validator split trustworthy

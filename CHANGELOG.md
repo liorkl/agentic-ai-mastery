@@ -125,6 +125,11 @@ upgrading to get a scoped baseline.
   `from anthropic import Agent` API replaced with the real Tool Runner and the separate
   Claude Agent SDK; two-generation-stale `_20241022` tool types; an unsourced rate-limit
   table replaced with a pointer to live response headers.
+- Three files still *recommended* the previous model generation as current after the
+  refresh — eight code examples in `ecosystem/api.md`, a hardcoded price table with the
+  old Sonnet 4.6 rates, and the model advice in `repo-ready/agents.md` and
+  `personal-env/cli-orientation.md`. All now point at the Claude 5 family; Sonnet 4.6 and
+  Opus 4.8 appear only where the comparison is the point.
 - `.claude/rules/knowledge-limits.md` used `globs:`, which is not a field — so the rule
   never scoped to `knowledge/`. The field is `paths:`.
 - **The agent contradicted the command it backs.** `agents/coach.md` said "NEVER modify
