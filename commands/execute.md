@@ -309,7 +309,7 @@ FounderFinder has a `.env` file — this is not hypothetical risk.
 
 ### How to Implement
 
-Create `/Users/liorklibansky/dev/FounderFinder/.claude/settings.json`:
+Create `<project-root>/.claude/settings.json`:
 
 ```json
 {

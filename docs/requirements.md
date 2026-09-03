@@ -137,7 +137,7 @@ The v1.0 is successful when:
 The project IS a Claude Code plugin. The repo root is the plugin directory.
 
 ```
-agentic-ai-mastery/                        # ~/liorklibansky/dev/agentic-ai-mastery
+agentic-ai-mastery/                        # local clone
 ├── .claude-plugin/
 │   └── plugin.json                        # Plugin manifest (name, version, author)
 │
@@ -219,7 +219,7 @@ agentic-ai-mastery/                        # ~/liorklibansky/dev/agentic-ai-mast
 }
 ```
 
-Users install with: `claude plugin marketplace add liorklibansky/agentic-ai-mastery` then `claude plugin install coach@agentic-ai-mastery`.
+Users install with: `claude plugin marketplace add liorkl/agentic-ai-mastery` then `claude plugin install coach@agentic-ai-mastery`.
 
 ### 3.2 Installation (User Perspective)
 
@@ -227,7 +227,7 @@ Users install with: `claude plugin marketplace add liorklibansky/agentic-ai-mast
 
 ```bash
 # Add the marketplace
-claude plugin marketplace add liorklibansky/agentic-ai-mastery
+claude plugin marketplace add liorkl/agentic-ai-mastery
 
 # Install the coach plugin
 claude plugin install coach@agentic-ai-mastery
