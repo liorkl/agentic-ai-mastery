@@ -1,0 +1,31 @@
+name: Templates
+
+# The files in templates/ ship as working files, so CI runs them. Both local
+# (.githooks/pre-push) and CI call the same script, so they cannot drift.
+
+on:
+  push:
+    branches:
+      - master
+      - "feat/**"
+      - "fix/**"
+      - "refactor/**"
+      - "chore/**"
+      - "docs/**"
+  pull_request:
+
+jobs:
+  templates:
+    name: Exercise the templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the template test suite
+        run: bash scripts/test-templates.sh
+
+      - name: shellcheck the hook templates
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq shellcheck
+          shellcheck templates/hooks/*.sh scripts/test-templates.sh

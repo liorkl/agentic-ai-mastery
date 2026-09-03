@@ -23,6 +23,8 @@ knowledge/
   shared/**                   → Cross-cutting practices (both missions)
   pricing/**                  → Loaded only on an explicit cost question
   ecosystem/**                → Adjacent topics (Claude API, Cowork)
+templates/                    → Real, CI-tested starter files for a Claude-ready repo
+scripts/test-templates.sh     → Runs the templates; called by pre-push AND CI
 docs/DESIGN.md                → Design notes (dev reference only)
 ```
 
@@ -77,7 +79,10 @@ claude plugin update coach@agentic-ai-mastery
 ## Key Constraints
 
 - Plugin manifest is JSON, commands/skills/agents are Markdown with YAML frontmatter
-- No external scripts or dependencies — components use Claude's native tools
+- Runtime components (commands, skill, agent) use Claude's native tools — no dependencies
+- `templates/` and `scripts/` DO contain real executable files, and CI runs them. This is
+  deliberate: guidance that lives only in prose cannot be tested, which is how a hook
+  config that never loads and reversed exit codes shipped as the flagship lesson
 - Knowledge files: max 500 lines each, <5,000 lines total
 - Context overhead target: ≤3,000 tokens per coaching interaction
 - Plugin NEVER reads .env, credentials, secrets, keys
@@ -97,6 +102,12 @@ claude plugin validate .
 ```bash
 wc -l knowledge/**/*.md        # Each file must be <500 lines
 cat knowledge/**/*.md | wc -l  # Total must be <5,000 lines
+```
+
+**Template test suite** (the same script CI runs):
+
+```bash
+bash scripts/test-templates.sh
 ```
 
 **JSON validation:**
@@ -135,7 +146,8 @@ self-contradiction and was deleted.
 ## DO NOT
 
 - Create a web frontend, API server, or database
-- Create shell scripts — commands/skills/agent use Claude's native tools
+- Add shell scripts to the *runtime* (commands/skills/agent use Claude's native tools).
+  `templates/` and `scripts/` are the exception — those are tested files, not runtime
 - Add npm/pip dependencies
 - Put anything inside `.claude-plugin/` except `plugin.json`
 - Create files over 500 lines — split them

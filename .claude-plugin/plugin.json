@@ -1,8 +1,19 @@
 {
   "name": "coach",
-  "description": "Coaches developers to master agentic AI development. Assesses skill by scanning your Claude Code/Cowork environment, teaches from an 11-level curriculum, tracks progress, discovers new features.",
+  "displayName": "Agentic AI Mastery Coach",
+  "description": "Coaches a developer on two missions: making their personal Claude Code environment highly effective, and making their repos Claude-ready. Assesses the real environment, applies fixes step by step, and teaches from a mission-organized knowledge base.",
   "version": "1.0.1",
   "author": {
     "name": "Lior Klibansky"
-  }
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/liorkl/agentic-ai-mastery",
+  "repository": "https://github.com/liorkl/agentic-ai-mastery",
+  "keywords": [
+    "coaching",
+    "claude-code",
+    "onboarding",
+    "best-practices",
+    "developer-experience"
+  ]
 }
