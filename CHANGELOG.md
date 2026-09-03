@@ -148,6 +148,17 @@ upgrading to get a scoped baseline.
   **merged into** skills, so the plugin was penalising a non-problem while shipping
   commands itself.
 
+- **This repo now has the verification gate its own rubric demands.** The plugin
+  classifies "no verification gate" as a HIGH-severity anti-pattern and shipped without
+  one for itself. `.claude/hooks/verify.sh` is built from the template the plugin hands to
+  users — JSON validity, the repo's own line limits, and the template suite — wired as a
+  `Stop` hook in the correct nested shape. It deliberately skips
+  `claude plugin validate`, which would spawn a nested claude process; pre-push and CI own
+  that check.
+- `BACKLOG.md` reconciled with reality. Several open items shipped in this release, and
+  one carried a note that had expired: it claimed a `permissions` key in `plugin.json`
+  "causes install to fail", which is now reported as an ignored unknown field.
+
 ### Removed
 
 - **12 user-facing entry points reduced to 5** — four commands (`assess` → `apply` →

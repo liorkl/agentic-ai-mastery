@@ -21,5 +21,19 @@
       "Read(**/*.key)",
       "Read(**/*.pem)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/verify.sh",
+            "timeout": 120,
+            "statusMessage": "Running the verification gate"
+          }
+        ]
+      }
+    ]
   }
 }
