@@ -19,7 +19,7 @@ Do NOT contribute: web frontends, API servers, shell scripts, npm/pip packages, 
 git clone https://github.com/<your-username>/agentic-ai-mastery ~/dev/agentic-ai-mastery
 cd ~/dev/agentic-ai-mastery
 
-# 2. Activate the pre-push hook (one-time setup)
+# 2. Activate the pre-push hook (one-time setup, optional)
 git config core.hooksPath .githooks
 
 # 3. Start Claude Code in a test project with the plugin loaded
@@ -28,6 +28,12 @@ claude --plugin-dir ~/dev/agentic-ai-mastery
 # 4. Verify it loaded
 /help
 ```
+
+**Which gate actually enforces what.** The pre-push hook is opt-in — nothing checks that
+you ran the `core.hooksPath` line, so do not treat it as a safety net. **CI is the real
+gate** and runs on every push and PR regardless. In-session, the `Stop` hook in
+`.claude/settings.json` runs the same checks before Claude can finish a turn, so a Claude
+session is covered whether or not you enabled the git hook.
 
 That is the dev loop: no install, no version bump, no update cycle. Plugin changes are
 picked up on the next session launch, or `/reload-plugins` mid-session.
