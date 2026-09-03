@@ -6,9 +6,10 @@ on:
       - master
       - "feat/**"
       - "fix/**"
+      - "refactor/**"
+      - "chore/**"
+      - "docs/**"
   pull_request:
-    branches:
-      - master
 
 jobs:
   validate:
