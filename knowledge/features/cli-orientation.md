@@ -147,8 +147,8 @@ CI pipelines or scripted workflows.
 | `/help` | List available commands and installed skills |
 | `/clear` | Reset conversation (keeps CLAUDE.md) |
 | `/compact` | Summarize conversation to free context |
-| `/undo` | Revert the last file edit |
-| `/status` | Show current context usage |
+| `/rewind` | Roll back code and/or conversation to a checkpoint |
+| `/status` | Show session status (account, model, connectivity) |
 | `/model` | Switch the active model |
 
 See `knowledge/commands/commands-ref.md` for the complete reference.

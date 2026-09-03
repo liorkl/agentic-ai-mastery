@@ -75,18 +75,20 @@ Agent teams coordinate multiple Claude instances working in parallel. Each teamm
 
 ### Enabling Agent Teams
 
-```json
-// .claude/settings.json
-{
-  "experimental": {
-    "agentTeams": true
-  }
-}
+Agent teams are gated by an environment variable — there is no `settings.json` key for them:
+
+```bash
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 ```
 
-Or environment variable:
-```bash
-export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=true
+You can also set it in the `env` block of `settings.json`, which is the same mechanism:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
 ```
 
 ### Team Orchestration Patterns

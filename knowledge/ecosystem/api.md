@@ -134,12 +134,12 @@ For async, non-interactive workloads (50% cheaper):
 
 ```python
 # Create batch
-batch = client.batches.create(
+batch = client.messages.batches.create(
     requests=[
         {
             "custom_id": "request-1",
             "params": {
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-5",
                 "max_tokens": 1024,
                 "messages": [{"role": "user", "content": "..."}]
             }
@@ -149,7 +149,8 @@ batch = client.batches.create(
 )
 
 # Poll for completion
-batch = client.batches.retrieve(batch.id)
+batch = client.messages.batches.retrieve(batch.id)
+# then stream results; key them by custom_id, never by position
 ```
 
 ## Prompt Caching
@@ -176,52 +177,66 @@ response = client.messages.create(
 - Reads: 90% cheaper
 - TTL: 5 minutes (refreshed on use)
 
-## Claude Agent SDK
+## Running an Agent Loop
 
-For building agent applications:
+There is no `Agent` class in the `anthropic` package. Two different things get called "the agent SDK" — know which one you want:
+
+**Tool Runner** — part of the regular Anthropic SDK. It drives the request → execute → loop cycle over tools *you* define:
 
 ```python
-from anthropic import Agent
+from anthropic import Anthropic, beta_tool
 
-agent = Agent(
-    model="claude-sonnet-4-6",
-    tools=[...],
-    system_prompt="You are a helpful assistant..."
+client = Anthropic()
+
+@beta_tool
+def get_weather(city: str) -> str:
+    """Look up the weather for a city."""
+    return fetch_weather(city)
+
+runner = client.beta.messages.tool_runner(
+    model="claude-opus-5",
+    max_tokens=4096,
+    tools=[get_weather],
+    messages=[{"role": "user", "content": "What's the weather in Haifa?"}],
 )
-
-# Run agent loop
-result = agent.run("Complete this task...")
+result = runner.until_done()
 ```
 
-### SDK Features
+**Claude Agent SDK** — a *separate package* (`claude-agent-sdk`), which is Claude Code packaged as a library. It ships built-in tools (read/write/edit, bash, grep, web search), the agent loop, subagents, and permissions:
 
-- Automatic tool execution
-- State management
-- Multi-turn conversations
-- Error handling
-- Cost tracking
+```python
+from claude_agent_sdk import query
+
+async for message in query(prompt="Fix the failing test", options={...}):
+    print(message)
+```
+
+Both are harness-only — you host them. If you want Anthropic to run the loop *and* host the tool sandbox, that's Managed Agents.
 
 ## Computer Use
 
 For GUI automation (beta):
 
+Anthropic-defined tool `type` strings are **dated and versioned** — copy the current one from the docs rather than reusing a version you remember. The `_20241022` generation is long superseded. Current examples:
+
 ```python
 tools = [
-    {"type": "computer_20241022", "display_width": 1920, "display_height": 1080},
-    {"type": "text_editor_20241022"},
-    {"type": "bash_20241022"}
+    {"type": "bash_20250124", "name": "bash"},
+    {"type": "text_editor_20250728", "name": "str_replace_based_edit_tool"},
+    # computer tool type: see the computer-use docs for the current dated version
 ]
 ```
 
+These tools are schema-less — do **not** give them an `input_schema`.
+
 ## API Rate Limits
 
-| Tier | Requests/min | Tokens/min | Tokens/day |
-|------|--------------|------------|------------|
-| Free | 5 | 10,000 | 100,000 |
-| Tier 1 | 50 | 40,000 | 1,000,000 |
-| Tier 2 | 1,000 | 80,000 | 2,500,000 |
-| Tier 3 | 2,000 | 160,000 | 5,000,000 |
-| Tier 4 | 4,000 | 400,000 | 10,000,000 |
+Rate limits are **per usage tier and per model**, and they change. Don't hardcode them
+from a doc (including this one) — read your current limits from the response headers
+(`anthropic-ratelimit-*`) or the Console, and see the
+[rate limits docs](https://docs.claude.com/en/api/rate-limits) for the live table.
+
+On a 429, respect the `retry-after` header. The SDKs retry 408/409/429/5xx twice by default.
 
 ## Integration with Claude Code
 

@@ -107,7 +107,7 @@ Create `.claude/agents/name.md` with frontmatter + system prompt.
 
 **Task delegation**: Claude invokes agents automatically based on description matching.
 
-**Explicit invocation**: `/agent reviewer`
+**Explicit invocation**: mention the agent by name — `@"reviewer (agent)"`. There is no `/agent <name>` command.
 
 **Fan-out**: Multiple agents working on different aspects simultaneously.
 

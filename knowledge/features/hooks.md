@@ -1,6 +1,6 @@
 <!-- file: knowledge/features/hooks.md -->
-<!-- last-updated: 2026-06-21 -->
-<!-- source: https://code.claude.com/docs/en/best-practices -->
+<!-- last-updated: 2026-09-03 -->
+<!-- source: https://code.claude.com/docs/en/hooks -->
 <!-- curriculum_level: L6 -->
 
 # Hooks System
@@ -15,118 +15,161 @@ Hooks are scripts that run on specific lifecycle events, **outside** the agentic
 
 ### Hook Events
 
-Well-known lifecycle events you'll use most:
+There are ~33 hook events. These are the ones you'll reach for first:
 
 | Event | When It Fires | Use Cases |
 |-------|--------------|-----------|
-| `PreToolUse` | Before Claude uses a tool | Intercept, block, protect paths |
-| `PostToolUse` | After Claude uses a tool | Validate, log, alert |
+| `PreToolUse` | Before a tool call executes | Intercept, block, protect paths |
+| `PostToolUse` | After a tool call succeeds | Validate, log, alert |
 | `Stop` | When Claude finishes responding | Verification gate (test/build/lint) |
-| `SessionStart` | When a session begins | Load context, set up state |
-| `UserPromptSubmit` | When you submit a prompt | Inject context, pre-flight checks |
+| `SessionStart` | When a session begins or resumes | Load context, set up state |
+| `UserPromptSubmit` | When you submit a prompt, before Claude processes it | Inject context, pre-flight checks |
+| `PermissionRequest` | When a tool call needs a permission decision | Custom auto-approve / auto-deny |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file loads | Debug which instructions actually loaded |
 
-Task-oriented events (e.g. `TaskCompleted`) also exist for agent-team flows. For the full, current event list and payload schemas, see the [hooks docs](https://code.claude.com/docs/en/hooks).
+Others cover subagents (`SubagentStart`, `SubagentStop`), tasks (`TaskCreated`, `TaskCompleted`), compaction (`PreCompact`, `PostCompact`), failures (`PostToolUseFailure`, `StopFailure`), and more. For the full event list and payload schemas, see the [hooks docs](https://code.claude.com/docs/en/hooks).
 
 ### Configuration
 
-Hooks are configured in `.claude/settings.json` or `.claude/settings.local.json`:
+Hooks are configured in `.claude/settings.json` or `.claude/settings.local.json`. Each event maps to a list of **matcher groups**, and each group holds a nested `hooks` array — the nesting is required:
 
 ```json
 {
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit",
-        "command": "python .claude/hooks/lint-before-edit.py"
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/block-secrets.py"
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": ".*",
-        "command": ".claude/hooks/log-activity.sh"
+        "matcher": "Edit",
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/lint-changed.sh" }
+        ]
       }
     ],
     "Stop": [
       {
-        "command": "npm run lint -- --quiet"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm test --silent",
+            "timeout": 120
+          }
+        ]
       }
     ]
   }
 }
 ```
 
-### Exit Code Conventions
+A flat `{"matcher": "Edit", "command": "..."}` — without the inner `hooks` array — is **not** a valid hook and silently never fires. Optional per-hook fields include `timeout` (seconds) and `statusMessage` (shown in the UI while it runs).
+
+### How a Hook Receives Its Input
+
+Command hooks get a **JSON object on stdin** — not positional arguments. Every event provides `session_id`, `cwd`, `permission_mode`, `hook_event_name`, and `transcript_path`; tool events add `tool_name` and `tool_input`.
+
+```bash
+input=$(cat)
+file=$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty')
+```
+
+There is no `$1`. A hook that reads `"$1"` gets an empty string.
+
+### Exit Codes
 
 | Exit Code | Meaning | Behavior |
 |-----------|---------|----------|
 | 0 | Pass | Continue normally |
-| 1 | Error | Block the operation |
-| 2 | Feedback | Send hook's stdout back to Claude |
+| 1 | Non-blocking error | Logged; **the action still proceeds** |
+| 2 | Block | Blocks the action on events that support blocking |
 
-**Exit code 2 is powerful**: It sends the hook's output back as feedback, allowing deterministic corrections.
+**Exit code 2 is the blocker** — on `PreToolUse` it blocks the tool call, on `Stop` it prevents Claude from finishing, on `UserPromptSubmit` it blocks the prompt. stderr is fed back to Claude as the reason.
+
+Exit code 1 does **not** block. A guardrail written with `exit 1` prints a warning and lets the operation through.
+
+Blocking is also expressible as structured JSON on stdout, which gives you a reason string:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "Potential secret in the proposed edit"
+  }
+}
+```
+
+Other useful output fields: `additionalContext` (inject into Claude's context), `updatedInput` (rewrite the tool input), `systemMessage` (show a note in the transcript).
 
 ### Essential Hook Patterns
 
-**Guardrail hook (security)** — A `PreToolUse` hook can block a dangerous command or protect a path *before* the tool runs:
+**Guardrail hook (security)** — a `PreToolUse` hook that blocks a secret before the write lands. It inspects the *proposed* content from `tool_input`, because the file on disk doesn't have the change yet:
+
 ```bash
 #!/bin/bash
-# PreToolUse hook for Edit/Write
-if grep -E "(API_KEY|SECRET|PASSWORD)=" "$1"; then
-  echo "Blocked: potential secret in file"
-  exit 1
+# PreToolUse, matcher: Edit|Write
+input=$(cat)
+payload=$(printf '%s' "$input" | jq -r '[.tool_input.content, .tool_input.new_string] | map(select(.)) | join("\n")')
+
+if printf '%s' "$payload" | grep -qE '(API_KEY|SECRET|PASSWORD|TOKEN)='; then
+  echo "Blocked: potential secret in the proposed edit" >&2
+  exit 2
 fi
 exit 0
 ```
 
 This is the deterministic complement to permission rules. For the broader permissions / deny-rule model (which tools and paths are allowed at all), see `knowledge/features/permissions.md` — hooks add custom logic on top of it rather than replacing it.
 
-**Quality hook** — Auto-lint after edits:
+**Quality hook** — auto-lint after edits:
+
 ```bash
 #!/bin/bash
-# PostToolUse hook for Edit
-npx eslint --fix "$1" 2>/dev/null
+# PostToolUse, matcher: Edit
+input=$(cat)
+file=$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty')
+[ -n "$file" ] || exit 0
+npx eslint --fix "$file" 2>/dev/null
 exit 0
 ```
 
-**Cost monitoring hook**:
-```python
-#!/usr/bin/env python3
-# PostToolUse hook - track token usage
-import json
-import sys
-# Read tool result, log cost estimate
-# Alert if session exceeds budget
-```
+**Verification gate (the #1 practice, made deterministic)** — a `Stop` hook that runs the project's test/build/lint before Claude can finish is THE way to enforce verification automatically. It closes the loop unattended: Claude cannot declare done while the suite is red, and exit code 2 blocks the stop and feeds the failure straight back for correction.
 
-**Verification gate (the #1 practice, made deterministic)** — A `Stop` hook that runs the project's test/build/lint before Claude can finish is THE way to enforce verification automatically. It closes the loop unattended: Claude cannot declare done while the suite is red, and exit code 2 feeds the failure straight back for correction.
 ```bash
 #!/bin/bash
 # Stop hook
-npm test --silent
-if [ $? -ne 0 ]; then
-  echo "Tests failed. Please fix before completing."
-  exit 2  # Send feedback to Claude
+if ! npm test --silent; then
+  echo "Tests failed. Fix before completing." >&2
+  exit 2   # blocks the stop and sends the reason back to Claude
 fi
 exit 0
 ```
 
 ### Writing Production Hooks
 
-**Keep hooks fast** — They block the workflow.
+**Keep hooks fast** — they block the workflow. Set an explicit `timeout`.
 
 **Avoid context pollution**:
-- Verbose hook outputs add to context
+- Verbose hook output adds to context
 - Use `--quiet` flags
 - Only output what Claude needs to see
 
-**Test independently**:
+**Test independently** — feed the hook the JSON it will actually receive:
+
 ```bash
-# Test hook directly
-.claude/hooks/my-hook.sh test-file.js
-echo $?  # Check exit code
+echo '{"tool_name":"Edit","tool_input":{"file_path":"test.js","new_string":"x"}}' \
+  | .claude/hooks/my-hook.sh
+echo $?  # 0 = pass, 2 = block
 ```
 
-**Typical hook size**: Under 100 lines with clear comments.
+**Typical hook size**: under 100 lines with clear comments.
 
 ### Caveat: Formatting Hooks
 
@@ -139,10 +182,11 @@ Consider running formatters only on `Stop`, not every `PostToolUse`.
 
 ## Mastery Checks
 
-- [ ] Have you implemented a security hook that blocks secrets?
-- [ ] Do you have quality gate hooks (lint, test)?
-- [ ] Do you understand the exit code 2 feedback pattern?
-- [ ] Have you tested your hooks independently?
+- [ ] Does your hook config use the nested `hooks: [{ type, command }]` shape?
+- [ ] Have you implemented a security hook that blocks secrets with `exit 2`?
+- [ ] Do you have a `Stop` verification gate (lint, test)?
+- [ ] Does your hook read its input as JSON from stdin rather than `$1`?
+- [ ] Have you tested your hooks independently by piping them JSON?
 
 ## Why It Matters
 
@@ -151,13 +195,13 @@ Consider running formatters only on `Stop`, not every `PostToolUse`.
 **Reliability you can't get from prompting**:
 - A `Stop` hook running the test/build/lint suite turns the #1 practice — verification — into something that fires every time, with no human in the loop
 - A `PreToolUse` block on secrets or protected paths cannot be talked around or forgotten
-- Exit code 2 feeds the failure back to Claude, turning a hook into an automatic correction loop
+- Exit code 2 blocks the action and feeds the reason back to Claude, turning a hook into an automatic correction loop
+
+**The two failure modes that make a hook silently useless**: the flat config shape (no inner `hooks` array), and `exit 1` where you meant `exit 2`. Both look right and neither errors.
 
 **Keep outputs minimal and actionable** — verbose hook output crowds the context and buries the one line Claude actually needs to act on.
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
-
 ## Official Resources
 
-- [Claude Code Hooks documentation](https://code.claude.com/docs/en/hooks)
-- [Claude Code Best Practices — Hooks section](https://www.anthropic.com/engineering/claude-code-best-practices)
+- [Claude Code Hooks reference](https://code.claude.com/docs/en/hooks)
+- [Claude Code Hooks guide](https://code.claude.com/docs/en/hooks-guide)

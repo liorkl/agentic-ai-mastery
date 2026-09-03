@@ -1,5 +1,6 @@
 ---
-globs: ["knowledge/**/*.md"]
+paths:
+  - "knowledge/**/*.md"
 ---
 
 # Knowledge File Rules
