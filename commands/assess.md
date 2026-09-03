@@ -1,5 +1,7 @@
 ---
 description: "Scan your Claude Code environment and report your skill level, gaps, and anti-patterns"
+disable-model-invocation: true
+allowed-tools: Read(~/.claude/coaching/state/**)
 ---
 
 # Coach Assess
@@ -34,6 +36,10 @@ The coach agent will return a structured report. Display it to the user in this 
 
 After displaying results, append to `~/.claude/coaching/state/outcomes.jsonl`:
 
+These state files are append-only, but **the Write tool truncates**. To add a line:
+read the existing file, append the new line to its contents, and write the whole file
+back. Writing only the new line destroys the history.
+
 ```json
 {
   "timestamp": "<ISO 8601>",
@@ -56,8 +62,8 @@ After displaying results, append to `~/.claude/coaching/state/outcomes.jsonl`:
 ```
 ---
 **What to do now:**
-Run `/coach:execute` to work your plan step by step — practices (verification first) then gaps, each with the why and exact code.
-*Or run `/coach:next` if you'd rather learn the next concept first.*
+Run `/coach:apply` to work your plan step by step — practices (verification first) then gaps, each with the why and exact code.
+*Or run `/coach:learn` if you'd rather learn the next concept first.*
 ```
 
 **If the environment is clean (no gaps, no anti-patterns):**
@@ -65,7 +71,7 @@ Run `/coach:execute` to work your plan step by step — practices (verification 
 ```
 ---
 **What to do now:**
-Your environment is clean. Run `/coach:next` to get your next level-appropriate lesson.
+Your environment is clean. Run `/coach:learn` to get your next level-appropriate lesson.
 ```
 
 ### 6. Scan Receipt

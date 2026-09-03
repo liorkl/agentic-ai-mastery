@@ -157,7 +157,7 @@ Brief description
 - Workspaces persist and travel, so you pick up where you left off from any machine
 - Included with Claude Pro/Team subscriptions (API usage billed separately)
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Mastery Checks
 

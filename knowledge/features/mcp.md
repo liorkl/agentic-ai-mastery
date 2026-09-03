@@ -141,7 +141,7 @@ MCP servers are **third-party code and integrations** — adding one is a supply
 
 **Check what's loaded** with `/context` and prune servers that add tools without adding value.
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 

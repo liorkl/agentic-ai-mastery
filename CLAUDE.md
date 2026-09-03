@@ -10,7 +10,9 @@ A Claude Code **plugin** that coaches developers to master agentic AI developmen
 
 ```
 .claude-plugin/plugin.json    → Plugin manifest
-commands/*.md                  → User-invoked slash commands (/coach:*)
+commands/*.md                  → Four user-invoked slash commands:
+                                 assess (measure) → apply (change)
+                                 learn (teach) → progress (report)
 skills/coaching/SKILL.md       → Auto-triggered coaching behavior
 agents/coach.md                → Sub-agent for complex flows (assessment, discovery)
 knowledge/**/*.md              → Curriculum content, read on-demand
@@ -42,9 +44,10 @@ on the next session launch. To reload mid-session without restarting:
 Then test:
 
 ```bash
-/coach:help
+/help
 /coach:assess
-/coach:next
+/coach:learn
+/coach:progress
 ```
 
 **Integration test** — test the actual install/update UX (run once):
@@ -97,8 +100,6 @@ python3 -m json.tool .claude-plugin/marketplace.json
 - `docs/requirements.md` — Scope, plugin components, acceptance criteria, implementation plan
 - `docs/curriculum-v1.1.md` — Full 11-level curriculum content
 - `docs/diagnostic-v1.1.md` — Environment scan targets and heuristics
-- `docs/cost-guide-v1.0.md` — Pricing data and cost coaching annotations
-- `docs/self-learning-discovery-v1.0.md` — Discovery protocol and state schemas
 
 ## Conventions
 

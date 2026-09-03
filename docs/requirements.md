@@ -1,6 +1,6 @@
 # Claude Code Coaching Agent — Requirements
 
-> **Sync status (2026-06-19):** Reconciled to the shipped plugin — verification-first / five-practices coaching, cost coaching OFF BY DEFAULT (cost + token estimate only in /coach:cost), added /coach:recap + /coach:compare + knowledge/features/plugins.md, assessment schema gained verification_ready / verification_gate / practice_gaps, current June-2026 models.
+> **Sync status (2026-06-19):** Reconciled to the shipped plugin — verification-first / five-practices coaching, cost coaching OFF BY DEFAULT (cost + token estimate only in /coach:cost), added /coach:progress week + /coach:progress previous + knowledge/features/plugins.md, assessment schema gained verification_ready / verification_gate / practice_gaps, current June-2026 models.
 
 > **Ladder re-order (2026-06-21):** The level ladder was re-ordered — old L2 (project config) and L3 (context engineering) MERGED into a single L2 "Project Memory & Context"; old L4–L8 each shifted down one (skills L4→L3, agents L5→L4, hooks L6→L5, MCP L7→L6, headless L8→L7); a new L8 "Parallel Work" (git worktrees / dual-instance) was added; L9 (teams) and L10 (plugins/governance) unchanged.
 
@@ -118,9 +118,9 @@ These documents contain the detailed designs. Requirements below reference them.
 The v1.0 is successful when:
 
 1. A developer can install the coach via `claude plugin install` or by copying files
-2. Running `/coach:help` lists commands; asking a coaching question triggers the skill
+2. Running `/help` lists commands; asking a coaching question triggers the skill
 3. `/coach:assess` accurately detects the developer's skill level from their environment
-4. `/coach:next` delivers relevant, level-appropriate teaching
+4. `/coach:learn` delivers relevant, level-appropriate teaching
 5. The coach identifies and flags gaps and anti-patterns
 6. Progress persists across sessions via JSONL files in `~/.claude/coaching/state/`
 7. Weekly discovery detects Claude Code version changes and new features
@@ -143,15 +143,15 @@ agentic-ai-mastery/                        # local clone
 │
 ├── commands/                              # User-invoked slash commands (/coach:*)
 │   ├── assess.md                          # /coach:assess
-│   ├── next.md                            # /coach:next
-│   ├── status.md                          # /coach:status
-│   ├── exercise.md                        # /coach:exercise
-│   ├── recap.md                           # /coach:recap
-│   ├── compare.md                         # /coach:compare
-│   ├── whats-new.md                       # /coach:whats-new
-│   ├── discover.md                        # /coach:discover
+│   ├── next.md                            # /coach:learn
+│   ├── status.md                          # /coach:progress
+│   ├── exercise.md                        # /coach:learn exercise
+│   ├── recap.md                           # /coach:progress week
+│   ├── compare.md                         # /coach:progress previous
+│   ├── whats-new.md                       # /coach:progress
+│   ├── discover.md                        # /coach:assess
 │   ├── cost.md                            # /coach:cost (opt-in cost coaching)
-│   └── help.md                            # /coach:help
+│   └── help.md                            # /help
 │
 ├── skills/                                # Auto-triggered by Claude on context match
 │   └── coaching/
@@ -247,7 +247,7 @@ git clone <repo-url> ~/dev/agentic-ai-mastery
 ```
 
 **What the user gets after install:**
-- Slash commands: `/coach:assess`, `/coach:next`, `/coach:recap`, `/coach:compare`, `/coach:cost`, etc.
+- Slash commands: `/coach:assess`, `/coach:learn`, `/coach:progress week`, `/coach:progress previous`, `/coach:cost`, etc.
 - Auto-triggered skill: Claude automatically coaches when learning questions detected
 - Sub-agent: available for complex coaching flows
 - All knowledge files bundled and accessible
@@ -325,15 +325,15 @@ Each command is a markdown file in `commands/` with YAML frontmatter (`descripti
 | Command | File | Behavior | Priority |
 |---------|------|----------|----------|
 | `/coach:assess` | `commands/assess.md` | Delegate to coach agent for full environment scan, level report, gaps, anti-patterns | P0 |
-| `/coach:next` | `commands/next.md` | Read assessment, load relevant knowledge file, deliver level-appropriate lesson | P0 |
-| `/coach:status` | `commands/status.md` | Show current level, last assessment date, discovery staleness | P0 |
-| `/coach:exercise` | `commands/exercise.md` | Hands-on exercise with clear success criteria | P1 |
-| `/coach:recap` | `commands/recap.md` | Progress narrative — what the user learned + how the repo got more Claude-ready | P1 |
-| `/coach:compare` | `commands/compare.md` | Before/after diff of two assessments | P1 |
-| `/coach:whats-new` | `commands/whats-new.md` | Show discovery digest of recent changes | P1 |
-| `/coach:discover` | `commands/discover.md` | Delegate to coach agent for full discovery protocol | P1 |
+| `/coach:learn` | `commands/next.md` | Read assessment, load relevant knowledge file, deliver level-appropriate lesson | P0 |
+| `/coach:progress` | `commands/status.md` | Show current level, last assessment date, discovery staleness | P0 |
+| `/coach:learn exercise` | `commands/exercise.md` | Hands-on exercise with clear success criteria | P1 |
+| `/coach:progress week` | `commands/recap.md` | Progress narrative — what the user learned + how the repo got more Claude-ready | P1 |
+| `/coach:progress previous` | `commands/compare.md` | Before/after diff of two assessments | P1 |
+| `/coach:progress` | `commands/whats-new.md` | Show discovery digest of recent changes | P1 |
+| `/coach:assess` | `commands/discover.md` | Delegate to coach agent for full discovery protocol | P1 |
 | `/coach:cost` | `commands/cost.md` | Opt-in cost coaching for current level — the ONLY command that surfaces cost content and a token estimate | P1 |
-| `/coach:help` | `commands/help.md` | List commands and current coaching state | P0 |
+| `/help` | `commands/help.md` | List commands and current coaching state | P0 |
 
 Each command markdown file contains instructions for Claude: which files to read, what to scan, what to output, and what state to update (append to outcomes.jsonl).
 
@@ -360,7 +360,7 @@ Skill body contains: coaching tone/behavior rules, the five cross-cutting practi
 - Full discovery protocol (web fetch, classification, knowledge updates)
 - Retrospective analysis (reads outcome history, identifies patterns)
 
-Commands like `/coach:assess` and `/coach:discover` delegate to this agent. It returns a summary to the user's main context.
+Commands like `/coach:assess` and `/coach:assess` delegate to this agent. It returns a summary to the user's main context.
 
 ```yaml
 ---
@@ -400,14 +400,14 @@ On every command/skill invocation:
 On /coach:assess (delegated to agent):
   Agent reads project files directly using native tools (~500 tokens)
 
-On /coach:next or teaching at Level N:
+On /coach:learn or teaching at Level N:
   ALSO load: knowledge/features/<relevant-file>.md (~400 tokens)
 
 On /coach:cost ONLY (opt-in cost coaching):
   ALSO load: knowledge/pricing/pricing-current.md (~300 tokens)
   This is the ONLY path that loads pricing and emits a token estimate.
 
-On /coach:discover (delegated to agent):
+On /coach:assess (delegated to agent):
   ALSO load: discovery-state.json (~100 tokens)
   Agent fetches changelog via WebFetch
 
@@ -694,7 +694,7 @@ In v1.0, this file is manually maintained (auto-updates deferred to v1.1). Initi
 
 Discovery runs when:
 - Coach is invoked AND `discovery-state.json` shows >7 days since last run
-- User explicitly runs `/coach:discover` or `/coach:whats-new`
+- User explicitly runs `/coach:assess` or `/coach:progress`
 
 Discovery DOES NOT run:
 - On every coach session (too expensive)
@@ -786,7 +786,7 @@ Discovery DOES NOT run:
 | Step | Deliverable | Depends On | Acceptance Test |
 |------|------------|------------|-----------------|
 | 2.1 | Seed knowledge base files (all `knowledge/**/*.md`) | 1.1 | Files exist, each <500 lines, cover all 11 levels |
-| 2.2 | Coaching skill (`skills/coaching/SKILL.md`) + teaching commands (`next.md`, `exercise.md`, `recap.md`, `compare.md`) | 1.3 + 2.1 | `/coach:next` delivers level-appropriate lesson by reading relevant knowledge file; `/coach:recap` narrates progress; `/coach:compare` diffs two assessments |
+| 2.2 | Coaching skill (`skills/coaching/SKILL.md`) + teaching commands (`next.md`, `exercise.md`, `recap.md`, `compare.md`) | 1.3 + 2.1 | `/coach:learn` delivers level-appropriate lesson by reading relevant knowledge file; `/coach:progress week` narrates progress; `/coach:progress previous` diffs two assessments |
 | 2.3 | Opt-in cost command (`commands/cost.md`) | 2.2 | `/coach:cost` is the ONLY command that surfaces cost content + a token estimate; no other command mentions cost |
 
 ### Phase 3: State & Persistence
@@ -801,7 +801,7 @@ Discovery DOES NOT run:
 
 | Step | Deliverable | Depends On | Acceptance Test |
 |------|------------|------------|-----------------|
-| 4.1 | `commands/discover.md` + `commands/whats-new.md` | 3.1 | `/coach:discover` triggers agent, `/coach:whats-new` shows digest |
+| 4.1 | `commands/discover.md` + `commands/whats-new.md` | 3.1 | `/coach:assess` triggers agent, `/coach:progress` shows digest |
 | 4.2 | Discovery protocol in agent (version check, changelog fetch, classification) | 4.1 | Detects version change, classifies entries |
 | 4.3 | Knowledge file updates from discoveries | 4.2 + 2.1 | Relevant knowledge files updated with new entries |
 
@@ -831,17 +831,17 @@ No mock environments or test scripts. Testing is done by installing globally and
 | Level 2+ detection | Open a project with CLAUDE.md + settings, run `/coach:assess` |
 | Gap detection | Open a project with agents but weak CLAUDE.md, verify gaps flagged |
 | Anti-pattern detection | Create an oversized CLAUDE.md (200+ lines), verify flagged |
-| Teaching relevance | At detected level, run `/coach:next`, verify content matches level |
+| Teaching relevance | At detected level, run `/coach:learn`, verify content matches level |
 | Verification-first coaching | At any level, verify coaching leads with the five practices (verify first) |
-| Cost off by default | Run `/coach:next` and a skill-triggered response — verify NO cost/token content appears |
+| Cost off by default | Run `/coach:learn` and a skill-triggered response — verify NO cost/token content appears |
 | Cost opt-in | Run `/coach:cost` — verify cost content + a token estimate appear (and only here) |
-| Recap | After a few interactions, run `/coach:recap` — verify a progress narrative (learned + repo readiness) |
-| Compare | With two assessments on file, run `/coach:compare` — verify a before/after diff |
+| Recap | After a few interactions, run `/coach:progress week` — verify a progress narrative (learned + repo readiness) |
+| Compare | With two assessments on file, run `/coach:progress previous` — verify a before/after diff |
 | Skill auto-trigger | Ask "how should I set up CLAUDE.md?" without using a command — verify coaching skill activates |
 | Privacy | Confirm `.env` and credential files never mentioned in scan results |
 | Persistence | Run two sessions, verify second reads first session's outcomes |
-| Discovery | Backdate discovery-state.json, run `/coach:discover`, verify discovery triggers |
-| Cowork compatibility | Install plugin, open Cowork, verify `/coach:help` works |
+| Discovery | Backdate discovery-state.json, run `/coach:assess`, verify discovery triggers |
+| Cowork compatibility | Install plugin, open Cowork, verify `/help` works |
 
 ### 7.2 Acceptance Criteria (Detailed)
 
@@ -858,7 +858,7 @@ Given anti-patterns mock, when coach runs assessment, then all expected anti-pat
 Given user at Level 2, when asking about agents (Level 5), coach explains prerequisites needed rather than teaching agents directly.
 
 **AC-05: Cost off by default**
-Given any regular teaching interaction (`/coach:next`, exercise, or skill-triggered coaching), the response includes NO cost or token content. Cost content and a token estimate appear ONLY when the user runs the opt-in `/coach:cost` command.
+Given any regular teaching interaction (`/coach:learn`, exercise, or skill-triggered coaching), the response includes NO cost or token content. Cost content and a token estimate appear ONLY when the user runs the opt-in `/coach:cost` command.
 
 **AC-05b: Verification-first coaching**
 Given any coaching interaction, the response leads with the five cross-cutting practices, verification first (establish how Claude's work will be checked before relying on it).

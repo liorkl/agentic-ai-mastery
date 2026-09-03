@@ -90,7 +90,7 @@ The right output style matches Claude's communication to what you're trying to g
 
 Picking the wrong style isn't a cost problem so much as a fit problem: Default during exploration hides reasoning you need, while Learning during high-volume production work slows you down.
 
-(For the token/cost angle, use the opt-in `/coach:cost` command.)
+(Cost coaching is off by default — ask explicitly if you want the token/cost angle.)
 
 ## Official Resources
 
