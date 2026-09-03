@@ -69,12 +69,10 @@ When MCP tools exceed 10% of your context window, Tool Search activates:
 - Critical for users with many servers configured
 - Can be disabled if you prefer upfront loading
 
-```json
-{
-  "toolSearch": {
-    "enabled": true
-  }
-}
+Tool search is controlled by an environment variable (enabled by default), not a `settings.json` key:
+
+```bash
+export ENABLE_TOOL_SEARCH=1
 ```
 
 ### Context Cost & Progressive Disclosure

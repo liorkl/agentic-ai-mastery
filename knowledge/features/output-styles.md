@@ -16,7 +16,7 @@ Claude Code offers configurable output styles that change how Claude communicate
 | **Explanatory** | Adds educational asides while it works | Onboarding to unfamiliar code |
 | **Learning** | Collaborative — shares insights and asks YOU to implement marked `TODO(human)` sections | Skill-building, hands-on practice |
 
-Custom styles live in `~/.claude/output-styles/` (create one with `/output-style:new`).
+Custom styles live in `~/.claude/output-styles/`; select and manage them through `/config`.
 
 The **Learning style is directly useful for skill-building and coaching** — it keeps you in the loop as the implementer rather than handing you finished code, which is exactly the muscle this plugin is built to grow.
 
@@ -65,7 +65,7 @@ function validateInput(data) {
 
 ### Custom Output Styles
 
-Create project-specific styles with `/output-style:new`. Custom styles are stored as files in `~/.claude/output-styles/`, where you can define tone, verbosity, whether to include explanations, and code-comment preferences.
+Create a project-specific style by adding a file to `~/.claude/output-styles/` (or the project's `.claude/output-styles/`), then select it via `/config`. The standalone `/output-style` command was removed. In a style file you can define tone, verbosity, whether to include explanations, and code-comment preferences.
 
 ### Persistence
 

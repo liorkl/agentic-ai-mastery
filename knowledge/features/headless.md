@@ -28,7 +28,7 @@ claude -p "prompt" --output-format stream-json --verbose
 claude -p "prompt" --model haiku
 
 # Scope which tools Claude may use without prompting
-claude -p "prompt" --allowedTools "Read,Edit,Bash"
+claude -p "prompt" --allowedTools "Read" "Edit" "Bash(npm test *)"
 ```
 
 `text` prints plain text; `json` wraps the result with session ID and metadata
@@ -148,7 +148,7 @@ to just what that item needs:
 # Restrict tools per item; pre-approve only what's required
 for f in $(git diff --name-only origin/main); do
   claude -p "Add a missing JSDoc comment to the exported functions in $f" \
-    --allowedTools "Read,Edit"
+    --allowedTools "Read" "Edit"
 done
 ```
 
@@ -206,10 +206,10 @@ custom apps, services). It supports streaming JSON output and structured outputs
 **Guardrails make automation safe and predictable**:
 ```bash
 # Always set limits so an automated run can't loop indefinitely
-claude -p "..." --max-turns 20 --timeout-minutes 30
+claude -p "..." --max-turns 20 --max-budget-usd 5
 ```
 
-Without `--max-turns`/`--timeout-minutes`, an unattended agent can loop on a stuck task with no one watching.
+Without `--max-turns`/`--max-budget-usd`, an unattended agent can loop on a stuck task with no one watching.
 
 (For the token/cost angle, use the opt-in `/coach:cost` command.)
 
