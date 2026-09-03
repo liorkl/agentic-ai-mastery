@@ -13,6 +13,15 @@ FAILED=0
 pass() { echo "  PASS  $1"; }
 fail() { echo "  FAIL  $1"; FAILED=1; }
 
+# expect <actual> <wanted> <label>
+expect() {
+  if [ "$1" = "$2" ]; then
+    pass "$3"
+  else
+    fail "$3 (expected exit $2, got $1)"
+  fi
+}
+
 echo "--- templates: JSON and hook config shape ---"
 if python3 - <<'PY'
 import json, sys
@@ -48,24 +57,24 @@ then pass "settings.json valid, hook shape correct"; else fail "settings.json / 
 
 echo "--- templates: hooks are runnable ---"
 for f in templates/hooks/*.sh; do
-  bash -n "$f" 2>/dev/null && pass "syntax: $f" || fail "syntax: $f"
-  [ -x "$f" ] && pass "executable: $f" || fail "not executable: $f"
+  if bash -n "$f" 2>/dev/null; then pass "syntax: $f"; else fail "syntax: $f"; fi
+  if [ -x "$f" ]; then pass "executable: $f"; else fail "not executable: $f"; fi
 done
 
 echo "--- templates: block-secrets.sh behaviour ---"
 run_hook() { echo "$1" | bash templates/hooks/block-secrets.sh >/dev/null 2>&1; echo $?; }
 
 rc=$(run_hook '{"tool_name":"Write","tool_input":{"content":"const API_KEY = \"sk-live-abc123def456\";"}}')
-[ "$rc" = "2" ] && pass "blocks a hardcoded secret (exit 2)" || fail "expected exit 2, got $rc"
+expect "$rc" 2 "blocks a hardcoded secret"
 
 rc=$(run_hook '{"tool_name":"Write","tool_input":{"content":"const key = process.env.API_KEY;"}}')
-[ "$rc" = "0" ] && pass "allows an env lookup (exit 0)" || fail "expected exit 0, got $rc"
+expect "$rc" 0 "allows an env lookup"
 
 rc=$(run_hook '{"tool_name":"Edit","tool_input":{"new_string":"function parseToken(token) { return token.trim(); }"}}')
-[ "$rc" = "0" ] && pass "no false positive on ordinary code" || fail "false positive, exit $rc"
+expect "$rc" 0 "no false positive on ordinary code"
 
 rc=$(run_hook '{"tool_name":"Edit","tool_input":{"new_string":"PASSWORD=\"hunter2hunter2\""}}')
-[ "$rc" = "2" ] && pass "blocks via the Edit new_string path" || fail "expected exit 2, got $rc"
+expect "$rc" 2 "blocks via the Edit new_string path"
 
 echo "--- templates: verify.sh (the verification gate) ---"
 TMP=$(mktemp -d)
@@ -76,13 +85,13 @@ echo '{"name":"f","scripts":{"test":"echo boom && exit 1"}}' > "$TMP/fail/packag
 echo '{"name":"p","scripts":{"test":"exit 0"}}'              > "$TMP/pass/package.json"
 
 CLAUDE_PROJECT_DIR="$TMP/fail" bash templates/hooks/verify.sh >/dev/null 2>&1; rc=$?
-[ "$rc" = "2" ] && pass "blocks the stop on failing tests (exit 2)" || fail "gate did not block, exit $rc"
+expect "$rc" 2 "blocks the stop on failing tests"
 
 CLAUDE_PROJECT_DIR="$TMP/pass" bash templates/hooks/verify.sh >/dev/null 2>&1; rc=$?
-[ "$rc" = "0" ] && pass "allows the stop on passing tests (exit 0)" || fail "expected exit 0, got $rc"
+expect "$rc" 0 "allows the stop on passing tests"
 
 CLAUDE_PROJECT_DIR="$TMP/none" bash templates/hooks/verify.sh >/dev/null 2>&1; rc=$?
-[ "$rc" = "0" ] && pass "nothing to verify is not a failure (exit 0)" || fail "expected exit 0, got $rc"
+expect "$rc" 0 "nothing to verify is not a failure"
 
 echo "--- templates: skill and agent frontmatter ---"
 if python3 - <<'PY'
