@@ -2,7 +2,7 @@
   "name": "coach",
   "displayName": "Agentic AI Mastery Coach",
   "description": "Coaches a developer on two missions: making their personal Claude Code environment highly effective, and making their repos Claude-ready. Assesses the real environment, applies fixes step by step, and teaches from a mission-organized knowledge base.",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "author": {
     "name": "Lior Klibansky"
   },
