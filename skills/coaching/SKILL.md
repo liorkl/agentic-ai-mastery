@@ -146,26 +146,17 @@ Use Write tool to append to `~/.claude/coaching/state/outcomes.jsonl`.
 
 ### Rule 8: Context Hygiene
 
-Load ONLY relevant knowledge files:
+Load ONLY relevant knowledge files. The routing table lives in exactly one place:
 
-| Topic | Load File |
-|-------|-----------|
-| CLI orientation, what is Claude Code | knowledge/features/cli-orientation.md |
-| Permission modes, plan mode, auto mode, sandboxing, safe operation | knowledge/features/permissions.md |
-| Productivity tips, prompting, context hygiene | knowledge/features/productivity-tips.md |
-| Models, effort levels | knowledge/features/models.md |
-| Output customization | knowledge/features/output-styles.md |
-| CLAUDE.md, rules, imports | knowledge/features/context.md |
-| Skills framework | knowledge/features/skills.md |
-| Custom agents | knowledge/features/agents.md |
-| Hooks system | knowledge/features/hooks.md |
-| MCP servers | knowledge/features/mcp.md |
-| Headless, automation | knowledge/features/headless.md |
-| Agent teams | knowledge/features/teams.md |
-| Plugins, packaging, marketplace, distribution | knowledge/features/plugins.md |
-| Pricing, costs | knowledge/pricing/pricing-current.md |
-| Cowork | knowledge/ecosystem/cowork.md |
-| API usage | knowledge/ecosystem/api.md |
+```
+Read ${CLAUDE_PLUGIN_ROOT}/knowledge/knowledge-map.md
+  → maps the question to one file, organized by mission
+```
+
+It also tells you which mission a question belongs to, which matters: "Claude keeps
+forgetting our conventions" is a repo problem, "Claude keeps asking permission" is a
+personal-setup problem, and answering in the wrong mission gives advice the developer
+cannot act on.
 
 Read at most ONE knowledge file per interaction.
 

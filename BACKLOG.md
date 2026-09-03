@@ -25,7 +25,7 @@
 
 - [x] New command: /coach:progress week — progress recap from assessment + outcome history (led by repo-readiness, not level)
 - [x] New command: /coach:progress previous — before/after assessment diff showing concrete improvement
-- [x] Knowledge: create `knowledge/features/plugins.md` — anatomy, validation, marketplace/install flow, permissions model (incl. the plugin.json permissions caveat)
+- [x] Knowledge: create `knowledge/repo-ready/plugins.md` — anatomy, validation, marketplace/install flow, permissions model (incl. the plugin.json permissions caveat)
 - [x] UX: explain the passive /coaching skill in /help output
 - [x] Re-center coaching on outcomes (verification-first) instead of feature collection; cost/token coaching off by default
 - [x] Refresh models/pricing/best-practices to June 2026; fix broken install (owner), manifest, agent tool frontmatter

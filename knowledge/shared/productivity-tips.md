@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/productivity-tips.md -->
+<!-- file: knowledge/shared/productivity-tips.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: 1-3 -->
@@ -74,7 +74,7 @@ The strong prompt: points at the file, points at an **example pattern to mirror*
 The best results come from tight feedback loops. Correct Claude the moment it drifts:
 
 - **`Esc`** — stop mid-action; context is preserved, redirect.
-- **`/rewind`** — restore a previous conversation/code checkpoint and try a different approach (see `knowledge/features/context.md` for how checkpoints work).
+- **`/rewind`** — restore a previous conversation/code checkpoint and try a different approach (see `knowledge/personal-env/context.md` for how checkpoints work).
 - **`/clear`** — reset between unrelated tasks.
 
 If you've corrected Claude more than twice on the same issue, the context is polluted with failed attempts. **`/clear` and start fresh with a better prompt** that bakes in what you learned — a clean session almost always beats a long one full of dead ends.
@@ -100,7 +100,7 @@ Don't ask Claude to "build the entire feature" at once. Scaffold → review → 
 
 ### 7. Match the Model to the Task
 
-Opus 5 is the default and handles most work; switch mid-session with `/model` when a task is simpler (cheaper, faster) or harder. Tune *thinking depth* separately with `effort` (`low` / `medium` / `high` / `xhigh` / `max`) — this replaced the old `budget_tokens`. Higher effort means more reasoning before acting; reach for it on architecture and hard debugging, dial down for routine edits. See `knowledge/features/models.md` for the full model/effort guidance.
+Opus 5 is the default and handles most work; switch mid-session with `/model` when a task is simpler (cheaper, faster) or harder. Tune *thinking depth* separately with `effort` (`low` / `medium` / `high` / `xhigh` / `max`) — this replaced the old `budget_tokens`. Higher effort means more reasoning before acting; reach for it on architecture and hard debugging, dial down for routine edits. See `knowledge/personal-env/models.md` for the full model/effort guidance.
 
 ---
 

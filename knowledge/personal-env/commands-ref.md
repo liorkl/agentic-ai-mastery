@@ -1,4 +1,4 @@
-<!-- file: knowledge/commands/commands-ref.md -->
+<!-- file: knowledge/personal-env/commands-ref.md -->
 <!-- last-updated: 2026-09-03 -->
 <!-- source: https://code.claude.com/docs/en/commands -->
 <!-- curriculum_level: All -->

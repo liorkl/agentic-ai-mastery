@@ -1,6 +1,6 @@
 ---
-description: "Work your assessment plan step by step — cross-cutting practices (verification first), then feature gaps, with the why explained inline"
-argument-hint: "[apply | done | skip | got it]"
+description: "Work your assessment plan step by step — fix your personal setup or make this repo Claude-ready, with the why explained inline"
+argument-hint: "[me | repo] [apply | done | skip | got it]"
 disable-model-invocation: true
 allowed-tools: Read(~/.claude/coaching/state/**)
 ---
@@ -8,6 +8,27 @@ allowed-tools: Read(~/.claude/coaching/state/**)
 # /coach:apply — Step-by-Step Plan Execution
 
 Walks the user through their assessment plan one step at a time. Each step combines **doing** (implementation) with **learning** (the why behind it).
+
+## Scope — Which Mission Are We Fixing?
+
+`$ARGUMENTS` may start with a scope. It decides **which files get changed**, so state it
+back to the user before touching anything.
+
+| Scope | Changes | Effect |
+|-------|---------|--------|
+| `me` | `~/.claude/` — settings, permissions, model/effort defaults, statusline, your own skills/agents/commands, MCP servers, global `CLAUDE.md` | Travels with the developer into every project. Not committed anywhere |
+| `repo` | `CLAUDE.md`, `.claude/settings.json`, `.claude/rules/`, hooks, project skills and agents | Gets committed, so the whole team benefits — including teammates who have tuned nothing |
+| *(none)* | Ask which, then proceed | Do not guess: one writes to the user's home directory, the other to a shared repo |
+
+Filter the plan to steps belonging to the active scope, and say which scope is active in
+every step header. A developer working through repo steps should never be surprised by an
+edit to their home directory.
+
+**Scope `me` is not optional politeness — it is the half that was missing.** The coach
+already scans `~/.claude/` thoroughly. Until now nothing acted on it: no command created a
+personal skill or subagent, set a statusline, wired an MCP server, tuned permissions, or
+wrote a global `CLAUDE.md`. Those are the highest-leverage fixes available to most
+developers, because they improve every repo they touch.
 
 ## Philosophy
 
@@ -31,8 +52,13 @@ Read ~/.claude/coaching/state/assessments.jsonl
     verification_ready, verification_gate, project_path
 ```
 
-If no assessment exists:
-- Tell user: "No assessment found. Run `/coach:assess` first to generate your plan."
+Prefer the most recent assessment **matching the active scope** (`scope: "me"` or
+`scope: "repo"`). An older assessment of the right scope beats a newer one of the wrong
+scope — a repo scan says nothing about the personal setup.
+
+If no assessment exists for the active scope:
+- Tell user: "No `<scope>` assessment found. Run `/coach:assess <scope>` first to generate
+  your plan."
 - Exit
 
 ### 2. Load or Initialize Execution State
@@ -178,13 +204,43 @@ Use the appropriate tool to apply the fix:
 - Shell command → use **Bash**
 - Multiple changes → apply them in sequence
 
+**Before the first write in a session, and before every write under `~/.claude/`:**
+
+- Show the exact content or diff first. Never apply a change the user has not seen.
+- Say which file, with its full path, and which scope it belongs to.
+- **Never overwrite an existing config file wholesale.** `~/.claude/settings.json` and a
+  project `CLAUDE.md` usually already have content the user cares about. Read the file,
+  merge the addition, and show the merged result. A `settings.json` written from scratch
+  silently discards their permissions, hooks, and statusline.
+- If the file does not exist, say so — creating is safer than editing and the user should
+  know which one is happening.
+
 After applying, confirm what was done:
 
 ```
-✓ Applied. I've created/updated <file or command> as shown above.
+✓ Applied. I've created/updated <full path> as shown above.
 ```
 
 Then proceed as if the user said "done" — mark complete, log, advance.
+
+### 6a-me. Personal-Environment Steps (`me` scope)
+
+These are the fixes nothing in this plugin used to make, despite scanning for them. Each
+is a real edit under `~/.claude/`, subject to the merge rules above.
+
+| Gap found | The fix | Why it's high leverage |
+|-----------|---------|------------------------|
+| Permissions prompt constantly | Add allow rules to `~/.claude/settings.json` `permissions.allow` for the read-only commands they approve every session | Prompt fatigue is why people reach for `bypassPermissions`, which is far worse than a considered allowlist |
+| No global `CLAUDE.md` | Create `~/.claude/CLAUDE.md` with their durable personal preferences | Applies in every project, including ones with no `CLAUDE.md` of their own |
+| Repeated instructions pasted into chat | Turn the most-repeated one into a personal skill at `~/.claude/skills/<name>/SKILL.md` | Loads on demand instead of being retyped; costs nothing until used |
+| Investigation pollutes the main thread | Add a read-only personal subagent in `~/.claude/agents/` with `model: haiku` | The subagent burns its own context and returns the conclusion |
+| No model or effort default | Set `model` in `~/.claude/settings.json`; explain `/effort` | Wrong default silently costs quality on hard work or money on easy work |
+| No statusline | Configure `statusLine` in `~/.claude/settings.json` | Makes the active model, branch, and context visible — cheap situational awareness |
+| Many MCP servers, all always on | Trim to the servers actually used; explain that tool search is on by default | MCP tool definitions consume context in every session |
+
+Present one per step, with the same what/why/how/mental-model shape as repo steps. State
+plainly that these changes are **not committed anywhere** — they live on this machine and
+follow the developer to every project.
 
 ### 6b. Practice Steps — Behavioral Habits
 

@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/context.md -->
+<!-- file: knowledge/personal-env/context.md -->
 <!-- last-updated: 2026-06-21 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: L2 -->
@@ -86,41 +86,6 @@ Limits to know:
 - Checkpoints persist for **~30 days**, then expire. They are **not a git replacement** — keep committing.
 - Only edits made through Claude's **Read/Write/Edit tools** are tracked. Files changed by **raw bash** commands (e.g. `sed`, redirects, `mv`) are **not** captured by a rewind.
 
-### CLAUDE.md Best Practices
-
-```markdown
-# CLAUDE.md cost-relevant sections
-
-## Architecture
-- Frontend: src/frontend/ (React, TypeScript)
-- Backend: src/api/ (Node.js, Express)
-- DO NOT read: node_modules/, dist/, .next/, coverage/
-
-## Commands
-- Build: npm run build
-- Test: npm test
-- Lint: npm run lint
-
-## Conventions
-- All API responses use ResponseWrapper from src/types/api.ts
-- Do NOT create new utility files — check src/utils/ first
-```
-
-**Keep CLAUDE.md short** (a good rule of thumb is under ~150 lines) — it's loaded every session. For each line, ask: *"Would removing this cause Claude to make a mistake?"* If not, cut it. Bloated CLAUDE.md files cause Claude to **ignore** your actual instructions. Domain knowledge or workflows that only matter sometimes belong in **skills**, which load on demand, not in CLAUDE.md.
-
-### @imports for Modular Context
-
-CLAUDE.md can pull in other files with the `@path/to/file` syntax (no `@import` keyword):
-
-```markdown
-# CLAUDE.md
-See @README.md for project overview.
-- Git workflow: @.claude/rules/git-instructions.md
-- Testing: @.claude/rules/testing.md
-```
-
-This keeps the always-loaded file lean while detail lives in files that are pulled in when relevant.
-
 ### Strategic Context Loading
 
 **Just-in-time retrieval** vs. upfront loading:
@@ -128,7 +93,7 @@ This keeps the always-loaded file lean while detail lives in files that are pull
 - Maintain lightweight identifiers (paths, links)
 - Load details only when the task requires them
 
-**Subagents keep the main thread small**: Delegate investigation and read-only codebase discovery to a subagent (e.g. the Explore agent). The subagent burns its own context window reading files and returns only the conclusion, so the main thread stays lean — the same root goal as `/clear` and `/compact`. For *parallel* isolated work on separate branches, see git worktrees in `knowledge/features/teams.md`.
+**Subagents keep the main thread small**: Delegate investigation and read-only codebase discovery to a subagent (e.g. the Explore agent). The subagent burns its own context window reading files and returns only the conclusion, so the main thread stays lean — the same root goal as `/clear` and `/compact`. For *parallel* isolated work on separate branches, see git worktrees in `knowledge/personal-env/teams.md`.
 
 ### Monitoring Context
 

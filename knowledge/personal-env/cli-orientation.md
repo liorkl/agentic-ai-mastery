@@ -1,4 +1,4 @@
-<!-- file: knowledge/features/cli-orientation.md -->
+<!-- file: knowledge/personal-env/cli-orientation.md -->
 <!-- last-updated: 2026-06-19 -->
 <!-- source: https://code.claude.com/docs/en/best-practices -->
 <!-- curriculum_level: 0-1 -->
@@ -151,7 +151,7 @@ CI pipelines or scripted workflows.
 | `/status` | Show session status (account, model, connectivity) |
 | `/model` | Switch the active model |
 
-See `knowledge/commands/commands-ref.md` for the complete reference.
+See `knowledge/personal-env/commands-ref.md` for the complete reference.
 
 ## Mastery Checks
 
